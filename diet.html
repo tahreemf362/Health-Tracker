@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diet Planner - WellNest</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+  <div class="logo-container">
+    <img src="images/fitness-logo.svg" alt="WellNest Fitness Logo" />
+    <h1>WellNest</h1>
+  </div>
+  
+  <!-- Hamburger Menu Button -->
+  <div class="hamburger" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  
+  <ul id="navMenu">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="body.html">Body</a></li>
+    <li><a href="mind.html">Mind</a></li>
+    <li><a href="sleep.html">Sleep</a></li>
+    <li><a href="diet.html" class="active">Diet</a></li>
+    <li><a href="reminders.html">Reminders</a></li>
+    <li><a href="login.html">Login</a></li>
+    <li><a href="signup.html">Sign Up</a></li>
+  </ul>
+</nav>
+
+<section class="section">
+  <h2>Diet Planner 🍎</h2>
+  <p>Plan your daily meals and maintain a balanced nutrition.</p>
+
+  <div class="card-container">
+    <div class="card">
+      <h3>Breakfast</h3>
+      <p>Oats, banana, and milk – 350 kcal</p>
+    </div>
+    <div class="card">
+      <h3>Lunch</h3>
+      <p>Grilled chicken, rice, and salad – 550 kcal</p>
+    </div>
+    <div class="card">
+      <h3>Dinner</h3>
+      <p>Soup and steamed veggies – 300 kcal</p>
+    </div>
+    <div class="card">
+      <h3>Snack</h3>
+      <p>Mixed nuts – 150 kcal</p>
+    </div>
+  </div>
+</section>
+
+<footer>© 2025 WellNest | Designed with 💚 by Tahreem Fatima</footer>
+
+<script>
+  // Hamburger Menu Functionality
+  const hamburger = document.getElementById('hamburger');
+  const navMenu = document.getElementById('navMenu');
+
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active');
+    navMenu.classList.toggle('active');
+  });
+
+  // Close menu when clicking on a link
+  document.querySelectorAll('#navMenu a').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('active');
+      navMenu.classList.remove('active');
+    });
+  });
+</script>
+</body>
+</html>

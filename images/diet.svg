@@ -1,0 +1,26 @@
+<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Diet/Nutrition Icon -->
+  <g fill="#2C6E63">
+    <!-- Apple shape -->
+    <path d="M30 12 Q20 12 18 25 Q18 40 30 48 Q42 40 42 25 Q40 12 30 12 Z" fill="#79C9AF"/>
+    
+    <!-- Apple stem -->
+    <rect x="29" y="8" width="2" height="6" rx="1" fill="#2C6E63"/>
+    
+    <!-- Apple leaf -->
+    <ellipse cx="34" cy="10" rx="4" ry="2" fill="#A8E6CF"/>
+    
+    <!-- Apple highlight -->
+    <ellipse cx="26" cy="20" rx="3" ry="6" fill="#A8E6CF" opacity="0.7"/>
+    
+    <!-- Nutritional elements around -->
+    <circle cx="12" cy="20" r="2" fill="#2C6E63" opacity="0.6"/>
+    <circle cx="48" cy="25" r="2" fill="#2C6E63" opacity="0.6"/>
+    <circle cx="15" cy="40" r="1.5" fill="#A8E6CF" opacity="0.8"/>
+    <circle cx="45" cy="40" r="1.5" fill="#A8E6CF" opacity="0.8"/>
+    
+    <!-- Vitamins symbols -->
+    <text x="10" y="25" font-size="8" font-weight="bold" fill="#2C6E63">C</text>
+    <text x="45" y="30" font-size="8" font-weight="bold" fill="#2C6E63">A</text>
+  </g>
+</svg>

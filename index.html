@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WellNest – All-in-One Health Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+  <!-- 🌿 Navigation Bar -->
+  <nav>
+    <div class="logo-container">
+      <img src="images/fitness-logo.svg" alt="WellNest Fitness Logo" />
+      <h1>WellNest</h1>
+    </div>
+    
+    <!-- Hamburger Menu Button -->
+    <div class="hamburger" id="hamburger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    
+    <ul id="navMenu">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="body.html">Body</a></li>
+      <li><a href="mind.html">Mind</a></li>
+      <li><a href="sleep.html">Sleep</a></li>
+      <li><a href="diet.html">Diet</a></li>
+      <li><a href="reminders.html">Reminders</a></li>
+      <li><a href="login.html">Login</a></li>
+      <li><a href="signup.html">Sign Up</a></li>
+    </ul>
+  </nav>
+
+  <!-- 🌸 Hero Section -->
+  <section class="hero">
+    <div class="hero-text">
+      <h2>Track Your Wellness Naturally 🌿</h2>
+      <p>
+        Welcome to <strong>WellNest</strong> — your all-in-one health tracker for body, mind, sleep, and nutrition. 
+        Embrace balance, live consciously, and nurture your wellness journey.
+      </p>
+      <button onclick="window.location.href='body.html'">Start Tracking</button>
+    </div>
+    <div class="hero-img">
+      <img src="images/fit.webp" alt="Nature Wellness Illustration" />
+    </div>
+  </section>
+
+  <!-- 🍃 About Section -->
+  <section class="section" id="about">
+    <h2>Why WellNest?</h2>
+    <p>
+      WellNest combines fitness tracking, mindfulness, diet planning, and healthy reminders into one smart system — 
+      inspired by nature, designed for your well-being.
+    </p>
+
+    <div class="card-container">
+      <div class="card">
+        <img src="images/yoga.svg" alt="Yoga Icon" />
+        <h3>Mindfulness</h3>
+        <p>Track your meditation sessions and stress levels. Stay calm and centered.</p>
+      </div>
+      <div class="card">
+        <img src="images/diet.svg" alt="Healthy Diet Icon" />
+        <h3>Smart Diet</h3>
+        <p>Monitor your meals, calories, and hydration with beautiful visual tracking.</p>
+      </div>
+      <div class="card">
+        <img src="images/sleep.svg" alt="Sleep Tracker Icon" />
+        <h3>Sleep Tracker</h3>
+        <p>Improve your rest with sleep insights and bedtime reminders.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 🌱 Call-to-Action Section -->
+  <section class="section" style="background: #A8E6CF;">
+    <h2>Join the Wellness Revolution 🌸</h2>
+    <p>
+      Start your natural journey today — because health isn’t just fitness, it’s harmony.
+    </p>
+    <button onclick="window.location.href='signup.html'" style="background:#379683; color:white;">Join Now</button>
+  </section>
+
+  <!-- 🌿 Footer -->
+  <footer>
+    <p>© 2025 WellNest | Designed with 💚 by Tahreem Fatima</p>
+  </footer>
+
+  <script>
+    // Hamburger Menu Functionality
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('navMenu');
+
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      navMenu.classList.toggle('active');
+    });
+
+    // Close menu when clicking on a link
+    document.querySelectorAll('#navMenu a').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+      });
+    });
+  </script>
+</body>
+</html>

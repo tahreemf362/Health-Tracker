@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mind Tracker - WellNest</title>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    function updateMood(value) {
+      const moods = ["😞", "😐", "😊", "😁", "🤩"];
+      document.getElementById("moodEmoji").innerText = moods[value - 1];
+    }
+  </script>
+</head>
+<body>
+
+<nav>
+  <div class="logo-container">
+    <img src="images/fitness-logo.svg" alt="WellNest Fitness Logo" />
+    <h1>WellNest</h1>
+  </div>
+  
+  <!-- Hamburger Menu Button -->
+  <div class="hamburger" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  
+  <ul id="navMenu">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="body.html">Body</a></li>
+    <li><a href="mind.html" class="active">Mind</a></li>
+    <li><a href="sleep.html">Sleep</a></li>
+    <li><a href="diet.html">Diet</a></li>
+    <li><a href="reminders.html">Reminders</a></li>
+    <li><a href="login.html">Login</a></li>
+    <li><a href="signup.html">Sign Up</a></li>
+  </ul>
+</nav>
+
+<section class="section">
+  <h2>Mind & Mood Tracker 🧘‍♀️</h2>
+  <p>Track your mood daily and take mindful breaks for better focus.</p>
+
+  <div class="card-container">
+    <div class="card">
+      <h3>How are you feeling today?</h3>
+      <input type="range" min="1" max="5" step="1" value="3" onchange="updateMood(this.value)">
+      <h1 id="moodEmoji">😊</h1>
+    </div>
+
+    <div class="card">
+      <h3>Daily Journal</h3>
+      <textarea rows="5" placeholder="Write your thoughts here..."></textarea>
+    </div>
+
+    <div class="card">
+      <h3>Relaxation Timer</h3>
+      <button onclick="alert('Start breathing for 2 minutes 🌿')">Start Relaxation</button>
+    </div>
+  </div>
+</section>
+
+<footer>© 2025 WellNest | Designed with 💚 by Tahreem Fatima</footer>
+
+<script>
+  // Hamburger Menu Functionality
+  const hamburger = document.getElementById('hamburger');
+  const navMenu = document.getElementById('navMenu');
+
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active');
+    navMenu.classList.toggle('active');
+  });
+
+  // Close menu when clicking on a link
+  document.querySelectorAll('#navMenu a').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('active');
+      navMenu.classList.remove('active');
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Yoga/Meditation Icon -->
+  <g fill="#2C6E63">
+    <!-- Person's head -->
+    <circle cx="30" cy="18" r="8" fill="#79C9AF"/>
+    
+    <!-- Person's body in lotus position -->
+    <path d="M22 26 Q30 22 38 26 L36 35 Q30 38 24 35 Z" fill="#2C6E63"/>
+    
+    <!-- Arms in meditation pose -->
+    <ellipse cx="18" cy="32" rx="6" ry="3" fill="#A8E6CF" opacity="0.8"/>
+    <ellipse cx="42" cy="32" rx="6" ry="3" fill="#A8E6CF" opacity="0.8"/>
+    
+    <!-- Legs crossed -->
+    <ellipse cx="22" cy="42" rx="8" ry="4" fill="#79C9AF"/>
+    <ellipse cx="38" cy="42" rx="8" ry="4" fill="#79C9AF"/>
+    
+    <!-- Zen circles for mindfulness -->
+    <circle cx="15" cy="15" r="2" fill="#A8E6CF" opacity="0.6"/>
+    <circle cx="45" cy="15" r="2" fill="#A8E6CF" opacity="0.6"/>
+    <circle cx="30" cy="8" r="1.5" fill="#ffffff" opacity="0.8"/>
+  </g>
+</svg>

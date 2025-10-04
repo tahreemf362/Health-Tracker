@@ -1,0 +1,28 @@
+<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+  <!-- Sleep Icon -->
+  <g fill="#2C6E63">
+    <!-- Moon crescent -->
+    <path d="M25 10 Q15 15 15 30 Q15 45 25 50 Q35 45 30 30 Q35 15 25 10 Z" fill="#79C9AF"/>
+    
+    <!-- Moon craters -->
+    <circle cx="22" cy="22" r="2" fill="#2C6E63" opacity="0.3"/>
+    <circle cx="26" cy="35" r="1.5" fill="#2C6E63" opacity="0.3"/>
+    
+    <!-- Stars -->
+    <g fill="#A8E6CF">
+      <path d="M40 15 L42 20 L47 20 L43 24 L45 29 L40 25 L35 29 L37 24 L33 20 L38 20 Z"/>
+      <path d="M45 35 L46 38 L49 38 L47 40 L48 43 L45 41 L42 43 L43 40 L41 38 L44 38 Z" transform="scale(0.7)"/>
+    </g>
+    
+    <!-- Sleep ZZZ -->
+    <g fill="#2C6E63" opacity="0.7">
+      <path d="M35 25 L40 25 L35 30 L40 30" stroke="#2C6E63" stroke-width="1" fill="none"/>
+      <path d="M42 28 L45 28 L42 32 L45 32" stroke="#2C6E63" stroke-width="1" fill="none"/>
+      <path d="M47 31 L49 31 L47 34 L49 34" stroke="#2C6E63" stroke-width="1" fill="none"/>
+    </g>
+    
+    <!-- Dreamy clouds -->
+    <ellipse cx="12" cy="45" rx="8" ry="3" fill="#A8E6CF" opacity="0.5"/>
+    <ellipse cx="48" cy="12" rx="6" ry="2" fill="#A8E6CF" opacity="0.5"/>
+  </g>
+</svg>

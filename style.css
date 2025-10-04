@@ -1,0 +1,606 @@
+/* 🌿 WellNest – Nature Wellness Theme */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  ba/* 🌟 Authentication Pages */
+.auth-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 120px);
+  padding: 60px 40px;
+  background: linear-gradient(135deg, #DCEAF5 0%, #A8E6CF 100%);
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 25px;
+  padding: 50px 45px;
+  box-shadow: 0 20px 40px rgba(44, 110, 99, 0.15);
+  position: relative;
+  z-index: 2;
+}
+  color: #333;
+  line-height: 1.6;
+}
+
+/* 🌱 Navbar */
+nav {
+  background: linear-gradient(90deg, #A8E6CF, #79C9AF);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  position: relative;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+nav img {
+  width: 40px;
+  height: 40px;
+  transition: transform 0.3s ease;
+}
+
+nav img:hover {
+  transform: scale(1.1);
+}
+
+nav h1 {
+  color: #2C6E63;
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+nav ul {
+  display: flex;
+  gap: 25px;
+  list-style: none;
+}
+
+nav ul li a {
+  color: #2C6E63;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+nav ul li a:hover {
+  color: #145C4D;
+  border-bottom: 2px solid #2C6E63;
+}
+
+/* 🍔 Hamburger Menu */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  padding: 5px;
+  z-index: 1001;
+}
+
+.hamburger span {
+  width: 25px;
+  height: 3px;
+  background: #2C6E63;
+  margin: 3px 0;
+  transition: 0.3s;
+  border-radius: 2px;
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: rotate(-45deg) translate(-5px, 6px);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: rotate(45deg) translate(-5px, -6px);
+}
+
+/* 🌤 Hero Section */
+.hero {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 80px 20px;
+  background: white;
+  border-radius: 0 0 60px 60px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.hero-text {
+  max-width: 500px;
+}
+
+.hero h2 {
+  color: #145C4D;
+  font-size: 2.4rem;
+  margin-bottom: 15px;
+}
+
+.hero p {
+  color: #444;
+  margin-bottom: 20px;
+}
+
+.hero button {
+  background: #379683;
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.hero button:hover {
+  background: #2C6E63;
+  transform: translateY(-3px);
+}
+
+.hero img {
+  width: 350px;
+  border-radius: 20px;
+}
+
+/* 🪴 Section Styling */
+.section {
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.section h2 {
+  color: #145C4D;
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.section p {
+  color: #555;
+  margin-bottom: 25px;
+}
+
+/* 🍃 Cards */
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 25px;
+}
+
+.card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+  padding: 25px;
+  width: 260px;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 20px rgba(55,150,131,0.2);
+}
+
+.card img {
+  width: 70px;
+  margin-bottom: 10px;
+}
+
+.card h3 {
+  color: #2C6E63;
+  margin-bottom: 8px;
+}
+
+/* � Authentication Pages */
+.auth-section {
+  display: flex;
+  min-height: 80vh;
+  align-items: center;
+  padding: 40px 20px;
+  background: linear-gradient(135deg, #DCEAF5 0%, #A8E6CF 100%);
+}
+
+.auth-container {
+  flex: 1;
+  max-width: 450px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 25px;
+  padding: 40px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.auth-header h2 {
+  color: #2C6E63;
+  font-size: 2.2rem;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.auth-header p {
+  color: #666;
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0; /* Allows flex items to shrink below content size */
+}
+
+.form-group label {
+  color: #2C6E63;
+  font-weight: 500;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select {
+  padding: 14px 18px;
+  border: 2px solid #E0E0E0;
+  border-radius: 14px;
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  font-family: 'Poppins', sans-serif;
+  background: #FAFAFA;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #79C9AF;
+  box-shadow: 0 0 0 3px rgba(121, 201, 175, 0.2);
+}
+
+.form-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #555;
+  cursor: pointer;
+}
+
+.checkbox-container input[type="checkbox"] {
+  margin-right: 10px;
+  accent-color: #79C9AF;
+}
+
+.forgot-password {
+  color: #79C9AF;
+  text-decoration: none;
+  font-size: 0.9rem;
+  align-self: flex-end;
+}
+
+.forgot-password:hover {
+  color: #2C6E63;
+}
+
+.auth-btn {
+  background: linear-gradient(90deg, #79C9AF, #2C6E63);
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  font-family: 'Poppins', sans-serif;
+}
+
+.auth-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(44, 110, 99, 0.3);
+}
+
+.auth-divider {
+  text-align: center;
+  position: relative;
+  margin: 20px 0;
+  color: #999;
+}
+
+.auth-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #E0E0E0;
+  z-index: 1;
+}
+
+.auth-divider span {
+  background: white;
+  padding: 0 15px;
+  position: relative;
+  z-index: 2;
+}
+
+.google-btn {
+  background: white;
+  border: 2px solid #E0E0E0;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.google-btn:hover {
+  border-color: #79C9AF;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 20px;
+  color: #666;
+}
+
+.auth-footer a {
+  color: #79C9AF;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.auth-footer a:hover {
+  color: #2C6E63;
+}
+
+.auth-illustration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.auth-illustration img {
+  width: 300px;
+  height: 300px;
+  opacity: 0.3;
+}
+
+.floating-elements {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.float-element {
+  position: absolute;
+  font-size: 2rem;
+  animation: float 3s ease-in-out infinite;
+}
+
+.float-element:nth-child(1) {
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.float-element:nth-child(2) {
+  top: 60%;
+  right: 20%;
+  animation-delay: 1s;
+}
+
+.float-element:nth-child(3) {
+  bottom: 20%;
+  left: 30%;
+  animation-delay: 2s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+/* 💻 Desktop/Laptop Specific Styles */
+@media (min-width: 769px) {
+  .auth-section {
+    padding: 80px 60px;
+  }
+  
+  .auth-container {
+    max-width: 520px;
+    padding: 60px 50px;
+  }
+  
+  .auth-header h2 {
+    font-size: 2.4rem;
+  }
+  
+  .auth-illustration img {
+    width: 350px;
+    height: 350px;
+  }
+}
+
+/* �🌸 Footer */
+footer {
+  background: #A8E6CF;
+  text-align: center;
+  padding: 15px;
+  color: #145C4D;
+  font-weight: 500;
+  border-top: 2px solid #79C9AF;
+}
+
+/* 📱 Mobile Navigation & Responsive */
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex;
+  }
+  
+  nav ul {
+    position: fixed;
+    left: -100%;
+    top: 70px;
+    bottom: 0;
+    flex-direction: column;
+    background: linear-gradient(180deg, #A8E6CF, #79C9AF);
+    width: 100%;
+    text-align: center;
+    transition: 0.3s;
+    box-shadow: 0 10px 27px rgba(0,0,0,0.05);
+    padding: 20px 0;
+    z-index: 1000;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  nav ul.active {
+    left: 0;
+  }
+  
+  nav ul::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  nav ul::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.1);
+  }
+  
+  nav ul::-webkit-scrollbar-thumb {
+    background: rgba(44, 110, 99, 0.5);
+    border-radius: 2px;
+  }
+  
+  nav ul::-webkit-scrollbar-thumb:hover {
+    background: rgba(44, 110, 99, 0.8);
+  }
+  
+  nav ul li {
+    margin: 12px 0;
+    flex-shrink: 0;
+  }
+  
+  nav ul li a {
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 12px 20px;
+    display: block;
+    border-radius: 8px;
+    margin: 0 20px;
+    transition: background-color 0.3s;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  nav ul li:last-child {
+    margin-bottom: 40px;
+  }
+  
+  nav ul li a:hover {
+    background: rgba(255,255,255,0.2);
+    border-bottom: none;
+  }
+
+  .hero {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .hero img {
+    width: 280px;
+    margin-top: 20px;
+  }
+
+  .card {
+    width: 90%;
+  }
+  
+  .auth-section {
+    padding: 30px 15px;
+    min-height: calc(100vh - 80px);
+  }
+  
+  .auth-container {
+    padding: 35px 25px;
+    margin: 20px 0;
+  }
+  
+  .auth-illustration {
+    display: none;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+  }
+  
+  .auth-header h2 {
+    font-size: 1.6rem;
+  }
+  
+  .floating-elements {
+    display: none;
+  }
+}
