@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hair & Skin Care - WellNest</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <img src="images/fitness-logo.svg" alt="WellNest Logo" class="logo">
+        <span>WellNest</span>
+      </div>
+      
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="body.html">Body</a></li>
+        <li><a href="mind.html">Mind</a></li>
+        <li><a href="sleep.html">Sleep</a></li>
+        <li><a href="diet.html">Diet</a></li>
+        <li><a href="workout.html">Workout</a></li>
+        <li><a href="care.html" class="active">Care</a></li>
+        <li><a href="reminders.html">Reminders</a></li>
+        <li><a href="login.html" id="loginLink">Login</a></li>
+        <li><a href="signup.html" id="signupLink">Sign Up</a></li>
+        <li><a href="#" id="logoutLink" onclick="logout()" style="display: none;">Logout</a></li>
+      </ul>
+      
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section care-hero">
+    <div class="hero-content">
+      <h1>Hair & Skin Care 🌺</h1>
+      <p>Your complete guide to healthy, glowing skin and beautiful hair</p>
+      <div class="care-stats" id="careStats">
+        <div class="stat-item">
+          <span class="stat-number" id="skinStreak">0</span>
+          <span class="stat-label">Day Streak</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="completedRoutines">0</span>
+          <span class="stat-label">Routines Done</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="careScore">0%</span>
+          <span class="stat-label">Care Score</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Care Type Selection -->
+    <section class="care-selection">
+      <div class="container">
+        <h2>Choose Your Care Focus</h2>
+        <div class="care-tabs">
+          <button class="care-tab active" onclick="switchCareType('skin')" id="skinTab">
+            🌟 Skin Care
+          </button>
+          <button class="care-tab" onclick="switchCareType('hair')" id="hairTab">
+            💇‍♀️ Hair Care
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Skin Care Section -->
+    <section class="care-content" id="skinCare">
+      <div class="container">
+        <!-- Skin Type Assessment -->
+        <div class="care-card">
+          <h3>🔍 Know Your Skin Type</h3>
+          <div class="skin-assessment">
+            <p>Answer these questions to get personalized recommendations:</p>
+            <div class="assessment-questions">
+              <div class="question">
+                <label>How does your skin feel after cleansing?</label>
+                <select id="skinFeel" onchange="updateSkinType()">
+                  <option value="">Select...</option>
+                  <option value="tight">Tight and dry</option>
+                  <option value="comfortable">Comfortable</option>
+                  <option value="oily">Oily within an hour</option>
+                  <option value="mixed">Oily T-zone, dry cheeks</option>
+                </select>
+              </div>
+              <div class="question">
+                <label>How often do you experience breakouts?</label>
+                <select id="breakouts" onchange="updateSkinType()">
+                  <option value="">Select...</option>
+                  <option value="never">Rarely or never</option>
+                  <option value="occasional">Occasionally</option>
+                  <option value="frequent">Frequently</option>
+                  <option value="constant">Almost constantly</option>
+                </select>
+              </div>
+            </div>
+            <div class="skin-type-result" id="skinTypeResult"></div>
+          </div>
+        </div>
+
+        <!-- Daily Skin Routine -->
+        <div class="care-card">
+          <h3>🌅 Daily Skin Care Routine</h3>
+          <div class="routine-tabs">
+            <button class="routine-tab active" onclick="switchRoutine('morning')">Morning</button>
+            <button class="routine-tab" onclick="switchRoutine('evening')">Evening</button>
+          </div>
+          
+          <div class="routine-content" id="morningRoutine">
+            <h4>Morning Routine ☀️</h4>
+            <div class="routine-checklist">
+              <div class="checklist-item" data-step="morning-cleanse">
+                <input type="checkbox" id="morningCleanse" onchange="updateProgress()">
+                <label for="morningCleanse">
+                  <strong>Gentle Cleanser</strong>
+                  <span>Wash with lukewarm water</span>
+                </label>
+              </div>
+              <div class="checklist-item" data-step="morning-toner">
+                <input type="checkbox" id="morningToner" onchange="updateProgress()">
+                <label for="morningToner">
+                  <strong>Toner/Essence</strong>
+                  <span>Balance pH and prep skin</span>
+                </label>
+              </div>
+              <div class="checklist-item" data-step="morning-serum">
+                <input type="checkbox" id="morningSerum" onchange="updateProgress()">
+                <label for="morningSerum">
+                  <strong>Vitamin C Serum</strong>
+                  <span>Antioxidant protection</span>
+                </label>
+              </div>
+              <div class="checklist-item" data-step="morning-moisturizer">
+                <input type="checkbox" id="morningMoisturizer" onchange="updateProgress()">
+                <label for="morningMoisturizer">
+                  <strong>Moisturizer</strong>
+                  <span>Hydrate and protect</span>
+                </label>
+              </div>
+              <div class="checklist-item" data-step="morning-sunscreen">
+                <input type="checkbox" id="morningSunscreen" onchange="updateProgress()">
+                <label for="morningSunscreen">
+                  <strong>SPF 30+ Sunscreen</strong>
+                  <span>Most important step!</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="routine-content" id="eveningRoutine" style="display: none;">
+            <h4>Evening Routine 🌙</h4>
+            <div class="routine-checklist">
+              <div class="checklist-item" data-step="evening-makeup">
+                <input type="checkbox" id="eveningMakeup" onchange="updateProgress()">
+                <label for="eveningMakeup">
+                  <strong>Makeup Remover</strong>
+                  <span>Remove all makeup first</span>
+                </label>
+              </div>
+              <div class="checklist-item" data-step="evening-cleanse">
+                <input type="checkbox" id="eveningCleanse" onchange="updateProgress()">
+                <label for="eveningCleanse">
+                  <strong>Double Cleanse</strong>
+                  <span>Oil cleanser + gentle cleanser</span>
+                </label>
+              </div>
+              <div class="checklist-item" data-step="evening-exfoliate">
+                <input type="checkbox" id="eveningExfoliate" onchange="updateProgress()">
+                <label for="eveningExfoliate">
+                  <strong>Exfoliate (2-3x/week)</strong>
+                  <span>BHA/AHA or gentle scrub</span>
+                </label>
+              </div>
+              <div class="checklist-item" data-step="evening-treatment">
+                <input type="checkbox" id="eveningTreatment" onchange="updateProgress()">
+                <label for="eveningTreatment">
+                  <strong>Treatment Serum</strong>
+                  <span>Retinol, niacinamide, or targeted treatment</span>
+                </label>
+              </div>
+              <div class="checklist-item" data-step="evening-moisturizer">
+                <input type="checkbox" id="eveningMoisturizer" onchange="updateProgress()">
+                <label for="eveningMoisturizer">
+                  <strong>Night Moisturizer</strong>
+                  <span>Richer formula for overnight repair</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weekly Skin Care -->
+        <div class="care-card">
+          <h3>📅 Weekly Skin Care Extras</h3>
+          <div class="weekly-checklist">
+            <div class="checklist-item" data-step="face-mask">
+              <input type="checkbox" id="faceMask" onchange="updateProgress()">
+              <label for="faceMask">
+                <strong>Face Mask (1-2x/week)</strong>
+                <span>Hydrating, purifying, or brightening</span>
+              </label>
+            </div>
+            <div class="checklist-item" data-step="eye-care">
+              <input type="checkbox" id="eyeCare" onchange="updateProgress()">
+              <label for="eyeCare">
+                <strong>Eye Care</strong>
+                <span>Eye cream and gentle massage</span>
+              </label>
+            </div>
+            <div class="checklist-item" data-step="lip-care">
+              <input type="checkbox" id="lipCare" onchange="updateProgress()">
+              <label for="lipCare">
+                <strong>Lip Care</strong>
+                <span>Exfoliate and moisturize lips</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hair Care Section -->
+    <section class="care-content" id="hairCare" style="display: none;">
+      <div class="container">
+        <!-- Hair Type Assessment -->
+        <div class="care-card">
+          <h3>💇‍♀️ Know Your Hair Type</h3>
+          <div class="hair-assessment">
+            <div class="assessment-questions">
+              <div class="question">
+                <label>What's your hair texture?</label>
+                <select id="hairTexture" onchange="updateHairType()">
+                  <option value="">Select...</option>
+                  <option value="straight">Straight</option>
+                  <option value="wavy">Wavy</option>
+                  <option value="curly">Curly</option>
+                  <option value="coily">Coily/Kinky</option>
+                </select>
+              </div>
+              <div class="question">
+                <label>How does your hair feel?</label>
+                <select id="hairFeel" onchange="updateHairType()">
+                  <option value="">Select...</option>
+                  <option value="dry">Dry and brittle</option>
+                  <option value="normal">Normal</option>
+                  <option value="oily">Oily/greasy</option>
+                  <option value="mixed">Oily roots, dry ends</option>
+                </select>
+              </div>
+            </div>
+            <div class="hair-type-result" id="hairTypeResult"></div>
+          </div>
+        </div>
+
+        <!-- Hair Care Routine -->
+        <div class="care-card">
+          <h3>🧴 Hair Care Routine</h3>
+          <div class="routine-tabs">
+            <button class="routine-tab active" onclick="switchHairRoutine('daily')">Daily</button>
+            <button class="routine-tab" onclick="switchHairRoutine('weekly')">Weekly</button>
+          </div>
+
+          <div class="hair-routine-content" id="dailyHairRoutine">
+            <h4>Daily Hair Care 🌸</h4>
+            <div class="routine-checklist">
+              <div class="checklist-item" data-step="hair-brush">
+                <input type="checkbox" id="hairBrush" onchange="updateProgress()">
+                <label for="hairBrush">
+                  <strong>Gentle Brushing</strong>
+                  <span>Use wide-tooth comb on wet hair</span>
+                </label>
+              </div>
+              <div class="checklist-item" data-step="hair-protection">
+                <input type="checkbox" id="hairProtection" onchange="updateProgress()">
+                <label for="hairProtection">
+                  <strong>Heat Protection</strong>
+                  <span>Apply before styling tools</span>
+                </label>
+              </div>
+              <div class="checklist-item" data-step="scalp-massage">
+                <input type="checkbox" id="scalpMassage" onchange="updateProgress()">
+                <label for="scalpMassage">
+                  <strong>Scalp Massage</strong>
+                  <span>2-3 minutes to boost circulation</span>
+                </label>
+              </div>
+              <div class="checklist-item" data-step="hair-hydration">
+                <input type="checkbox" id="hairHydration" onchange="updateProgress()">
+                <label for="hairHydration">
+                  <strong>Leave-in Treatment</strong>
+                  <span>Hydrating mist or serum</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="hair-routine-content" id="weeklyHairRoutine" style="display: none;">
+            <h4>Weekly Hair Care 💆‍♀️</h4>
+            <div class="routine-checklist">
+              <div class="checklist-item" data-step="hair-shampoo">
+                <input type="checkbox" id="hairShampoo" onchange="updateProgress()">
+                <label for="hairShampoo">
+                  <strong>Gentle Shampoo</strong>
+                  <span>2-3 times per week maximum</span>
+                </label>
+              </div>
+              <div class="checklist-item" data-step="hair-condition">
+                <input type="checkbox" id="hairCondition" onchange="updateProgress()">
+                <label for="hairCondition">
+                  <strong>Deep Conditioning</strong>
+                  <span>Nourishing mask for 10-20 minutes</span>
+                </label>
+              </div>
+              <div class="checklist-item" data-step="hair-trim">
+                <input type="checkbox" id="hairTrim" onchange="updateProgress()">
+                <label for="hairTrim">
+                  <strong>Trim Schedule</strong>
+                  <span>Every 6-8 weeks for healthy ends</span>
+                </label>
+              </div>
+              <div class="checklist-item" data-step="hair-oil">
+                <input type="checkbox" id="hairOil" onchange="updateProgress()">
+                <label for="hairOil">
+                  <strong>Oil Treatment</strong>
+                  <span>Coconut, argan, or jojoba oil</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hair Health Tips -->
+        <div class="care-card">
+          <h3>💡 Hair Health Tips</h3>
+          <div class="tips-grid">
+            <div class="tip-item">
+              <h4>🌡️ Temperature Control</h4>
+              <p>Use lukewarm water for washing and cool water for final rinse to seal cuticles.</p>
+            </div>
+            <div class="tip-item">
+              <h4>🥗 Nutrition</h4>
+              <p>Eat protein-rich foods, biotin, iron, and omega-3 fatty acids for strong hair.</p>
+            </div>
+            <div class="tip-item">
+              <h4>😴 Silk Pillowcase</h4>
+              <p>Reduces friction and prevents hair breakage while you sleep.</p>
+            </div>
+            <div class="tip-item">
+              <h4>☀️ UV Protection</h4>
+              <p>Protect hair from sun damage with UV-filtering products or hats.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Progress Tracking -->
+    <section class="progress-section">
+      <div class="container">
+        <h2>📊 Your Care Progress</h2>
+        <div class="progress-cards">
+          <div class="progress-card">
+            <h3>Today's Progress</h3>
+            <div class="progress-circle">
+              <span class="progress-text" id="todayProgress">0%</span>
+            </div>
+            <p id="progressMessage">Start your routine to see progress!</p>
+          </div>
+          <div class="progress-card">
+            <h3>Weekly Streak</h3>
+            <div class="streak-display">
+              <span class="streak-number" id="weeklyStreak">0</span>
+              <span class="streak-label">days</span>
+            </div>
+            <p>Keep it up! Consistency is key! 🔥</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Care Tips & Guidance -->
+    <section class="guidance-section">
+      <div class="container">
+        <h2>💡 Expert Guidance</h2>
+        <div class="guidance-tabs">
+          <button class="guidance-tab active" onclick="switchGuidance('ingredients')">Ingredients</button>
+          <button class="guidance-tab" onclick="switchGuidance('problems')">Common Issues</button>
+          <button class="guidance-tab" onclick="switchGuidance('diy')">DIY Recipes</button>
+        </div>
+
+        <div class="guidance-content" id="ingredientsGuidance">
+          <h3>🧪 Key Ingredients to Know</h3>
+          <div class="ingredients-grid">
+            <div class="ingredient-card">
+              <h4>Hyaluronic Acid</h4>
+              <p>Powerful hydrator that can hold 1000x its weight in water. Perfect for all skin types.</p>
+            </div>
+            <div class="ingredient-card">
+              <h4>Vitamin C</h4>
+              <p>Antioxidant that brightens skin and protects against environmental damage.</p>
+            </div>
+            <div class="ingredient-card">
+              <h4>Retinol</h4>
+              <p>Anti-aging powerhouse that increases cell turnover. Start slow and use at night.</p>
+            </div>
+            <div class="ingredient-card">
+              <h4>Niacinamide</h4>
+              <p>Regulates oil production, minimizes pores, and reduces inflammation.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="guidance-content" id="problemsGuidance" style="display: none;">
+          <h3>🚨 Common Skin & Hair Issues</h3>
+          <div class="problems-accordion">
+            <div class="problem-item">
+              <button class="problem-header" onclick="toggleProblem(this)">
+                Acne & Breakouts
+              </button>
+              <div class="problem-content">
+                <p><strong>Causes:</strong> Excess oil, bacteria, clogged pores, hormones</p>
+                <p><strong>Solutions:</strong> Salicylic acid, benzoyl peroxide, consistent routine, avoid over-cleansing</p>
+              </div>
+            </div>
+            <div class="problem-item">
+              <button class="problem-header" onclick="toggleProblem(this)">
+                Dry, Brittle Hair
+              </button>
+              <div class="problem-content">
+                <p><strong>Causes:</strong> Over-washing, heat damage, chemical treatments, environmental factors</p>
+                <p><strong>Solutions:</strong> Deep conditioning, reduce heat styling, silk pillowcases, regular trims</p>
+              </div>
+            </div>
+            <div class="problem-item">
+              <button class="problem-header" onclick="toggleProblem(this)">
+                Dark Circles
+              </button>
+              <div class="problem-content">
+                <p><strong>Causes:</strong> Genetics, lack of sleep, dehydration, aging</p>
+                <p><strong>Solutions:</strong> Eye cream with caffeine/vitamin C, adequate sleep, hydration, sunglasses</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="guidance-content" id="diyGuidance" style="display: none;">
+          <h3>🏠 DIY Care Recipes</h3>
+          <div class="diy-recipes">
+            <div class="recipe-card">
+              <h4>Honey Oat Face Mask</h4>
+              <p><strong>Ingredients:</strong> 2 tbsp oats, 1 tbsp honey, 1 tsp water</p>
+              <p><strong>Benefits:</strong> Gentle exfoliation and hydration</p>
+              <p><strong>Instructions:</strong> Mix ingredients, apply for 15 minutes, rinse with warm water.</p>
+            </div>
+            <div class="recipe-card">
+              <h4>Coconut Oil Hair Mask</h4>
+              <p><strong>Ingredients:</strong> 3 tbsp coconut oil, 1 tbsp honey</p>
+              <p><strong>Benefits:</strong> Deep moisture and shine</p>
+              <p><strong>Instructions:</strong> Warm oil, mix with honey, apply to hair, leave 30 minutes, shampoo.</p>
+            </div>
+            <div class="recipe-card">
+              <h4>Green Tea Toner</h4>
+              <p><strong>Ingredients:</strong> 1 cup green tea (cooled), 2 tbsp witch hazel</p>
+              <p><strong>Benefits:</strong> Antioxidants and gentle astringent</p>
+              <p><strong>Instructions:</strong> Mix and store in fridge. Apply with cotton pad after cleansing.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    let currentCareType = 'skin';
+    let careProgress = JSON.parse(localStorage.getItem('careProgress')) || {
+      skin: { streak: 0, completed: 0, lastDate: null },
+      hair: { streak: 0, completed: 0, lastDate: null }
+    };
+
+    // Authentication check
+    function checkAuthentication() {
+      const isLoggedIn = localStorage.getItem('wellnest_user');
+      if (!isLoggedIn || isLoggedIn !== 'true') {
+        alert('Please login to access care features! 💆‍♀️');
+        window.location.href = 'login.html';
+        return false;
+      }
+      return true;
+    }
+
+    // Navigation functions
+    function updateNavigation() {
+      const isLoggedIn = localStorage.getItem('wellnest_user');
+      if (isLoggedIn === 'true') {
+        document.getElementById('loginLink').style.display = 'none';
+        document.getElementById('signupLink').style.display = 'none';
+        document.getElementById('logoutLink').style.display = 'block';
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('wellnest_user');
+      localStorage.removeItem('wellnest_user_data');
+      alert('Logged out successfully! See you soon! 👋');
+      window.location.href = 'index.html';
+    }
+
+    // Care type switching
+    function switchCareType(type) {
+      currentCareType = type;
+      
+      // Update tabs
+      document.querySelectorAll('.care-tab').forEach(tab => tab.classList.remove('active'));
+      document.getElementById(type + 'Tab').classList.add('active');
+      
+      // Update content
+      document.getElementById('skinCare').style.display = type === 'skin' ? 'block' : 'none';
+      document.getElementById('hairCare').style.display = type === 'hair' ? 'block' : 'none';
+      
+      updateStats();
+    }
+
+    // Routine switching
+    function switchRoutine(routine) {
+      document.querySelectorAll('.routine-tab').forEach(tab => tab.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      document.getElementById('morningRoutine').style.display = routine === 'morning' ? 'block' : 'none';
+      document.getElementById('eveningRoutine').style.display = routine === 'evening' ? 'block' : 'none';
+    }
+
+    function switchHairRoutine(routine) {
+      document.querySelectorAll('.routine-tab').forEach(tab => tab.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      document.getElementById('dailyHairRoutine').style.display = routine === 'daily' ? 'block' : 'none';
+      document.getElementById('weeklyHairRoutine').style.display = routine === 'weekly' ? 'block' : 'none';
+    }
+
+    // Skin type assessment
+    function updateSkinType() {
+      const skinFeel = document.getElementById('skinFeel').value;
+      const breakouts = document.getElementById('breakouts').value;
+      
+      if (skinFeel && breakouts) {
+        let skinType = '';
+        let recommendations = '';
+        
+        if (skinFeel === 'tight' && breakouts === 'never') {
+          skinType = 'Dry Skin';
+          recommendations = 'Focus on hydrating products, gentle cleansers, and rich moisturizers. Avoid alcohol-based toners.';
+        } else if (skinFeel === 'oily' && breakouts === 'frequent') {
+          skinType = 'Oily/Acne-Prone Skin';
+          recommendations = 'Use oil-free products, salicylic acid or benzoyl peroxide, and lightweight moisturizers.';
+        } else if (skinFeel === 'mixed') {
+          skinType = 'Combination Skin';
+          recommendations = 'Use different products for different areas. Gentle cleanser, light moisturizer, spot treatments.';
+        } else {
+          skinType = 'Normal Skin';
+          recommendations = 'Maintain with gentle, balanced products. Focus on prevention and consistency.';
+        }
+        
+        document.getElementById('skinTypeResult').innerHTML = `
+          <div class="skin-type-card">
+            <h4>Your Skin Type: ${skinType}</h4>
+            <p>${recommendations}</p>
+          </div>
+        `;
+      }
+    }
+
+    // Hair type assessment
+    function updateHairType() {
+      const hairTexture = document.getElementById('hairTexture').value;
+      const hairFeel = document.getElementById('hairFeel').value;
+      
+      if (hairTexture && hairFeel) {
+        let hairType = `${hairTexture.charAt(0).toUpperCase() + hairTexture.slice(1)} ${hairFeel.charAt(0).toUpperCase() + hairFeel.slice(1)} Hair`;
+        let recommendations = '';
+        
+        if (hairFeel === 'dry') {
+          recommendations = 'Focus on moisturizing treatments, avoid over-washing, use leave-in conditioners and hair oils.';
+        } else if (hairFeel === 'oily') {
+          recommendations = 'Use clarifying shampoos, focus cleansing on roots, use lightweight products on lengths.';
+        } else if (hairFeel === 'mixed') {
+          recommendations = 'Cleanse roots thoroughly, condition mid-lengths to ends, use dry shampoo between washes.';
+        } else {
+          recommendations = 'Maintain with balanced care routine, regular trims, and heat protection.';
+        }
+        
+        document.getElementById('hairTypeResult').innerHTML = `
+          <div class="hair-type-card">
+            <h4>Your Hair Type: ${hairType}</h4>
+            <p>${recommendations}</p>
+          </div>
+        `;
+      }
+    }
+
+    // Progress tracking
+    function updateProgress() {
+      const today = new Date().toDateString();
+      const totalChecked = document.querySelectorAll('input[type="checkbox"]:checked').length;
+      const totalBoxes = document.querySelectorAll('input[type="checkbox"]').length;
+      const progress = Math.round((totalChecked / totalBoxes) * 100);
+      
+      // Update display
+      document.getElementById('todayProgress').textContent = progress + '%';
+      
+      // Update progress message
+      let message = '';
+      if (progress === 0) {
+        message = 'Start your routine to see progress!';
+      } else if (progress < 30) {
+        message = 'Great start! Keep going! 🌱';
+      } else if (progress < 70) {
+        message = 'You\'re doing amazing! 🌟';
+      } else if (progress < 100) {
+        message = 'Almost there! Finish strong! 💪';
+      } else {
+        message = 'Perfect! You\'re glowing! ✨';
+      }
+      document.getElementById('progressMessage').textContent = message;
+      
+      // Update care progress
+      if (!careProgress[currentCareType].lastDate || careProgress[currentCareType].lastDate !== today) {
+        if (progress >= 80) { // Consider 80%+ as completed day
+          careProgress[currentCareType].completed++;
+          careProgress[currentCareType].streak++;
+          careProgress[currentCareType].lastDate = today;
+        }
+      }
+      
+      localStorage.setItem('careProgress', JSON.stringify(careProgress));
+      updateStats();
+    }
+
+    // Update statistics
+    function updateStats() {
+      const stats = careProgress[currentCareType];
+      document.getElementById('skinStreak').textContent = stats.streak;
+      document.getElementById('completedRoutines').textContent = stats.completed;
+      document.getElementById('careScore').textContent = Math.min(stats.streak * 10, 100) + '%';
+      document.getElementById('weeklyStreak').textContent = stats.streak;
+    }
+
+    // Guidance functions
+    function switchGuidance(type) {
+      document.querySelectorAll('.guidance-tab').forEach(tab => tab.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      document.querySelectorAll('.guidance-content').forEach(content => {
+        content.style.display = 'none';
+      });
+      document.getElementById(type + 'Guidance').style.display = 'block';
+    }
+
+    function toggleProblem(button) {
+      const content = button.nextElementSibling;
+      const isOpen = content.style.display === 'block';
+      
+      // Close all other problems
+      document.querySelectorAll('.problem-content').forEach(p => p.style.display = 'none');
+      
+      // Toggle current problem
+      content.style.display = isOpen ? 'none' : 'block';
+    }
+
+    // Hamburger Menu Functionality
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('navMenu');
+
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      navMenu.classList.toggle('active');
+    });
+
+    // Close menu when clicking on a link
+    document.querySelectorAll('.nav-menu a').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+      });
+    });
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      if (!checkAuthentication()) return;
+      
+      updateNavigation();
+      updateStats();
+      
+      // Load saved checkboxes
+      const savedChecks = JSON.parse(localStorage.getItem('careChecks')) || {};
+      Object.keys(savedChecks).forEach(id => {
+        const checkbox = document.getElementById(id);
+        if (checkbox) checkbox.checked = savedChecks[id];
+      });
+      
+      updateProgress();
+    });
+
+    // Save checkbox states
+    document.addEventListener('change', function(e) {
+      if (e.target.type === 'checkbox') {
+        const savedChecks = JSON.parse(localStorage.getItem('careChecks')) || {};
+        savedChecks[e.target.id] = e.target.checked;
+        localStorage.setItem('careChecks', JSON.stringify(savedChecks));
+      }
+    });
+  </script>
+</body>
+</html>

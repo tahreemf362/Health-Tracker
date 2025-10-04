@@ -25,13 +25,16 @@
     
     <ul id="navMenu">
       <li><a href="index.html" class="active">Home</a></li>
-      <li><a href="body.html">Body</a></li>
-      <li><a href="mind.html">Mind</a></li>
-      <li><a href="sleep.html">Sleep</a></li>
-      <li><a href="diet.html">Diet</a></li>
-      <li><a href="reminders.html">Reminders</a></li>
-      <li><a href="login.html">Login</a></li>
-      <li><a href="signup.html">Sign Up</a></li>
+      <li><a href="#" onclick="checkAuth('body.html')">Body</a></li>
+      <li><a href="#" onclick="checkAuth('mind.html')">Mind</a></li>
+      <li><a href="#" onclick="checkAuth('sleep.html')">Sleep</a></li>
+      <li><a href="#" onclick="checkAuth('diet.html')">Diet</a></li>
+      <li><a href="#" onclick="checkAuth('workout.html')">Workout</a></li>
+      <li><a href="#" onclick="checkAuth('care.html')">Care</a></li>
+      <li><a href="#" onclick="checkAuth('reminders.html')">Reminders</a></li>
+      <li><a href="login.html" id="loginLink">Login</a></li>
+      <li><a href="signup.html" id="signupLink">Sign Up</a></li>
+      <li><a href="#" onclick="logout()" id="logoutLink" style="display:none;">Logout</a></li>
     </ul>
   </nav>
 
@@ -43,7 +46,10 @@
         Welcome to <strong>WellNest</strong> — your all-in-one health tracker for body, mind, sleep, and nutrition. 
         Embrace balance, live consciously, and nurture your wellness journey.
       </p>
-      <button onclick="window.location.href='body.html'">Start Tracking</button>
+      <div class="auth-buttons">
+        <button onclick="window.location.href='login.html'" class="login-btn">Login to Start</button>
+        <button onclick="window.location.href='signup.html'" class="signup-btn">Sign Up Free</button>
+      </div>
     </div>
     <div class="hero-img">
       <img src="images/fit.webp" alt="Nature Wellness Illustration" />
@@ -108,6 +114,60 @@
         navMenu.classList.remove('active');
       });
     });
+
+    // Authentication System
+    function checkAuth(page) {
+      const isLoggedIn = localStorage.getItem('wellnest_user');
+      
+      if (isLoggedIn) {
+        window.location.href = page;
+      } else {
+        alert('🔒 Please login to access your wellness journey! 🌿');
+        window.location.href = 'login.html';
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('wellnest_user');
+      localStorage.removeItem('wellnest_user_data');
+      alert('👋 Logged out successfully! See you soon! 🌿');
+      updateAuthUI();
+    }
+
+    function updateAuthUI() {
+      const isLoggedIn = localStorage.getItem('wellnest_user');
+      const userData = JSON.parse(localStorage.getItem('wellnest_user_data') || '{}');
+      
+      const loginLink = document.getElementById('loginLink');
+      const signupLink = document.getElementById('signupLink');
+      const logoutLink = document.getElementById('logoutLink');
+      
+      if (isLoggedIn) {
+        loginLink.style.display = 'none';
+        signupLink.textContent = `Hi, ${userData.firstName || 'User'}!`;
+        signupLink.href = '#';
+        signupLink.onclick = () => alert(`Welcome ${userData.firstName}! 🌿\\nEmail: ${userData.email}\\nFitness Goal: ${userData.fitnessGoal}`);
+        logoutLink.style.display = 'block';
+        
+        // Update hero buttons for logged in users
+        const heroText = document.querySelector('.hero-text .auth-buttons');
+        if (heroText) {
+          heroText.innerHTML = `
+            <button onclick="window.location.href='body.html'" class="dashboard-btn">Go to Dashboard</button>
+            <button onclick="window.location.href='diet.html'" class="track-btn">Start Tracking</button>
+          `;
+        }
+      } else {
+        loginLink.style.display = 'block';
+        signupLink.textContent = 'Sign Up';
+        signupLink.href = 'signup.html';
+        signupLink.onclick = null;
+        logoutLink.style.display = 'none';
+      }
+    }
+
+    // Check authentication status on page load
+    document.addEventListener('DOMContentLoaded', updateAuthUI);
   </script>
 </body>
 </html>

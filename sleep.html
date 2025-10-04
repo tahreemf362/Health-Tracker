@@ -27,9 +27,11 @@
     <li><a href="mind.html">Mind</a></li>
     <li><a href="sleep.html" class="active">Sleep</a></li>
     <li><a href="diet.html">Diet</a></li>
+    <li><a href="workout.html">Workout</a></li>
     <li><a href="reminders.html">Reminders</a></li>
-    <li><a href="login.html">Login</a></li>
-    <li><a href="signup.html">Sign Up</a></li>
+    <li><a href="login.html" id="loginLink">Login</a></li>
+    <li><a href="signup.html" id="signupLink">Sign Up</a></li>
+    <li><a href="#" onclick="logout()" id="logoutLink" style="display:none;">Logout 👋</a></li>
   </ul>
 </nav>
 
@@ -39,13 +41,33 @@
 
   <div class="card-container">
     <div class="card">
-      <h3>Hours Slept</h3>
-      <p>7 hrs 45 mins</p>
+      <h3>Hours Slept Today</h3>
+      <p id="sleepDisplay">7 hrs 45 mins</p>
     </div>
 
     <div class="card">
       <h3>Sleep Quality</h3>
       <p>Good 😴</p>
+    </div>
+
+    <div class="card">
+      <h3>Add Today's Sleep</h3>
+      <div class="sleep-input-container">
+        <label for="sleepHours">Hours:</label>
+        <input type="number" id="sleepHours" min="0" max="24" step="0.5" placeholder="8" class="sleep-input">
+        <label for="sleepMinutes">Minutes:</label>
+        <input type="number" id="sleepMinutes" min="0" max="59" step="1" placeholder="30" class="sleep-input">
+        <button onclick="addSleepHours()" class="sleep-btn">Add Sleep 💤</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Sleep History</h3>
+      <div id="sleepHistory">
+        <p>📅 Oct 3: 7 hrs 45 mins</p>
+        <p>📅 Oct 2: 8 hrs 15 mins</p>
+        <p>📅 Oct 1: 6 hrs 30 mins</p>
+      </div>
     </div>
 
     <div class="card">
@@ -58,6 +80,82 @@
 <footer>© 2025 WellNest | Designed with 💚 by Tahreem Fatima</footer>
 
 <script>
+  // Sleep Tracking Functionality
+  function addSleepHours() {
+    const hours = document.getElementById('sleepHours').value;
+    const minutes = document.getElementById('sleepMinutes').value;
+    
+    if (!hours && !minutes) {
+      alert('Please enter sleep hours or minutes! 😴');
+      return;
+    }
+    
+    const totalHours = parseInt(hours || 0);
+    const totalMinutes = parseInt(minutes || 0);
+    
+    if (totalHours < 0 || totalHours > 24 || totalMinutes < 0 || totalMinutes >= 60) {
+      alert('Please enter valid time values! (Hours: 0-24, Minutes: 0-59)');
+      return;
+    }
+    
+    // Format sleep display
+    let sleepText = '';
+    if (totalHours > 0 && totalMinutes > 0) {
+      sleepText = `${totalHours} hrs ${totalMinutes} mins`;
+    } else if (totalHours > 0) {
+      sleepText = `${totalHours} hrs`;
+    } else if (totalMinutes > 0) {
+      sleepText = `${totalMinutes} mins`;
+    }
+    
+    // Update today's sleep display
+    document.getElementById('sleepDisplay').textContent = sleepText;
+    
+    // Add to sleep history
+    const today = new Date();
+    const dateStr = today.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric' 
+    });
+    
+    const historyContainer = document.getElementById('sleepHistory');
+    const newEntry = document.createElement('p');
+    newEntry.innerHTML = `📅 ${dateStr}: ${sleepText}`;
+    newEntry.style.color = '#2C6E63';
+    newEntry.style.fontWeight = '500';
+    
+    // Insert at the beginning
+    historyContainer.insertBefore(newEntry, historyContainer.firstChild);
+    
+    // Clear input fields
+    document.getElementById('sleepHours').value = '';
+    document.getElementById('sleepMinutes').value = '';
+    
+    // Show success message
+    alert(`Sleep logged successfully! 🌙\n${sleepText} added to your tracker.`);
+    
+    // Provide sleep quality feedback
+    const totalSleepMinutes = (totalHours * 60) + totalMinutes;
+    let feedback = '';
+    
+    if (totalSleepMinutes < 360) { // Less than 6 hours
+      feedback = '😴 You might need more sleep for optimal health!';
+    } else if (totalSleepMinutes >= 360 && totalSleepMinutes <= 540) { // 6-9 hours
+      feedback = '✨ Great job! You\'re in the healthy sleep range.';
+    } else {
+      feedback = '😊 That\'s quite a bit of sleep! Hope you feel refreshed.';
+    }
+    
+    setTimeout(() => alert(feedback), 1000);
+  }
+
+  // Check authentication
+  const isLoggedIn = localStorage.getItem('wellnest_user');
+  if (!isLoggedIn) {
+    alert('🔒 Please login to access your sleep tracker! 🌿');
+    window.location.href = 'login.html';
+  }
+
   // Hamburger Menu Functionality
   const hamburger = document.getElementById('hamburger');
   const navMenu = document.getElementById('navMenu');

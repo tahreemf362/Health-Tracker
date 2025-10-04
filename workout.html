@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workout Trainer - WellNest</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav>
+  <div class="logo-container">
+    <img src="images/fitness-logo.svg" alt="WellNest Fitness Logo" />
+    <h1>WellNest</h1>
+  </div>
+  
+  <!-- Hamburger Menu Button -->
+  <div class="hamburger" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  
+  <ul id="navMenu">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="body.html">Body</a></li>
+    <li><a href="mind.html">Mind</a></li>
+    <li><a href="sleep.html">Sleep</a></li>
+    <li><a href="diet.html">Diet</a></li>
+    <li><a href="workout.html" class="active">Workout</a></li>
+    <li><a href="reminders.html">Reminders</a></li>
+    <li><a href="login.html" id="loginLink">Login</a></li>
+    <li><a href="signup.html" id="signupLink">Sign Up</a></li>
+    <li><a href="#" onclick="logout()" id="logoutLink" style="display:none;">Logout 👋</a></li>
+  </ul>
+</nav>
+
+<!-- Welcome Header -->
+<div class="welcome-header" id="welcomeHeader" style="display:none;">
+  <div class="welcome-content">
+    <span class="welcome-text">Welcome back, <span id="userName">User</span>! 💪</span>
+    <span class="motivational-text" id="motivationalText">Let's crush your fitness goals today!</span>
+  </div>
+</div>
+
+<section class="section">
+  <h2>Personal Workout Trainer 🏋️‍♂️</h2>
+  <p>Get personalized workouts, track your progress, and achieve your fitness goals!</p>
+
+  <!-- 🎯 Fitness Goal Setup -->
+  <div class="workout-setup" id="workoutSetup">
+    <h3>Set Your Fitness Goals 🎯</h3>
+    <div class="goal-setup-card">
+      <div class="goal-selection">
+        <h4>What's Your Primary Goal?</h4>
+        <div class="goal-options">
+          <button class="goal-btn" data-goal="weight-loss" onclick="selectGoal('weight-loss')">
+            🔥 Lose Weight
+          </button>
+          <button class="goal-btn" data-goal="weight-gain" onclick="selectGoal('weight-gain')">
+            💪 Gain Weight/Muscle
+          </button>
+          <button class="goal-btn" data-goal="maintain" onclick="selectGoal('maintain')">
+            ⚖️ Maintain Fitness
+          </button>
+        </div>
+      </div>
+
+      <div class="body-parts" id="bodyPartsSection" style="display:none;">
+        <h4>Which Areas Do You Want to Focus On?</h4>
+        <div class="body-part-grid">
+          <label class="body-part-option">
+            <input type="checkbox" value="full-body" onchange="updateBodyParts()">
+            <span class="body-part-card">🏃‍♂️ Full Body</span>
+          </label>
+          <label class="body-part-option">
+            <input type="checkbox" value="upper-body" onchange="updateBodyParts()">
+            <span class="body-part-card">💪 Upper Body</span>
+          </label>
+          <label class="body-part-option">
+            <input type="checkbox" value="lower-body" onchange="updateBodyParts()">
+            <span class="body-part-card">🦵 Lower Body</span>
+          </label>
+          <label class="body-part-option">
+            <input type="checkbox" value="core" onchange="updateBodyParts()">
+            <span class="body-part-card">🎯 Core/Abs</span>
+          </label>
+          <label class="body-part-option">
+            <input type="checkbox" value="cardio" onchange="updateBodyParts()">
+            <span class="body-part-card">❤️ Cardio</span>
+          </label>
+          <label class="body-part-option">
+            <input type="checkbox" value="flexibility" onchange="updateBodyParts()">
+            <span class="body-part-card">🧘‍♀️ Flexibility</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="fitness-level" id="fitnessLevelSection" style="display:none;">
+        <h4>What's Your Fitness Level?</h4>
+        <div class="level-options">
+          <button class="level-btn" onclick="selectLevel('beginner')">
+            🌱 Beginner
+          </button>
+          <button class="level-btn" onclick="selectLevel('intermediate')">
+            🔥 Intermediate  
+          </button>
+          <button class="level-btn" onclick="selectLevel('advanced')">
+            💎 Advanced
+          </button>
+        </div>
+      </div>
+
+      <div class="workout-time" id="workoutTimeSection" style="display:none;">
+        <h4>How Much Time Can You Dedicate?</h4>
+        <div class="time-options">
+          <button class="time-btn" onclick="selectTime(15)">⏰ 15 mins</button>
+          <button class="time-btn" onclick="selectTime(30)">⏰ 30 mins</button>
+          <button class="time-btn" onclick="selectTime(45)">⏰ 45 mins</button>
+          <button class="time-btn" onclick="selectTime(60)">⏰ 60+ mins</button>
+        </div>
+      </div>
+
+      <button class="start-workout-btn" id="startWorkoutBtn" onclick="generateWorkout()" style="display:none;">
+        🚀 Generate My Workout Plan
+      </button>
+    </div>
+  </div>
+
+  <!-- 💪 Workout Plan Display -->
+  <div class="workout-plan" id="workoutPlan" style="display:none;">
+    <div class="plan-header">
+      <h3>Your Personalized Workout Plan 💪</h3>
+      <div class="plan-info">
+        <span class="plan-goal" id="planGoal"></span>
+        <span class="plan-duration" id="planDuration"></span>
+        <span class="plan-level" id="planLevel"></span>
+      </div>
+    </div>
+
+    <div class="exercises-container" id="exercisesContainer">
+      <!-- Exercises will be dynamically generated here -->
+    </div>
+
+    <div class="workout-timer" id="workoutTimer">
+      <h4>Workout Timer ⏱️</h4>
+      <div class="timer-display">
+        <span class="timer-time" id="timerDisplay">00:00</span>
+        <div class="timer-controls">
+          <button onclick="startTimer()" id="startBtn">▶️ Start</button>
+          <button onclick="pauseTimer()" id="pauseBtn">⏸️ Pause</button>
+          <button onclick="resetTimer()" id="resetBtn">🔄 Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="workout-actions">
+      <button onclick="completeWorkout()" class="complete-btn">✅ Complete Workout</button>
+      <button onclick="showNewWorkout()" class="new-workout-btn">🔄 Generate New Workout</button>
+    </div>
+  </div>
+
+  <!-- 📊 Progress Tracking -->
+  <div class="progress-section" id="progressSection" style="display:none;">
+    <h3>Your Progress Journey 📊</h3>
+    <div class="progress-cards">
+      <div class="progress-card">
+        <div class="progress-icon">🏆</div>
+        <div class="progress-info">
+          <span class="progress-number" id="totalWorkouts">0</span>
+          <span class="progress-label">Workouts Completed</span>
+        </div>
+      </div>
+      <div class="progress-card">
+        <div class="progress-icon">🔥</div>
+        <div class="progress-info">
+          <span class="progress-number" id="caloriesBurned">0</span>
+          <span class="progress-label">Calories Burned</span>
+        </div>
+      </div>
+      <div class="progress-card">
+        <div class="progress-icon">⏰</div>
+        <div class="progress-info">
+          <span class="progress-number" id="totalTime">0</span>
+          <span class="progress-label">Minutes Exercised</span>
+        </div>
+      </div>
+      <div class="progress-card">
+        <div class="progress-icon">📈</div>
+        <div class="progress-info">
+          <span class="progress-number" id="streakDays">0</span>
+          <span class="progress-label">Day Streak</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="motivational-section">
+      <h4>💬 Personal Motivation</h4>
+      <div class="motivation-card" id="motivationCard">
+        <p id="motivationMessage">Great job starting your fitness journey! Every step counts! 💪</p>
+        <button onclick="getNewMotivation()" class="motivation-btn">✨ Get New Motivation</button>
+      </div>
+    </div>
+
+    <div class="tips-section">
+      <h4>💡 Today's Fitness Tips</h4>
+      <div class="tips-container" id="tipsContainer">
+        <!-- Tips will be generated based on user's goal -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>© 2025 WellNest | Designed with 💚 by Tahreem Fatima</footer>
+
+<script>
+  // Check authentication on page load
+  window.onload = function() {
+    checkAuthentication();
+    updateNavigation();
+    loadUserProgress();
+  };
+
+  function checkAuthentication() {
+    const isLoggedIn = localStorage.getItem('wellnest_user');
+    const userDataStr = localStorage.getItem('wellnest_user_data');
+    
+    if (!isLoggedIn || isLoggedIn !== 'true' || !userDataStr) {
+      alert('Please login to access workout features! 🔐');
+      window.location.href = 'login.html';
+      return false;
+    }
+    
+    const userData = JSON.parse(userDataStr);
+    
+    // Show welcome message
+    document.getElementById('welcomeHeader').style.display = 'block';
+    document.getElementById('userName').textContent = userData.firstName || 'Fitness Enthusiast';
+    
+    return true;
+  }
+
+  function updateNavigation() {
+    const isLoggedIn = localStorage.getItem('wellnest_user');
+    const userDataStr = localStorage.getItem('wellnest_user_data');
+    if (isLoggedIn === 'true' && userDataStr) {
+      document.getElementById('loginLink').style.display = 'none';
+      document.getElementById('signupLink').style.display = 'none';
+      document.getElementById('logoutLink').style.display = 'block';
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem('wellnest_user');
+    localStorage.removeItem('wellnest_user_data');
+    localStorage.removeItem('workoutProgress');
+    alert('Logged out successfully! See you soon! 👋');
+    window.location.href = 'index.html';
+  }
+
+  // Hamburger Menu Functionality
+  const hamburger = document.getElementById('hamburger');
+  const navMenu = document.getElementById('navMenu');
+
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active');
+    navMenu.classList.toggle('active');
+  });
+
+  document.querySelectorAll('#navMenu a').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('active');
+      navMenu.classList.remove('active');
+    });
+  });
+
+  // Workout Planning Variables
+  let selectedGoal = '';
+  let selectedBodyParts = [];
+  let selectedLevel = '';
+  let selectedTime = 0;
+  let currentWorkout = [];
+  let workoutTimer = null;
+  let timerSeconds = 0;
+  let isTimerRunning = false;
+
+  // Exercise Database
+  const exercises = {
+    'weight-loss': {
+      'full-body': [
+        { name: 'Jumping Jacks', duration: '30s', rest: '10s', calories: 8, tips: 'Keep your core engaged and land softly' },
+        { name: 'Burpees', duration: '20s', rest: '15s', calories: 12, tips: 'Explosive movement, maintain form over speed' },
+        { name: 'Mountain Climbers', duration: '30s', rest: '10s', calories: 10, tips: 'Keep hips level and core tight' },
+        { name: 'High Knees', duration: '30s', rest: '10s', calories: 9, tips: 'Pump your arms and lift knees high' }
+      ],
+      'upper-body': [
+        { name: 'Push-ups', duration: '30s', rest: '15s', calories: 6, tips: 'Keep body in straight line, modify on knees if needed' },
+        { name: 'Tricep Dips', duration: '20s', rest: '15s', calories: 5, tips: 'Use chair or bench, keep elbows close to body' },
+        { name: 'Arm Circles', duration: '30s', rest: '10s', calories: 3, tips: 'Start small, gradually increase circle size' },
+        { name: 'Plank to T', duration: '20s', rest: '15s', calories: 7, tips: 'Rotate slowly, maintain balance' }
+      ],
+      'cardio': [
+        { name: 'Running in Place', duration: '45s', rest: '15s', calories: 12, tips: 'Lift knees high, pump arms vigorously' },
+        { name: 'Jump Rope (No Rope)', duration: '30s', rest: '10s', calories: 14, tips: 'Stay light on feet, consistent rhythm' },
+        { name: 'Dancing', duration: '60s', rest: '20s', calories: 8, tips: 'Have fun! Any movement counts' },
+        { name: 'Stair Climbing', duration: '45s', rest: '15s', calories: 15, tips: 'Use actual stairs or step up/down motion' }
+      ]
+    },
+    'weight-gain': {
+      'upper-body': [
+        { name: 'Push-ups', duration: '45s', rest: '20s', calories: 6, tips: 'Focus on controlled movement and full range' },
+        { name: 'Pike Push-ups', duration: '30s', rest: '20s', calories: 8, tips: 'Target shoulders, keep legs straight' },
+        { name: 'Tricep Push-ups', duration: '30s', rest: '20s', calories: 7, tips: 'Hands close together, elbows by sides' },
+        { name: 'Plank Hold', duration: '60s', rest: '30s', calories: 4, tips: 'Build core strength, essential for all exercises' }
+      ],
+      'lower-body': [
+        { name: 'Squats', duration: '45s', rest: '20s', calories: 8, tips: 'Go deep, weight in heels, chest up' },
+        { name: 'Lunges', duration: '40s', rest: '20s', calories: 9, tips: 'Step forward deep, push through front heel' },
+        { name: 'Single Leg Glute Bridge', duration: '30s each', rest: '15s', calories: 6, tips: 'Squeeze glutes at top, control the movement' },
+        { name: 'Calf Raises', duration: '45s', rest: '15s', calories: 4, tips: 'Rise up on toes, slow controlled movement' }
+      ]
+    }
+  };
+
+  // Motivational Messages
+  const motivationalMessages = [
+    "You're stronger than you think! 💪 Keep pushing forward!",
+    "Every workout is a step closer to your goal! 🎯",
+    "Your body can do it. It's your mind you need to convince! 🧠",
+    "Success is the sum of small efforts repeated daily! 📈",
+    "Don't wish for it, work for it! 🔥",
+    "The hardest part is showing up - you're already winning! 🏆",
+    "Progress, not perfection! Every rep counts! ✨",
+    "Your future self will thank you for this workout! 🙏",
+    "Strong is the new beautiful! 💎",
+    "Champions train, losers complain. You're a champion! 👑"
+  ];
+
+  // Fitness Tips by Goal
+  const fitnessTips = {
+    'weight-loss': [
+      "💧 Drink water before, during, and after workouts for better fat burning",
+      "🍎 Combine cardio with strength training for maximum calorie burn",
+      "😴 Get 7-9 hours of sleep - it helps regulate hunger hormones",
+      "🔥 High-intensity intervals burn more calories in less time",
+      "📊 Track your progress with photos, not just the scale"
+    ],
+    'weight-gain': [
+      "🍗 Eat protein within 30 minutes after your workout",
+      "💪 Progressive overload - gradually increase intensity",
+      "💤 Rest days are when muscles actually grow - don't skip them!",
+      "🥛 Stay hydrated to support muscle protein synthesis",
+      "📈 Focus on compound movements for maximum muscle activation"
+    ],
+    'maintain': [
+      "⚖️ Consistency beats intensity - regular moderate exercise is key",
+      "🔄 Mix different types of workouts to prevent boredom",
+      "🎯 Set process goals, not just outcome goals",
+      "🧘‍♀️ Include flexibility and mobility work in your routine",
+      "👥 Find a workout buddy for accountability and motivation"
+    ]
+  };
+
+  function selectGoal(goal) {
+    selectedGoal = goal;
+    document.querySelectorAll('.goal-btn').forEach(btn => btn.classList.remove('selected'));
+    document.querySelector(`[data-goal="${goal}"]`).classList.add('selected');
+    
+    document.getElementById('bodyPartsSection').style.display = 'block';
+    updateMotivationalText();
+  }
+
+  function updateBodyParts() {
+    selectedBodyParts = [];
+    document.querySelectorAll('.body-part-option input:checked').forEach(input => {
+      selectedBodyParts.push(input.value);
+    });
+    
+    if (selectedBodyParts.length > 0) {
+      document.getElementById('fitnessLevelSection').style.display = 'block';
+    }
+  }
+
+  function selectLevel(level) {
+    selectedLevel = level;
+    document.querySelectorAll('.level-btn').forEach(btn => btn.classList.remove('selected'));
+    event.target.classList.add('selected');
+    
+    document.getElementById('workoutTimeSection').style.display = 'block';
+  }
+
+  function selectTime(time) {
+    selectedTime = time;
+    document.querySelectorAll('.time-btn').forEach(btn => btn.classList.remove('selected'));
+    event.target.classList.add('selected');
+    
+    document.getElementById('startWorkoutBtn').style.display = 'block';
+  }
+
+  function generateWorkout() {
+    if (!selectedGoal || selectedBodyParts.length === 0 || !selectedLevel || !selectedTime) {
+      alert('Please complete all selections! 📋');
+      return;
+    }
+
+    currentWorkout = [];
+    let totalExercises = Math.floor(selectedTime / 5); // Roughly 5 minutes per exercise set
+    
+    selectedBodyParts.forEach(bodyPart => {
+      if (exercises[selectedGoal] && exercises[selectedGoal][bodyPart]) {
+        let bodyPartExercises = exercises[selectedGoal][bodyPart];
+        let numExercises = Math.min(Math.ceil(totalExercises / selectedBodyParts.length), bodyPartExercises.length);
+        
+        for (let i = 0; i < numExercises; i++) {
+          let exercise = {...bodyPartExercises[i]};
+          
+          // Adjust for fitness level
+          if (selectedLevel === 'beginner') {
+            exercise.duration = exercise.duration.replace(/\d+/, match => Math.max(15, parseInt(match) - 10));
+            exercise.rest = exercise.rest.replace(/\d+/, match => parseInt(match) + 5);
+          } else if (selectedLevel === 'advanced') {
+            exercise.duration = exercise.duration.replace(/\d+/, match => parseInt(match) + 15);
+            exercise.rest = exercise.rest.replace(/\d+/, match => Math.max(5, parseInt(match) - 5));
+          }
+          
+          currentWorkout.push(exercise);
+        }
+      }
+    });
+
+    displayWorkout();
+  }
+
+  function displayWorkout() {
+    document.getElementById('workoutSetup').style.display = 'none';
+    document.getElementById('workoutPlan').style.display = 'block';
+    document.getElementById('progressSection').style.display = 'block';
+
+    // Update plan info
+    const goalEmojis = {
+      'weight-loss': '🔥 Weight Loss',
+      'weight-gain': '💪 Muscle Building', 
+      'maintain': '⚖️ Maintenance'
+    };
+    
+    document.getElementById('planGoal').textContent = goalEmojis[selectedGoal];
+    document.getElementById('planDuration').textContent = `⏰ ${selectedTime} minutes`;
+    document.getElementById('planLevel').textContent = `📊 ${selectedLevel.charAt(0).toUpperCase() + selectedLevel.slice(1)}`;
+
+    // Display exercises
+    const container = document.getElementById('exercisesContainer');
+    container.innerHTML = '';
+
+    currentWorkout.forEach((exercise, index) => {
+      const exerciseCard = document.createElement('div');
+      exerciseCard.className = 'exercise-card';
+      exerciseCard.innerHTML = `
+        <div class="exercise-number">${index + 1}</div>
+        <div class="exercise-info">
+          <h4>${exercise.name}</h4>
+          <div class="exercise-details">
+            <span class="exercise-duration">⏱️ ${exercise.duration}</span>
+            <span class="exercise-rest">😴 Rest: ${exercise.rest}</span>
+            <span class="exercise-calories">🔥 ~${exercise.calories} cal</span>
+          </div>
+          <p class="exercise-tips">💡 ${exercise.tips}</p>
+        </div>
+        <button onclick="markExerciseComplete(${index})" class="exercise-complete-btn" id="complete-${index}">
+          ✅ Done
+        </button>
+      `;
+      container.appendChild(exerciseCard);
+    });
+
+    // Display tips
+    displayTips();
+  }
+
+  function displayTips() {
+    const tipsContainer = document.getElementById('tipsContainer');
+    const tips = fitnessTips[selectedGoal] || [];
+    
+    tipsContainer.innerHTML = tips.map(tip => `
+      <div class="tip-item">
+        ${tip}
+      </div>
+    `).join('');
+  }
+
+  function markExerciseComplete(index) {
+    const button = document.getElementById(`complete-${index}`);
+    button.textContent = '✅ Completed!';
+    button.disabled = true;
+    button.style.background = '#4CAF50';
+    
+    // Check if all exercises are complete
+    const completedExercises = document.querySelectorAll('.exercise-complete-btn:disabled').length;
+    if (completedExercises === currentWorkout.length) {
+      setTimeout(() => {
+        alert('🎉 Awesome! You completed all exercises! Ready to finish your workout?');
+      }, 500);
+    }
+  }
+
+  // Timer Functions
+  function startTimer() {
+    isTimerRunning = true;
+    document.getElementById('startBtn').disabled = true;
+    document.getElementById('pauseBtn').disabled = false;
+    
+    workoutTimer = setInterval(() => {
+      timerSeconds++;
+      updateTimerDisplay();
+    }, 1000);
+  }
+
+  function pauseTimer() {
+    isTimerRunning = false;
+    clearInterval(workoutTimer);
+    document.getElementById('startBtn').disabled = false;
+    document.getElementById('pauseBtn').disabled = true;
+  }
+
+  function resetTimer() {
+    timerSeconds = 0;
+    isTimerRunning = false;
+    clearInterval(workoutTimer);
+    updateTimerDisplay();
+    document.getElementById('startBtn').disabled = false;
+    document.getElementById('pauseBtn').disabled = true;
+  }
+
+  function updateTimerDisplay() {
+    const minutes = Math.floor(timerSeconds / 60);
+    const seconds = timerSeconds % 60;
+    document.getElementById('timerDisplay').textContent = 
+      `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  function completeWorkout() {
+    if (!isTimerRunning && timerSeconds === 0) {
+      alert('⏰ Please start the timer for your workout session!');
+      return;
+    }
+    
+    pauseTimer();
+    
+    // Calculate workout stats
+    const completedExercises = document.querySelectorAll('.exercise-complete-btn:disabled').length;
+    const totalCalories = currentWorkout.reduce((sum, ex) => sum + ex.calories, 0);
+    const workoutMinutes = Math.ceil(timerSeconds / 60);
+    
+    // Update progress
+    updateWorkoutProgress(completedExercises, totalCalories, workoutMinutes);
+    
+    // Show completion message
+    const motivationMsg = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
+    alert(`🎉 Workout Complete!\n\n📊 Exercises: ${completedExercises}/${currentWorkout.length}\n🔥 Calories: ~${totalCalories}\n⏰ Time: ${workoutMinutes} minutes\n\n${motivationMsg}`);
+    
+    // Refresh progress display
+    loadUserProgress();
+  }
+
+  function showNewWorkout() {
+    document.getElementById('workoutPlan').style.display = 'none';
+    document.getElementById('workoutSetup').style.display = 'block';
+    resetTimer();
+    
+    // Reset selections
+    selectedGoal = '';
+    selectedBodyParts = [];
+    selectedLevel = '';
+    selectedTime = 0;
+    
+    // Hide sections
+    document.getElementById('bodyPartsSection').style.display = 'none';
+    document.getElementById('fitnessLevelSection').style.display = 'none';
+    document.getElementById('workoutTimeSection').style.display = 'none';
+    document.getElementById('startWorkoutBtn').style.display = 'none';
+    
+    // Clear selections
+    document.querySelectorAll('.goal-btn, .level-btn, .time-btn').forEach(btn => {
+      btn.classList.remove('selected');
+    });
+    document.querySelectorAll('.body-part-option input').forEach(input => {
+      input.checked = false;
+    });
+  }
+
+  function updateWorkoutProgress(exercises, calories, minutes) {
+    let progress = JSON.parse(localStorage.getItem('workoutProgress')) || {
+      totalWorkouts: 0,
+      totalCalories: 0,
+      totalMinutes: 0,
+      lastWorkoutDate: null,
+      streak: 0
+    };
+    
+    progress.totalWorkouts += 1;
+    progress.totalCalories += calories;
+    progress.totalMinutes += minutes;
+    
+    // Update streak
+    const today = new Date().toDateString();
+    const lastDate = progress.lastWorkoutDate;
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    if (lastDate === today) {
+      // Already worked out today, don't change streak
+    } else if (lastDate === yesterday.toDateString()) {
+      progress.streak += 1;
+    } else if (!lastDate) {
+      progress.streak = 1;
+    } else {
+      progress.streak = 1; // Reset streak
+    }
+    
+    progress.lastWorkoutDate = today;
+    localStorage.setItem('workoutProgress', JSON.stringify(progress));
+  }
+
+  function loadUserProgress() {
+    const progress = JSON.parse(localStorage.getItem('workoutProgress')) || {
+      totalWorkouts: 0,
+      totalCalories: 0,
+      totalMinutes: 0,
+      streak: 0
+    };
+    
+    document.getElementById('totalWorkouts').textContent = progress.totalWorkouts;
+    document.getElementById('caloriesBurned').textContent = progress.totalCalories;
+    document.getElementById('totalTime').textContent = progress.totalMinutes;
+    document.getElementById('streakDays').textContent = progress.streak;
+    
+    // Update motivational message based on progress
+    updateMotivationalText(progress);
+  }
+
+  function updateMotivationalText(progress = null) {
+    const userDataStr = localStorage.getItem('wellnest_user_data');
+    const userData = userDataStr ? JSON.parse(userDataStr) : {};
+    let message = "Let's crush your fitness goals today!";
+    
+    if (progress) {
+      if (progress.streak >= 7) {
+        message = `🔥 ${progress.streak} day streak! You're on fire!`;
+      } else if (progress.totalWorkouts >= 10) {
+        message = "💪 You're building an amazing fitness habit!";
+      } else if (progress.totalWorkouts >= 5) {
+        message = "🌟 Great progress! Keep the momentum going!";
+      }
+    } else if (selectedGoal) {
+      const goalMessages = {
+        'weight-loss': "🔥 Ready to burn some calories and feel amazing?",
+        'weight-gain': "💪 Let's build that strength and muscle!",
+        'maintain': "⚖️ Consistency is key to lasting fitness!"
+      };
+      message = goalMessages[selectedGoal];
+    }
+    
+    document.getElementById('motivationalText').textContent = message;
+  }
+
+  function getNewMotivation() {
+    const randomMessage = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
+    document.getElementById('motivationMessage').textContent = randomMessage;
+  }
+
+  // Initialize tips and motivation on load
+  setTimeout(() => {
+    if (selectedGoal) {
+      displayTips();
+    }
+    getNewMotivation();
+  }, 1000);
+</script>
+</body>
+</html>

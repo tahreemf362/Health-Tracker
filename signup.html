@@ -29,6 +29,7 @@
       <li><a href="mind.html">Mind</a></li>
       <li><a href="sleep.html">Sleep</a></li>
       <li><a href="diet.html">Diet</a></li>
+      <li><a href="workout.html">Workout</a></li>
       <li><a href="reminders.html">Reminders</a></li>
       <li><a href="login.html">Login</a></li>
     </ul>
@@ -150,8 +151,21 @@
         return;
       }
       
-      alert('Account created successfully! Welcome to WellNest 🌱');
-      window.location.href = 'index.html';
+      // Store user data
+      const userData = {
+        firstName: document.getElementById('firstName').value,
+        lastName: document.getElementById('lastName').value,
+        email: document.getElementById('signupEmail').value,
+        birthDate: document.getElementById('birthDate').value,
+        fitnessGoal: document.getElementById('fitnessGoal').value,
+        signupTime: new Date().toISOString()
+      };
+      
+      localStorage.setItem('wellnest_user', 'true');
+      localStorage.setItem('wellnest_user_data', JSON.stringify(userData));
+      
+      alert(`Account created successfully! Welcome to WellNest ${userData.firstName}! 🌱`);
+      window.location.href = 'body.html'; // Redirect to dashboard
     });
 
     // Hamburger Menu Functionality

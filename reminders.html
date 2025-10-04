@@ -6,14 +6,171 @@
   <title>Reminders - WellNest</title>
   <link rel="stylesheet" href="style.css">
   <script>
-    function addReminder() {
+    let activeReminders = [];
+    let reminderIntervals = [];
+
+    function addTimedReminder() {
       const task = document.getElementById("reminderInput").value;
-      if (task.trim() === "") return alert("Please enter a reminder!");
-      const li = document.createElement("li");
-      li.textContent = "🔔 " + task;
-      document.getElementById("reminderList").appendChild(li);
+      const time = document.getElementById("reminderTime").value;
+      const type = document.getElementById("reminderType").value;
+      
+      if (task.trim() === "") return alert("Please enter a reminder task!");
+      if (!time) return alert("Please set a time for the reminder!");
+
+      // Request notification permission
+      if (Notification.permission === "default") {
+        Notification.requestPermission();
+      }
+
+      const reminder = {
+        id: Date.now(),
+        task: task,
+        time: time,
+        type: type,
+        active: true,
+        created: new Date().toLocaleDateString()
+      };
+
+      activeReminders.push(reminder);
+      displayReminder(reminder);
+      scheduleReminder(reminder);
+      
+      // Clear form
       document.getElementById("reminderInput").value = "";
+      document.getElementById("reminderTime").value = "";
+      document.getElementById("reminderType").value = "once";
     }
+
+    function displayReminder(reminder) {
+      const li = document.createElement("li");
+      li.className = "reminder-item";
+      li.innerHTML = `
+        <div class="reminder-content">
+          <span class="reminder-icon">🔔</span>
+          <div class="reminder-details">
+            <strong>${reminder.task}</strong>
+            <div class="reminder-time">⏰ ${formatTime(reminder.time)} - ${reminder.type}</div>
+          </div>
+          <button onclick="removeReminder(${reminder.id})" class="remove-btn">❌</button>
+        </div>
+      `;
+      document.getElementById("reminderList").appendChild(li);
+    }
+
+    function scheduleReminder(reminder) {
+      const now = new Date();
+      const [hours, minutes] = reminder.time.split(':').map(Number);
+      
+      let reminderTime = new Date();
+      reminderTime.setHours(hours, minutes, 0, 0);
+      
+      // If time has passed today, schedule for tomorrow (for once/daily reminders)
+      if (reminderTime <= now && (reminder.type === 'once' || reminder.type === 'daily')) {
+        reminderTime.setDate(reminderTime.getDate() + 1);
+      }
+
+      const timeUntilReminder = reminderTime.getTime() - now.getTime();
+
+      if (reminder.type === 'once') {
+        setTimeout(() => {
+          triggerNotification(reminder);
+          removeReminder(reminder.id);
+        }, timeUntilReminder);
+      } else if (reminder.type === 'daily') {
+        setTimeout(() => {
+          triggerNotification(reminder);
+          // Schedule next day
+          scheduleReminder(reminder);
+        }, timeUntilReminder);
+      } else if (reminder.type === 'hourly') {
+        const interval = setInterval(() => {
+          triggerNotification(reminder);
+        }, 60 * 60 * 1000); // Every hour
+        
+        reminderIntervals.push({ id: reminder.id, interval: interval });
+      }
+    }
+
+    function triggerNotification(reminder) {
+      // Browser notification
+      if (Notification.permission === "granted") {
+        new Notification(`WellNest Reminder: ${reminder.task}`, {
+          body: `Time for: ${reminder.task}`,
+          icon: 'images/fitness-logo.svg',
+          badge: 'images/fitness-logo.svg'
+        });
+      }
+
+      // Audio alert
+      const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmEfBzmByfLAciUEKH7J8t+QQAoTVrLr7aNWFAdGod/3um4gBDue2vTEcSEEJ4HM8t+RQgkRVrTs66hWFApGn+DyvmEfBzmByfLAciUEKH7J8t+QQAoUVrPp66hVFApGn+DyvmEfBzmByfLAciUEKH7J8t+QQAoTVrLr7aNWFAdGod/3um4gBDue2vTEcSEEJ4HM8t+RQgkRVrTs66hWFApGn+DyvmEfBzmByfLAciUEKH7J8t+QQAoUXrPq6qhWFAlDodnw');
+      audio.play().catch(() => {}); // Ignore audio errors
+
+      // Visual alert
+      showVisualAlert(reminder);
+    }
+
+    function showVisualAlert(reminder) {
+      // Create modal-style alert
+      const alertDiv = document.createElement('div');
+      alertDiv.className = 'reminder-alert';
+      alertDiv.innerHTML = `
+        <div class="alert-content">
+          <h3>🔔 Reminder Time!</h3>
+          <p><strong>${reminder.task}</strong></p>
+          <p>⏰ ${formatTime(reminder.time)}</p>
+          <button onclick="closeAlert(this)" class="alert-close-btn">Got it!</button>
+        </div>
+      `;
+      document.body.appendChild(alertDiv);
+      
+      // Auto-remove after 10 seconds
+      setTimeout(() => {
+        if (alertDiv.parentNode) {
+          alertDiv.parentNode.removeChild(alertDiv);
+        }
+      }, 10000);
+    }
+
+    function closeAlert(button) {
+      const alert = button.closest('.reminder-alert');
+      if (alert && alert.parentNode) {
+        alert.parentNode.removeChild(alert);
+      }
+    }
+
+    function removeReminder(id) {
+      // Remove from array
+      activeReminders = activeReminders.filter(r => r.id !== id);
+      
+      // Clear any intervals
+      const intervalObj = reminderIntervals.find(r => r.id === id);
+      if (intervalObj) {
+        clearInterval(intervalObj.interval);
+        reminderIntervals = reminderIntervals.filter(r => r.id !== id);
+      }
+      
+      // Remove from DOM
+      const listItems = document.querySelectorAll('#reminderList li');
+      listItems.forEach(item => {
+        if (item.querySelector(`button[onclick="removeReminder(${id})"]`)) {
+          item.remove();
+        }
+      });
+    }
+
+    function formatTime(time) {
+      const [hours, minutes] = time.split(':');
+      const hour12 = hours % 12 || 12;
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      return `${hour12}:${minutes} ${ampm}`;
+    }
+
+    // Request notification permission on page load
+    window.addEventListener('load', () => {
+      if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+      }
+    });
   </script>
 </head>
 <body>
@@ -37,9 +194,11 @@
     <li><a href="mind.html">Mind</a></li>
     <li><a href="sleep.html">Sleep</a></li>
     <li><a href="diet.html">Diet</a></li>
+    <li><a href="workout.html">Workout</a></li>
     <li><a href="reminders.html" class="active">Reminders</a></li>
-    <li><a href="login.html">Login</a></li>
-    <li><a href="signup.html">Sign Up</a></li>
+    <li><a href="login.html" id="loginLink">Login</a></li>
+    <li><a href="signup.html" id="signupLink">Sign Up</a></li>
+    <li><a href="#" onclick="logout()" id="logoutLink" style="display:none;">Logout 👋</a></li>
   </ul>
 </nav>
 
@@ -48,11 +207,29 @@
   <p>Stay consistent with your health routine!</p>
 
   <div class="card-container">
-    <div class="card">
-      <h3>Set a Reminder</h3>
-      <input type="text" id="reminderInput" placeholder="E.g. Drink water, go for walk">
-      <button onclick="addReminder()">Add</button>
-      <ul id="reminderList" style="text-align:left; margin-top:10px;"></ul>
+    <div class="card reminder-card">
+      <h3>Set a Timed Reminder ⏰</h3>
+      <div class="reminder-form">
+        <input type="text" id="reminderInput" placeholder="E.g. Drink water, take medicine, exercise">
+        <div class="time-input-group">
+          <label for="reminderTime">Set Time:</label>
+          <input type="time" id="reminderTime" required>
+        </div>
+        <div class="reminder-type">
+          <label for="reminderType">Repeat:</label>
+          <select id="reminderType">
+            <option value="once">Once</option>
+            <option value="daily">Daily</option>
+            <option value="hourly">Every Hour</option>
+          </select>
+        </div>
+        <button onclick="addTimedReminder()" class="add-reminder-btn">Add Reminder</button>
+      </div>
+      
+      <div class="active-reminders">
+        <h4>Active Reminders:</h4>
+        <ul id="reminderList"></ul>
+      </div>
     </div>
 
     <div class="card">
@@ -65,6 +242,13 @@
 <footer>© 2025 WellNest | Designed with 💚 by Tahreem Fatima</footer>
 
 <script>
+  // Check authentication
+  const isLoggedIn = localStorage.getItem('wellnest_user');
+  if (!isLoggedIn) {
+    alert('🔒 Please login to access your reminders! 🌿');
+    window.location.href = 'login.html';
+  }
+
   // Hamburger Menu Functionality
   const hamburger = document.getElementById('hamburger');
   const navMenu = document.getElementById('navMenu');

@@ -26,27 +26,174 @@
     <li><a href="mind.html">Mind</a></li>
     <li><a href="sleep.html">Sleep</a></li>
     <li><a href="diet.html">Diet</a></li>
+    <li><a href="workout.html">Workout</a></li>
     <li><a href="reminders.html">Reminders</a></li>
-    <li><a href="login.html">Login</a></li>
-    <li><a href="signup.html">Sign Up</a></li>
+    <li><a href="login.html" id="loginLink">Login</a></li>
+    <li><a href="signup.html" id="signupLink">Sign Up</a></li>
+    <li><a href="#" onclick="logout()" id="logoutLink" style="display:none;">Logout 👋</a></li>
   </ul>
 </nav>
 
 <section class="section">
-  <h2>Body Health Tracker 💪</h2>
+  <div class="welcome-header">
+    <h2>Body Health Tracker 💪</h2>
+    <div class="user-welcome" id="userWelcome"></div>
+  </div>
   <p>Monitor your physical activities and keep your body strong and active.</p>
 
+  <!-- 👤 User Profile Setup -->
+  <div class="profile-setup" id="profileSetup">
+    <h3>Set Up Your Profile 👤</h3>
+    <div class="profile-card">
+      <div class="profile-inputs">
+        <div class="input-group">
+          <label for="userAge">Age (years)</label>
+          <input type="number" id="userAge" placeholder="e.g., 25" min="16" max="100" />
+        </div>
+        <div class="input-group">
+          <label for="userHeight">Height (cm)</label>
+          <input type="number" id="userHeight" placeholder="e.g., 170" min="100" max="250" />
+        </div>
+        <div class="input-group">
+          <label for="userWeight">Weight (kg)</label>
+          <input type="number" id="userWeight" placeholder="e.g., 70" min="30" max="300" step="0.1" />
+        </div>
+        <div class="input-group">
+          <label for="userGender">Gender</label>
+          <select id="userGender">
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+      </div>
+      <button onclick="saveProfile()" class="save-profile-btn">Save Profile & Get Analysis 📊</button>
+    </div>
+  </div>
+
+  <!-- 📊 Health Analysis Dashboard -->
+  <div class="health-dashboard" id="healthDashboard" style="display: none;">
+    <h3>Your Health Dashboard 📊</h3>
+    
+    <!-- BMI & Health Metrics -->
+    <div class="metrics-grid">
+      <div class="metric-card bmi-card">
+        <h4>BMI Analysis</h4>
+        <div class="bmi-display">
+          <span class="bmi-value" id="bmiValue">--</span>
+          <span class="bmi-status" id="bmiStatus">Calculate BMI</span>
+        </div>
+        <div class="bmi-bar">
+          <div class="bmi-indicator" id="bmiIndicator"></div>
+        </div>
+        <div class="bmi-labels">
+          <span>Underweight</span>
+          <span>Normal</span>
+          <span>Overweight</span>
+          <span>Obese</span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <h4>Ideal Weight Range</h4>
+        <div class="weight-range">
+          <span id="idealWeightRange">--</span>
+          <small>Based on your height</small>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <h4>Daily Calorie Needs</h4>
+        <div class="calorie-needs">
+          <span id="dailyCalories">--</span>
+          <small>BMR + Activity Level</small>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <h4>Target Heart Rate</h4>
+        <div class="heart-rate-zone">
+          <span id="targetHeartRate">--</span>
+          <small>For optimal exercise</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Personalized Advice -->
+    <div class="advice-section">
+      <h4>Personalized Health Advice 💡</h4>
+      <div id="healthAdvice" class="advice-cards">
+        <!-- Dynamic advice will be populated here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 📈 Activity Tracking -->
   <div class="card-container">
-    <div class="card"><h3>Steps</h3><p>7,842 Today</p></div>
-    <div class="card"><h3>Heart Rate</h3><p>78 bpm</p></div>
-    <div class="card"><h3>Calories Burned</h3><p>356 kcal</p></div>
-    <div class="card"><h3>Water Intake</h3><p>6 Glasses</p></div>
+    <div class="card activity-card">
+      <h3>Steps Today</h3>
+      <p class="activity-number" id="stepsToday">7,842</p>
+      <div class="progress-mini">
+        <div class="progress-mini-fill" style="width: 78%"></div>
+      </div>
+      <small>Goal: 10,000 steps</small>
+    </div>
+    
+    <div class="card activity-card">
+      <h3>Heart Rate</h3>
+      <p class="activity-number" id="currentHeartRate">78 bpm</p>
+      <div class="heart-status" id="heartStatus">Normal</div>
+    </div>
+    
+    <div class="card activity-card">
+      <h3>Calories Burned</h3>
+      <p class="activity-number" id="caloriesBurned">356 kcal</p>
+      <div class="progress-mini">
+        <div class="progress-mini-fill" style="width: 45%"></div>
+      </div>
+      <small id="calorieGoal">Goal: 800 kcal</small>
+    </div>
+    
+    <div class="card activity-card">
+      <h3>Water Intake</h3>
+      <p class="activity-number">6 Glasses</p>
+      <div class="progress-mini">
+        <div class="progress-mini-fill" style="width: 75%"></div>
+      </div>
+      <small>Goal: 8 glasses</small>
+    </div>
   </div>
 </section>
 
 <footer>© 2025 WellNest | Designed with 💚 by Tahreem Fatima</footer>
 
 <script>
+  // Check authentication
+  const isLoggedIn = localStorage.getItem('wellnest_user');
+  if (!isLoggedIn) {
+    alert('🔒 Please login to access your health dashboard! 🌿');
+    window.location.href = 'login.html';
+  }
+
+  // Show personalized welcome message
+  const userData = JSON.parse(localStorage.getItem('wellnest_user_data') || '{}');
+  const welcomeDiv = document.getElementById('userWelcome');
+  if (welcomeDiv && userData.firstName) {
+    const goalEmoji = {
+      'weight-loss': '🏃‍♀️',
+      'muscle-gain': '💪',
+      'general-fitness': '🌟',
+      'stress-management': '🧘‍♀️',
+      'better-sleep': '😴',
+      'nutrition': '🥗'
+    };
+    
+    welcomeDiv.innerHTML = `
+      <p>Welcome back, <strong>${userData.firstName}</strong>! ${goalEmoji[userData.fitnessGoal] || '🌿'}</p>
+      <span class="user-goal">Goal: ${userData.fitnessGoal ? userData.fitnessGoal.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Wellness'}</span>
+    `;
+  }
+
   // Hamburger Menu Functionality
   const hamburger = document.getElementById('hamburger');
   const navMenu = document.getElementById('navMenu');
@@ -63,6 +210,265 @@
       navMenu.classList.remove('active');
     });
   });
+
+  // Health Monitoring & Analysis Functionality
+  let userProfile = {
+    age: null,
+    height: null,
+    weight: null,
+    gender: null
+  };
+
+  function saveProfile() {
+    const age = parseInt(document.getElementById('userAge').value);
+    const height = parseInt(document.getElementById('userHeight').value);
+    const weight = parseFloat(document.getElementById('userWeight').value);
+    const gender = document.getElementById('userGender').value;
+
+    // Validation
+    if (!age || age < 16 || age > 100) {
+      alert('Please enter a valid age (16-100 years) 👶👴');
+      return;
+    }
+    if (!height || height < 100 || height > 250) {
+      alert('Please enter a valid height (100-250 cm) 📏');
+      return;
+    }
+    if (!weight || weight < 30 || weight > 300) {
+      alert('Please enter a valid weight (30-300 kg) ⚖️');
+      return;
+    }
+    if (!gender) {
+      alert('Please select your gender 👤');
+      return;
+    }
+
+    // Save profile
+    userProfile = { age, height, weight, gender };
+    localStorage.setItem('wellnestProfile', JSON.stringify(userProfile));
+
+    // Calculate and display health metrics
+    calculateHealthMetrics();
+    
+    // Show dashboard and hide setup
+    document.getElementById('profileSetup').style.display = 'none';
+    document.getElementById('healthDashboard').style.display = 'block';
+
+    alert('✅ Profile saved! Your personalized health analysis is ready! 🎉');
+  }
+
+  function calculateHealthMetrics() {
+    const { age, height, weight, gender } = userProfile;
+
+    // Calculate BMI
+    const heightInMeters = height / 100;
+    const bmi = weight / (heightInMeters * heightInMeters);
+    
+    // Display BMI
+    document.getElementById('bmiValue').textContent = bmi.toFixed(1);
+    updateBMIStatus(bmi);
+
+    // Calculate Ideal Weight Range (using BMI 18.5-24.9)
+    const minIdealWeight = (18.5 * heightInMeters * heightInMeters).toFixed(1);
+    const maxIdealWeight = (24.9 * heightInMeters * heightInMeters).toFixed(1);
+    document.getElementById('idealWeightRange').textContent = `${minIdealWeight} - ${maxIdealWeight} kg`;
+
+    // Calculate Daily Calorie Needs (BMR using Mifflin-St Jeor Equation)
+    let bmr;
+    if (gender === 'male') {
+      bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
+    } else {
+      bmr = (10 * weight) + (6.25 * height) - (5 * age) - 161;
+    }
+    const dailyCalories = Math.round(bmr * 1.4); // Moderate activity level
+    document.getElementById('dailyCalories').textContent = `${dailyCalories} kcal`;
+
+    // Calculate Target Heart Rate (220 - age) * 0.5-0.85
+    const maxHeartRate = 220 - age;
+    const minTargetHR = Math.round(maxHeartRate * 0.5);
+    const maxTargetHR = Math.round(maxHeartRate * 0.85);
+    document.getElementById('targetHeartRate').textContent = `${minTargetHR}-${maxTargetHR} bpm`;
+
+    // Update activity goals based on profile
+    updateActivityGoals(dailyCalories);
+
+    // Generate personalized advice
+    generateHealthAdvice(bmi, age, gender);
+
+    // Update heart rate status
+    updateHeartRateStatus();
+  }
+
+  function updateBMIStatus(bmi) {
+    const bmiStatus = document.getElementById('bmiStatus');
+    const bmiIndicator = document.getElementById('bmiIndicator');
+    
+    let status, color, position;
+    
+    if (bmi < 18.5) {
+      status = 'Underweight';
+      color = '#74C0FC';
+      position = '12.5%';
+    } else if (bmi >= 18.5 && bmi < 25) {
+      status = 'Normal Weight';
+      color = '#51CF66';
+      position = '37.5%';
+    } else if (bmi >= 25 && bmi < 30) {
+      status = 'Overweight';
+      color = '#FFD43B';
+      position = '62.5%';
+    } else {
+      status = 'Obese';
+      color = '#FF6B6B';
+      position = '87.5%';
+    }
+
+    bmiStatus.textContent = status;
+    bmiStatus.style.color = color;
+    bmiIndicator.style.left = position;
+    bmiIndicator.style.backgroundColor = color;
+  }
+
+  function updateActivityGoals(dailyCalories) {
+    // Update calorie burn goal (20-30% of daily calories)
+    const calorieGoal = Math.round(dailyCalories * 0.25);
+    document.getElementById('calorieGoal').textContent = `Goal: ${calorieGoal} kcal`;
+  }
+
+  function updateHeartRateStatus() {
+    const currentHR = 78; // This would normally come from a device/sensor
+    const { age } = userProfile;
+    
+    if (!age) return;
+    
+    const maxHR = 220 - age;
+    const restingHRNormal = age < 30 ? [60, 100] : age < 50 ? [65, 100] : [70, 100];
+    
+    let status = 'Normal';
+    let color = '#51CF66';
+    
+    if (currentHR < restingHRNormal[0]) {
+      status = 'Low';
+      color = '#74C0FC';
+    } else if (currentHR > restingHRNormal[1]) {
+      status = 'High';
+      color = '#FF6B6B';
+    }
+    
+    document.getElementById('heartStatus').textContent = status;
+    document.getElementById('heartStatus').style.color = color;
+  }
+
+  function generateHealthAdvice(bmi, age, gender) {
+    const adviceContainer = document.getElementById('healthAdvice');
+    let advice = [];
+
+    // BMI-based advice
+    if (bmi < 18.5) {
+      advice.push({
+        icon: '🍎',
+        title: 'Gain Healthy Weight',
+        text: 'Focus on nutrient-dense foods and strength training to build healthy muscle mass.',
+        type: 'nutrition'
+      });
+    } else if (bmi >= 25) {
+      advice.push({
+        icon: '🏃‍♂️',
+        title: 'Weight Management',
+        text: 'Combine cardio exercises with a balanced diet to reach your ideal weight range.',
+        type: 'exercise'
+      });
+    } else {
+      advice.push({
+        icon: '✅',
+        title: 'Maintain Your Health',
+        text: 'Great job! Keep up your current lifestyle with regular exercise and balanced nutrition.',
+        type: 'maintain'
+      });
+    }
+
+    // Age-based advice
+    if (age >= 40) {
+      advice.push({
+        icon: '🦴',
+        title: 'Bone Health Priority',
+        text: 'Include calcium-rich foods and weight-bearing exercises to maintain strong bones.',
+        type: 'health'
+      });
+    }
+
+    if (age >= 50) {
+      advice.push({
+        icon: '❤️',
+        title: 'Heart Health Focus',
+        text: 'Regular cardio and monitoring blood pressure become increasingly important.',
+        type: 'heart'
+      });
+    }
+
+    // Gender-specific advice
+    if (gender === 'female') {
+      advice.push({
+        icon: '🌸',
+        title: 'Women\'s Health',
+        text: 'Ensure adequate iron intake and consider the impact of hormonal changes on metabolism.',
+        type: 'gender'
+      });
+    }
+
+    // General advice
+    advice.push({
+      icon: '💧',
+      title: 'Stay Hydrated',
+      text: 'Aim for 8-10 glasses of water daily. Proper hydration supports all body functions.',
+      type: 'hydration'
+    });
+
+    advice.push({
+      icon: '😴',
+      title: 'Quality Sleep',
+      text: 'Get 7-9 hours of quality sleep. Good rest is essential for recovery and metabolism.',
+      type: 'sleep'
+    });
+
+    // Render advice cards
+    let adviceHTML = '';
+    advice.forEach(item => {
+      adviceHTML += `
+        <div class="advice-card ${item.type}">
+          <div class="advice-icon">${item.icon}</div>
+          <div class="advice-content">
+            <h5>${item.title}</h5>
+            <p>${item.text}</p>
+          </div>
+        </div>
+      `;
+    });
+
+    adviceContainer.innerHTML = adviceHTML;
+  }
+
+  // Check if profile exists on page load
+  function loadExistingProfile() {
+    const savedProfile = localStorage.getItem('wellnestProfile');
+    if (savedProfile) {
+      userProfile = JSON.parse(savedProfile);
+      
+      // Fill in the form
+      document.getElementById('userAge').value = userProfile.age;
+      document.getElementById('userHeight').value = userProfile.height;
+      document.getElementById('userWeight').value = userProfile.weight;
+      document.getElementById('userGender').value = userProfile.gender;
+      
+      // Show dashboard
+      calculateHealthMetrics();
+      document.getElementById('profileSetup').style.display = 'none';
+      document.getElementById('healthDashboard').style.display = 'block';
+    }
+  }
+
+  // Initialize on page load
+  window.addEventListener('load', loadExistingProfile);
 </script>
 </body>
 </html>

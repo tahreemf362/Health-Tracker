@@ -33,9 +33,11 @@
     <li><a href="mind.html" class="active">Mind</a></li>
     <li><a href="sleep.html">Sleep</a></li>
     <li><a href="diet.html">Diet</a></li>
+    <li><a href="workout.html">Workout</a></li>
     <li><a href="reminders.html">Reminders</a></li>
-    <li><a href="login.html">Login</a></li>
-    <li><a href="signup.html">Sign Up</a></li>
+    <li><a href="login.html" id="loginLink">Login</a></li>
+    <li><a href="signup.html" id="signupLink">Sign Up</a></li>
+    <li><a href="#" onclick="logout()" id="logoutLink" style="display:none;">Logout 👋</a></li>
   </ul>
 </nav>
 
@@ -43,21 +45,167 @@
   <h2>Mind & Mood Tracker 🧘‍♀️</h2>
   <p>Track your mood daily and take mindful breaks for better focus.</p>
 
-  <div class="card-container">
-    <div class="card">
-      <h3>How are you feeling today?</h3>
-      <input type="range" min="1" max="5" step="1" value="3" onchange="updateMood(this.value)">
-      <h1 id="moodEmoji">😊</h1>
+  <!-- 🎭 Mood Selection & Suggestions -->
+  <div class="mood-section">
+    <div class="mood-card">
+      <h3>How are you feeling today? 🌈</h3>
+      <div class="mood-selector">
+        <div class="mood-options">
+          <button class="mood-btn" data-mood="1" onclick="selectMood(1)">😞</button>
+          <button class="mood-btn" data-mood="2" onclick="selectMood(2)">😐</button>
+          <button class="mood-btn active" data-mood="3" onclick="selectMood(3)">😊</button>
+          <button class="mood-btn" data-mood="4" onclick="selectMood(4)">😁</button>
+          <button class="mood-btn" data-mood="5" onclick="selectMood(5)">🤩</button>
+        </div>
+        <div class="mood-labels">
+          <span>Very Sad</span>
+          <span>Sad</span>
+          <span>Neutral</span>
+          <span>Happy</span>
+          <span>Very Happy</span>
+        </div>
+      </div>
+      <div class="selected-mood">
+        <h2 id="currentMood">😊</h2>
+        <p id="moodText">You're feeling good today!</p>
+      </div>
     </div>
 
-    <div class="card">
-      <h3>Daily Journal</h3>
-      <textarea rows="5" placeholder="Write your thoughts here..."></textarea>
+    <!-- 💡 Personalized Suggestions -->
+    <div class="suggestions-card">
+      <h3>Personalized Suggestions 💡</h3>
+      <div id="suggestions" class="suggestions-list">
+        <div class="suggestion-item">
+          <span class="suggestion-icon">🌿</span>
+          <span class="suggestion-text">Take a few deep breaths and stay positive!</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🎵 Relaxation & Music Section -->
+  <div class="relaxation-section">
+    <div class="relaxation-card">
+      <h3>Relaxation Center 🧘‍♀️</h3>
+      
+      <!-- Music Player -->
+      <div class="music-player">
+        <h4>🎵 Calming Sounds</h4>
+        <div class="music-controls">
+          <div class="music-options">
+            <button class="music-btn" onclick="playMusic('rain')">
+              <span class="music-icon">🌧️</span>
+              <span>Rain Sounds</span>
+            </button>
+            <button class="music-btn" onclick="playMusic('ocean')">
+              <span class="music-icon">🌊</span>
+              <span>Ocean Waves</span>
+            </button>
+            <button class="music-btn" onclick="playMusic('forest')">
+              <span class="music-icon">🌲</span>
+              <span>Forest Sounds</span>
+            </button>
+            <button class="music-btn" onclick="playMusic('meditation')">
+              <span class="music-icon">🕉️</span>
+              <span>Meditation</span>
+            </button>
+          </div>
+          
+          <div class="player-controls">
+            <div id="currentTrack" class="current-track">
+              <span id="trackName">No music playing</span>
+            </div>
+            <div class="control-buttons">
+              <button id="playPauseBtn" onclick="toggleMusic()" disabled>
+                <span id="playIcon">▶️</span>
+              </button>
+              <button onclick="stopMusic()">⏹️</button>
+              <button onclick="adjustVolume()">🔊</button>
+            </div>
+          </div>
+          
+          <div class="volume-control">
+            <input type="range" id="volumeSlider" min="0" max="100" value="50" onchange="setVolume(this.value)">
+            <span id="volumeDisplay">50%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Breathing Exercise -->
+      <div class="breathing-exercise">
+        <h4>🫁 Guided Breathing</h4>
+        <div class="breathing-container">
+          <div id="breathingCircle" class="breathing-circle">
+            <span id="breathingText">Click Start</span>
+          </div>
+          <div class="breathing-controls">
+            <button id="breathingBtn" onclick="toggleBreathing()">Start Breathing</button>
+            <div class="breathing-settings">
+              <label>Duration: 
+                <select id="breathingDuration">
+                  <option value="60">1 minute</option>
+                  <option value="180" selected>3 minutes</option>
+                  <option value="300">5 minutes</option>
+                  <option value="600">10 minutes</option>
+                </select>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="card">
-      <h3>Relaxation Timer</h3>
-      <button onclick="alert('Start breathing for 2 minutes 🌿')">Start Relaxation</button>
+    <!-- Daily Journal -->
+    <div class="journal-card">
+      <h3>Daily Mindfulness Journal 📝</h3>
+      <div class="journal-prompts">
+        <div class="prompt-tabs">
+          <button class="prompt-tab active" onclick="switchPrompt('gratitude')">Gratitude</button>
+          <button class="prompt-tab" onclick="switchPrompt('thoughts')">Thoughts</button>
+          <button class="prompt-tab" onclick="switchPrompt('goals')">Goals</button>
+        </div>
+        <div id="journalContent" class="journal-content">
+          <div class="journal-prompt active" id="gratitude">
+            <p class="prompt-text">What are you grateful for today? 🙏</p>
+            <textarea id="gratitudeText" placeholder="I'm grateful for..."></textarea>
+          </div>
+          <div class="journal-prompt" id="thoughts">
+            <p class="prompt-text">What's on your mind? 💭</p>
+            <textarea id="thoughtsText" placeholder="Today I'm thinking about..."></textarea>
+          </div>
+          <div class="journal-prompt" id="goals">
+            <p class="prompt-text">What do you want to achieve? 🎯</p>
+            <textarea id="goalsText" placeholder="My goals for today/tomorrow are..."></textarea>
+          </div>
+        </div>
+        <button onclick="saveJournal()" class="save-journal-btn">Save Entry 💾</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📊 Mood History -->
+  <div class="mood-history">
+    <h3>Mood History 📊</h3>
+    <div class="mood-chart">
+      <div id="moodGraph" class="mood-graph">
+        <div class="graph-placeholder">
+          <p>Track your mood daily to see patterns! 📈</p>
+        </div>
+      </div>
+      <div class="mood-stats">
+        <div class="stat-item">
+          <span class="stat-label">This Week Average</span>
+          <span class="stat-value" id="weeklyAvg">😊 3.2</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Best Day</span>
+          <span class="stat-value">🤩 Yesterday</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Streak</span>
+          <span class="stat-value">✨ 5 days</span>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -65,6 +213,13 @@
 <footer>© 2025 WellNest | Designed with 💚 by Tahreem Fatima</footer>
 
 <script>
+  // Check authentication
+  const isLoggedIn = localStorage.getItem('wellnest_user');
+  if (!isLoggedIn) {
+    alert('🔒 Please login to access your mindfulness tracker! 🌿');
+    window.location.href = 'login.html';
+  }
+
   // Hamburger Menu Functionality
   const hamburger = document.getElementById('hamburger');
   const navMenu = document.getElementById('navMenu');
@@ -81,6 +236,397 @@
       navMenu.classList.remove('active');
     });
   });
+
+  // 🎭 Enhanced Mind Page Functionality
+  let currentMoodValue = 3;
+  let currentAudio = null;
+  let breathingTimer = null;
+  let breathingActive = false;
+
+  // Mood Selection & Suggestions
+  const moodData = {
+    1: {
+      emoji: '😞',
+      text: "It's okay to feel sad sometimes. You're not alone.",
+      suggestions: [
+        { icon: '🫂', text: 'Reach out to a friend or family member for support' },
+        { icon: '🚶‍♀️', text: 'Take a gentle walk outside for fresh air' },
+        { icon: '🎵', text: 'Listen to uplifting music or your favorite songs' },
+        { icon: '📝', text: 'Write down your feelings in the journal below' },
+        { icon: '☕', text: 'Make yourself a warm, comforting drink' },
+        { icon: '🛁', text: 'Take a relaxing bath or shower' }
+      ]
+    },
+    2: {
+      emoji: '😐',
+      text: "Feeling neutral is normal. Let's add some positivity!",
+      suggestions: [
+        { icon: '📖', text: 'Read a few pages of an inspiring book' },
+        { icon: '🎨', text: 'Try a creative activity like drawing or crafts' },
+        { icon: '🧘‍♀️', text: 'Practice 5 minutes of meditation or breathing' },
+        { icon: '📞', text: 'Call someone who makes you smile' },
+        { icon: '🌱', text: 'Do something productive, however small' },
+        { icon: '🎬', text: 'Watch a funny video or uplifting content' }
+      ]
+    },
+    3: {
+      emoji: '😊',
+      text: "You're feeling good today! Keep it up!",
+      suggestions: [
+        { icon: '🌿', text: 'Take a few deep breaths and stay positive!' },
+        { icon: '💪', text: 'Channel this energy into a productive activity' },
+        { icon: '❤️', text: 'Share your positive energy with someone else' },
+        { icon: '🎯', text: 'Set a small goal for today and achieve it' },
+        { icon: '🌸', text: 'Practice gratitude for 3 things in your life' },
+        { icon: '☀️', text: 'Spend some time outdoors if possible' }
+      ]
+    },
+    4: {
+      emoji: '😁',
+      text: "You're feeling great! Spread that happiness!",
+      suggestions: [
+        { icon: '🎉', text: 'Celebrate your good mood - you deserve it!' },
+        { icon: '💌', text: 'Send a kind message to someone you care about' },
+        { icon: '🏃‍♀️', text: 'Use this energy for physical activity or exercise' },
+        { icon: '🎨', text: 'Try something creative while you feel inspired' },
+        { icon: '📚', text: 'Learn something new or work on a hobby' },
+        { icon: '🌟', text: 'Help someone else - spread the positivity!' }
+      ]
+    },
+    5: {
+      emoji: '🤩',
+      text: "You're feeling amazing! What a wonderful day!",
+      suggestions: [
+        { icon: '🚀', text: 'Take on that challenge you\'ve been avoiding' },
+        { icon: '💝', text: 'Do something special for yourself or others' },
+        { icon: '📱', text: 'Share your joy responsibly on social media' },
+        { icon: '🎪', text: 'Try something new and adventurous' },
+        { icon: '💡', text: 'Start that project you\'ve been planning' },
+        { icon: '🌈', text: 'Remember this feeling for tougher days ahead' }
+      ]
+    }
+  };
+
+  function selectMood(mood) {
+    currentMoodValue = mood;
+    
+    // Update UI
+    document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`[data-mood="${mood}"]`).classList.add('active');
+    
+    document.getElementById('currentMood').textContent = moodData[mood].emoji;
+    document.getElementById('moodText').textContent = moodData[mood].text;
+    
+    // Update suggestions
+    updateSuggestions(mood);
+    
+    // Save mood to history
+    saveMoodToHistory(mood);
+  }
+
+  function updateSuggestions(mood) {
+    const suggestionsContainer = document.getElementById('suggestions');
+    const suggestions = moodData[mood].suggestions;
+    
+    suggestionsContainer.innerHTML = suggestions.map(suggestion => `
+      <div class="suggestion-item">
+        <span class="suggestion-icon">${suggestion.icon}</span>
+        <span class="suggestion-text">${suggestion.text}</span>
+      </div>
+    `).join('');
+  }
+
+  // 🎵 Music Player Functionality
+  const musicTracks = {
+    rain: {
+      name: '🌧️ Gentle Rain',
+      url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmcoGwAbAAAD', // Placeholder data URL
+      duration: '∞'
+    },
+    ocean: {
+      name: '🌊 Ocean Waves',
+      url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmcoGwAbAAAD',
+      duration: '∞'
+    },
+    forest: {
+      name: '🌲 Forest Sounds',
+      url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmcoGwAbAAAD',
+      duration: '∞'
+    },
+    meditation: {
+      name: '🕉️ Meditation Bells',
+      url: 'data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmcoGwAbAAAD',
+      duration: '∞'
+    }
+  };
+
+  function playMusic(type) {
+    // Stop current music if playing
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio = null;
+    }
+
+    // Create audio context for nature sounds simulation
+    try {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      
+      // Generate different nature sounds
+      let oscillator, gainNode;
+      
+      if (type === 'rain') {
+        // Create white noise for rain
+        const bufferSize = 2 * audioContext.sampleRate;
+        const noiseBuffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = Math.random() * 2 - 1;
+        }
+        
+        const whiteNoise = audioContext.createBufferSource();
+        whiteNoise.buffer = noiseBuffer;
+        whiteNoise.loop = true;
+        
+        const filter = audioContext.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 1000;
+        
+        gainNode = audioContext.createGain();
+        gainNode.gain.value = 0.1;
+        
+        whiteNoise.connect(filter);
+        filter.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        whiteNoise.start();
+        
+        currentAudio = { stop: () => whiteNoise.stop(), context: audioContext };
+      } else {
+        // Create different tones for other sounds
+        oscillator = audioContext.createOscillator();
+        gainNode = audioContext.createGain();
+        
+        const frequencies = {
+          ocean: [150, 200, 100],
+          forest: [400, 600, 300, 800],
+          meditation: [256, 384, 512]
+        };
+        
+        oscillator.frequency.setValueAtTime(frequencies[type][0], audioContext.currentTime);
+        oscillator.type = 'sine';
+        gainNode.gain.value = 0.05;
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        oscillator.start();
+        
+        // Add frequency modulation for natural effect
+        setInterval(() => {
+          if (oscillator && currentAudio) {
+            const freqs = frequencies[type];
+            const randomFreq = freqs[Math.floor(Math.random() * freqs.length)];
+            oscillator.frequency.setValueAtTime(randomFreq, audioContext.currentTime);
+          }
+        }, 2000 + Math.random() * 3000);
+        
+        currentAudio = { stop: () => oscillator.stop(), context: audioContext };
+      }
+
+      // Update UI
+      document.getElementById('trackName').textContent = musicTracks[type].name;
+      document.getElementById('playPauseBtn').disabled = false;
+      document.getElementById('playIcon').textContent = '⏸️';
+      
+      // Add playing class to button
+      document.querySelectorAll('.music-btn').forEach(btn => btn.classList.remove('playing'));
+      event.target.closest('.music-btn').classList.add('playing');
+
+    } catch (error) {
+      // Fallback for browsers that don't support Web Audio API
+      alert(`🎵 Playing ${musicTracks[type].name}\n\nNote: For actual audio, please use a browser that supports Web Audio API or connect external speakers.`);
+    }
+  }
+
+  function toggleMusic() {
+    if (currentAudio) {
+      const icon = document.getElementById('playIcon');
+      if (icon.textContent === '⏸️') {
+        // Pause simulation
+        icon.textContent = '▶️';
+        if (currentAudio.context) {
+          currentAudio.context.suspend();
+        }
+      } else {
+        // Resume simulation
+        icon.textContent = '⏸️';
+        if (currentAudio.context) {
+          currentAudio.context.resume();
+        }
+      }
+    }
+  }
+
+  function stopMusic() {
+    if (currentAudio) {
+      currentAudio.stop();
+      currentAudio = null;
+      document.getElementById('trackName').textContent = 'No music playing';
+      document.getElementById('playPauseBtn').disabled = true;
+      document.getElementById('playIcon').textContent = '▶️';
+      document.querySelectorAll('.music-btn').forEach(btn => btn.classList.remove('playing'));
+    }
+  }
+
+  function setVolume(value) {
+    document.getElementById('volumeDisplay').textContent = value + '%';
+    // Volume control would be implemented with actual audio
+  }
+
+  function adjustVolume() {
+    const currentVolume = document.getElementById('volumeSlider').value;
+    const newVolume = currentVolume == 0 ? 50 : 0;
+    document.getElementById('volumeSlider').value = newVolume;
+    setVolume(newVolume);
+  }
+
+  // 🫁 Breathing Exercise
+  function toggleBreathing() {
+    const btn = document.getElementById('breathingBtn');
+    const circle = document.getElementById('breathingCircle');
+    const text = document.getElementById('breathingText');
+    
+    if (!breathingActive) {
+      // Start breathing exercise
+      breathingActive = true;
+      btn.textContent = 'Stop Breathing';
+      
+      const duration = parseInt(document.getElementById('breathingDuration').value) * 1000;
+      const endTime = Date.now() + duration;
+      
+      function breathingCycle() {
+        if (!breathingActive) return;
+        
+        // Inhale phase
+        text.textContent = 'Breathe In...';
+        circle.style.transform = 'scale(1.3)';
+        circle.style.background = 'linear-gradient(135deg, #A8E6CF, #79C9AF)';
+        
+        setTimeout(() => {
+          if (!breathingActive) return;
+          
+          // Hold phase
+          text.textContent = 'Hold...';
+          
+          setTimeout(() => {
+            if (!breathingActive) return;
+            
+            // Exhale phase
+            text.textContent = 'Breathe Out...';
+            circle.style.transform = 'scale(1)';
+            circle.style.background = 'linear-gradient(135deg, #79C9AF, #2C6E63)';
+            
+            setTimeout(() => {
+              if (breathingActive && Date.now() < endTime) {
+                breathingCycle();
+              } else {
+                stopBreathing();
+              }
+            }, 4000); // Exhale for 4 seconds
+          }, 2000); // Hold for 2 seconds
+        }, 4000); // Inhale for 4 seconds
+      }
+      
+      breathingCycle();
+      
+      // Auto stop after selected duration
+      breathingTimer = setTimeout(() => {
+        stopBreathing();
+        alert('🎉 Great job! You completed your breathing session. Feel the calm energy flowing through you.');
+      }, duration);
+      
+    } else {
+      stopBreathing();
+    }
+  }
+
+  function stopBreathing() {
+    breathingActive = false;
+    if (breathingTimer) {
+      clearTimeout(breathingTimer);
+      breathingTimer = null;
+    }
+    
+    document.getElementById('breathingBtn').textContent = 'Start Breathing';
+    document.getElementById('breathingText').textContent = 'Click Start';
+    document.getElementById('breathingCircle').style.transform = 'scale(1)';
+    document.getElementById('breathingCircle').style.background = 'linear-gradient(135deg, #A8E6CF, #79C9AF)';
+  }
+
+  // 📝 Journal Functionality
+  function switchPrompt(type) {
+    // Update tabs
+    document.querySelectorAll('.prompt-tab').forEach(tab => tab.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    // Update content
+    document.querySelectorAll('.journal-prompt').forEach(prompt => prompt.classList.remove('active'));
+    document.getElementById(type).classList.add('active');
+  }
+
+  function saveJournal() {
+    const gratitude = document.getElementById('gratitudeText').value;
+    const thoughts = document.getElementById('thoughtsText').value;
+    const goals = document.getElementById('goalsText').value;
+    
+    if (gratitude.trim() || thoughts.trim() || goals.trim()) {
+      const today = new Date().toLocaleDateString();
+      
+      // Save to localStorage (in a real app, this would go to a database)
+      const journalEntry = {
+        date: today,
+        gratitude,
+        thoughts,
+        goals,
+        mood: currentMoodValue
+      };
+      
+      let journalHistory = JSON.parse(localStorage.getItem('mindJournal') || '[]');
+      journalHistory.push(journalEntry);
+      localStorage.setItem('mindJournal', JSON.stringify(journalHistory));
+      
+      alert('✨ Journal entry saved! Your thoughts are safely recorded.');
+      
+      // Clear textareas
+      document.getElementById('gratitudeText').value = '';
+      document.getElementById('thoughtsText').value = '';
+      document.getElementById('goalsText').value = '';
+    } else {
+      alert('📝 Please write something in at least one section before saving.');
+    }
+  }
+
+  function saveMoodToHistory(mood) {
+    const today = new Date().toDateString();
+    let moodHistory = JSON.parse(localStorage.getItem('moodHistory') || '{}');
+    moodHistory[today] = mood;
+    localStorage.setItem('moodHistory', JSON.stringify(moodHistory));
+    updateMoodStats();
+  }
+
+  function updateMoodStats() {
+    const moodHistory = JSON.parse(localStorage.getItem('moodHistory') || '{}');
+    const moods = Object.values(moodHistory);
+    
+    if (moods.length > 0) {
+      const average = (moods.reduce((a, b) => a + b, 0) / moods.length).toFixed(1);
+      const emoji = ['😞', '😐', '😊', '😁', '🤩'][Math.round(average) - 1] || '😊';
+      document.getElementById('weeklyAvg').textContent = `${emoji} ${average}`;
+    }
+  }
+
+  // Initialize the page
+  selectMood(3);
+  updateMoodStats();
 </script>
 </body>
 </html>
