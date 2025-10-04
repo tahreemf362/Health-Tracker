@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Body Health Tracker - WellNest</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <img src="images/fitness-logo.svg" alt="WellNest Logo" class="logo">
+        <span>WellNest</span>
+      </div>
+      
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="body.html">Body</a></li>
+        <li><a href="bodyhealth.html" class="active">Body Health</a></li>
+        <li><a href="mind.html">Mind</a></li>
+        <li><a href="sleep.html">Sleep</a></li>
+        <li><a href="diet.html">Diet</a></li>
+        <li><a href="workout.html">Workout</a></li>
+        <li><a href="care.html">Care</a></li>
+        <li><a href="reminders.html">Reminders</a></li>
+        <li><a href="login.html" id="loginLink">Login</a></li>
+        <li><a href="signup.html" id="signupLink">Sign Up</a></li>
+        <li><a href="#" id="logoutLink" onclick="logout()" style="display: none;">Logout</a></li>
+      </ul>
+      
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section bodyhealth-hero">
+    <div class="hero-content">
+      <h1>Body Health Tracker 💪</h1>
+      <p>Comprehensive health monitoring and wellness insights</p>
+    </div>
+  </section>
+
+  <main class="main-content">
+    <div class="container">
+
+      <!-- Blood Pressure Tracker -->
+      <div class="care-card">
+        <h3>🩸 Blood Pressure Monitor</h3>
+        <div class="health-input-group">
+          <div class="input-row">
+            <div class="input-field">
+              <label>Systolic (mmHg):</label>
+              <input type="number" id="systolic" placeholder="e.g. 120">
+            </div>
+            <div class="input-field">
+              <label>Diastolic (mmHg):</label>
+              <input type="number" id="diastolic" placeholder="e.g. 80">
+            </div>
+          </div>
+          <button class="health-btn" onclick="checkBP()">Check Blood Pressure</button>
+          <div class="result-card" id="bpResult"></div>
+          <button class="secondary-btn">📱 Connect Device (Coming Soon)</button>
+        </div>
+      </div>
+
+      <!-- Blood Sugar Tracker -->
+      <div class="care-card">
+        <h3>🍯 Blood Sugar Monitor</h3>
+        <div class="health-input-group">
+          <div class="input-field">
+            <label>Glucose Level (mg/dL):</label>
+            <input type="number" id="glucose" placeholder="e.g. 100">
+          </div>
+          <button class="health-btn" onclick="checkSugar()">Check Blood Sugar</button>
+          <div class="result-card" id="sugarResult"></div>
+        </div>
+      </div>
+
+      <!-- BMI Calculator -->
+      <div class="care-card">
+        <h3>⚖️ BMI Calculator</h3>
+        <div class="health-input-group">
+          <div class="input-row">
+            <div class="input-field">
+              <label>Height (cm):</label>
+              <input type="number" id="height" placeholder="e.g. 165">
+            </div>
+            <div class="input-field">
+              <label>Weight (kg):</label>
+              <input type="number" id="weight" placeholder="e.g. 60">
+            </div>
+          </div>
+          <button class="health-btn" onclick="calcBMI()">Calculate BMI</button>
+          <div class="result-card" id="bmiResult"></div>
+        </div>
+      </div>
+
+      <!-- Step Counter -->
+      <div class="care-card">
+        <h3>🚶‍♀️ Daily Step Counter</h3>
+        <div class="step-display">
+          <div class="step-number" id="steps">0</div>
+          <div class="step-label">steps today</div>
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="stepBar">0%</div>
+          </div>
+          <div class="progress-text">Goal: 10,000 steps</div>
+        </div>
+        <button class="health-btn" onclick="addSteps()">+ Add Steps</button>
+      </div>
+
+      <!-- Heart Rate Monitor -->
+      <div class="care-card">
+        <h3>❤️ Heart Rate Monitor</h3>
+        <div class="heart-monitor">
+          <div class="heart-pulse" id="heartPulse">
+            <div class="pulse-animation"></div>
+          </div>
+          <button class="health-btn" onclick="simulateHeartRate()">Measure Heart Rate</button>
+          <div class="result-card" id="heartResult"></div>
+        </div>
+      </div>
+
+      <!-- Health Summary -->
+      <div class="care-card">
+        <h3>📊 Health Summary</h3>
+        <div class="health-summary" id="healthSummary">
+          <div class="summary-item">
+            <span class="summary-label">Overall Health Score:</span>
+            <span class="summary-value" id="healthScore">-</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Last Check:</span>
+            <span class="summary-value" id="lastCheck">Never</span>
+          </div>
+          <div class="recommendations" id="recommendations">
+            <h4>💡 Recommendations:</h4>
+            <ul id="recommendationsList">
+              <li>Complete a health check to get personalized recommendations</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Authentication check
+    function checkAuthentication() {
+      const isLoggedIn = localStorage.getItem('wellnest_user');
+      if (!isLoggedIn || isLoggedIn !== 'true') {
+        alert('Please login to access health monitoring features! 💊');
+        window.location.href = 'login.html';
+        return false;
+      }
+      return true;
+    }
+
+    // Navigation functions
+    function updateNavigation() {
+      const isLoggedIn = localStorage.getItem('wellnest_user');
+      if (isLoggedIn === 'true') {
+        document.getElementById('loginLink').style.display = 'none';
+        document.getElementById('signupLink').style.display = 'none';
+        document.getElementById('logoutLink').style.display = 'block';
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('wellnest_user');
+      localStorage.removeItem('wellnest_user_data');
+      alert('Logged out successfully! See you soon! 👋');
+      window.location.href = 'index.html';
+    }
+
+    // Blood Pressure checker
+    function checkBP() {
+      const s = parseInt(document.getElementById("systolic").value);
+      const d = parseInt(document.getElementById("diastolic").value);
+      let res = "", color = "";
+      
+      if (!s || !d) {
+        res = "⚠️ Please enter both values!";
+        color = "#ff9800";
+      } else if (s < 90 || d < 60) {
+        res = "🔵 Low BP - Consider drinking more fluids and rest";
+        color = "#2196f3";
+      } else if (s > 140 || d > 90) {
+        res = "🔴 High BP - Reduce salt intake and manage stress";
+        color = "#f44336";
+      } else {
+        res = "✅ Normal BP - Great! Keep maintaining healthy habits";
+        color = "#4caf50";
+      }
+      
+      document.getElementById("bpResult").innerHTML = `
+        <div class="result-display" style="border-color: ${color}">
+          <div class="result-text">${res}</div>
+          <div class="result-values">Systolic: ${s} | Diastolic: ${d}</div>
+        </div>
+      `;
+      updateHealthScore();
+    }
+
+    // Blood Sugar checker
+    function checkSugar() {
+      const g = parseInt(document.getElementById("glucose").value);
+      let res = "", color = "";
+      
+      if (!g) {
+        res = "⚠️ Please enter glucose value!";
+        color = "#ff9800";
+      } else if (g < 70) {
+        res = "🔵 Low Blood Sugar - Have something sweet immediately 🍯";
+        color = "#2196f3";
+      } else if (g > 140) {
+        res = "🔴 High Blood Sugar - Avoid sugary foods today";
+        color = "#f44336";
+      } else {
+        res = "✅ Normal Blood Sugar - Excellent! Maintain balanced diet";
+        color = "#4caf50";
+      }
+      
+      document.getElementById("sugarResult").innerHTML = `
+        <div class="result-display" style="border-color: ${color}">
+          <div class="result-text">${res}</div>
+          <div class="result-values">Glucose: ${g} mg/dL</div>
+        </div>
+      `;
+      updateHealthScore();
+    }
+
+    // BMI Calculator
+    function calcBMI() {
+      const h = parseFloat(document.getElementById("height").value) / 100;
+      const w = parseFloat(document.getElementById("weight").value);
+      
+      if (!h || !w) {
+        document.getElementById("bmiResult").innerHTML = 
+          '<div class="result-display" style="border-color: #ff9800">⚠️ Please enter both height and weight!</div>';
+        return;
+      }
+      
+      const bmi = (w / (h * h)).toFixed(1);
+      let res = "", color = "", category = "";
+      
+      if (bmi < 18.5) {
+        res = `BMI: ${bmi} - Underweight`;
+        category = "Consider gaining healthy weight 🥗";
+        color = "#2196f3";
+      } else if (bmi < 25) {
+        res = `BMI: ${bmi} - Normal Weight`;
+        category = "Perfect! Maintain current lifestyle ✅";
+        color = "#4caf50";
+      } else if (bmi < 30) {
+        res = `BMI: ${bmi} - Overweight`;
+        category = "Consider healthy weight loss 🏃‍♀️";
+        color = "#ff9800";
+      } else {
+        res = `BMI: ${bmi} - Obese`;
+        category = "Consult healthcare provider 🏥";
+        color = "#f44336";
+      }
+      
+      document.getElementById("bmiResult").innerHTML = `
+        <div class="result-display" style="border-color: ${color}">
+          <div class="result-text">${res}</div>
+          <div class="result-values">${category}</div>
+        </div>
+      `;
+      updateHealthScore();
+    }
+
+    // Step Counter
+    let stepCount = parseInt(localStorage.getItem('dailySteps')) || 0;
+    
+    function addSteps() {
+      const newSteps = Math.floor(Math.random() * 500) + 100;
+      stepCount += newSteps;
+      updateStepDisplay();
+      localStorage.setItem('dailySteps', stepCount);
+    }
+    
+    function updateStepDisplay() {
+      const percent = Math.min((stepCount / 10000) * 100, 100);
+      document.getElementById("steps").textContent = stepCount.toLocaleString();
+      document.getElementById("stepBar").style.width = percent + "%";
+      document.getElementById("stepBar").textContent = Math.floor(percent) + "%";
+    }
+
+    // Heart Rate Monitor
+    function simulateHeartRate() {
+      const heartAnimation = document.querySelector('.pulse-animation');
+      if (heartAnimation) heartAnimation.style.animation = 'heartbeat 1s infinite';
+      
+      setTimeout(() => {
+        const rate = Math.floor(Math.random() * 40) + 60;
+        let status = "", color = "";
+        
+        if (rate < 60) {
+          status = "Below normal - Consider medical consultation";
+          color = "#2196f3";
+        } else if (rate > 100) {
+          status = "Above normal - Try relaxation techniques";
+          color = "#ff9800";
+        } else {
+          status = "Normal resting heart rate ✅";
+          color = "#4caf50";
+        }
+        
+        document.getElementById("heartResult").innerHTML = `
+          <div class="result-display" style="border-color: ${color}">
+            <div class="result-text">❤️ ${rate} BPM</div>
+            <div class="result-values">${status}</div>
+          </div>
+        `;
+        
+        if (heartAnimation) heartAnimation.style.animation = '';
+        updateHealthScore();
+      }, 2000);
+    }
+
+    // Health Score Calculation
+    function updateHealthScore() {
+      let score = 0;
+      let checkCount = 0;
+      
+      const bpResult = document.getElementById("bpResult").textContent;
+      const sugarResult = document.getElementById("sugarResult").textContent;
+      const bmiResult = document.getElementById("bmiResult").textContent;
+      const heartResult = document.getElementById("heartResult").textContent;
+      
+      if (bpResult && bpResult.includes("✅")) { score += 25; checkCount++; }
+      if (sugarResult && sugarResult.includes("✅")) { score += 25; checkCount++; }
+      if (bmiResult && bmiResult.includes("✅")) { score += 25; checkCount++; }
+      if (heartResult && heartResult.includes("✅")) { score += 25; checkCount++; }
+      
+      if (checkCount > 0) {
+        const finalScore = Math.round(score);
+        document.getElementById("healthScore").textContent = finalScore + "/100";
+        document.getElementById("lastCheck").textContent = new Date().toLocaleDateString();
+        
+        const recommendations = [];
+        if (finalScore >= 75) {
+          recommendations.push("Excellent health! Keep up the great work! 🌟");
+        } else if (finalScore >= 50) {
+          recommendations.push("Good health with room for improvement 💪");
+        } else {
+          recommendations.push("Focus on improving your health metrics 🎯");
+        }
+        
+        if (stepCount < 5000) {
+          recommendations.push("Increase daily physical activity");
+        }
+        
+        const list = document.getElementById("recommendationsList");
+        list.innerHTML = recommendations.map(rec => `<li>${rec}</li>`).join('');
+      }
+    }
+
+    // Hamburger Menu Functionality
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('navMenu');
+
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      navMenu.classList.toggle('active');
+    });
+
+    document.querySelectorAll('.nav-menu a').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+      });
+    });
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      if (!checkAuthentication()) return;
+      updateNavigation();
+      updateStepDisplay();
+    });
+  </script>
+</body>
+</html>

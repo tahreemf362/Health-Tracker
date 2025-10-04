@@ -3631,3 +3631,342 @@ footer {
     padding: 20px;
   }
 }
+
+/* 💊 Body Health Page Styles */
+.bodyhealth-hero {
+  background: linear-gradient(135deg, #E8F5E8, #A8E6CF, #79C9AF);
+  color: #2C5530;
+  text-align: center;
+  padding: 60px 20px;
+  margin-bottom: 30px;
+}
+
+.bodyhealth-hero h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.bodyhealth-hero p {
+  font-size: 1.3rem;
+  opacity: 0.9;
+}
+
+/* Health Input Groups */
+.health-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.input-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-field label {
+  font-weight: 600;
+  color: #2C5530;
+  font-size: 1rem;
+}
+
+.input-field input {
+  padding: 12px;
+  border: 2px solid #A8E6CF;
+  border-radius: 10px;
+  font-size: 1rem;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.input-field input:focus {
+  outline: none;
+  border-color: #2C5530;
+  box-shadow: 0 0 0 3px rgba(44,85,48,0.1);
+  transform: translateY(-2px);
+}
+
+/* Health Buttons */
+.health-btn {
+  background: linear-gradient(135deg, #4CAF50, #388E3C);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(76,175,80,0.3);
+  width: auto;
+  max-width: 250px;
+  align-self: flex-start;
+}
+
+.health-btn:hover {
+  background: linear-gradient(135deg, #388E3C, #2E7D32);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(76,175,80,0.4);
+}
+
+.secondary-btn {
+  background: linear-gradient(135deg, #FF9800, #F57C00);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  width: auto;
+  max-width: 200px;
+  align-self: flex-start;
+}
+
+.secondary-btn:hover {
+  background: linear-gradient(135deg, #F57C00, #E65100);
+  transform: translateY(-2px);
+}
+
+/* Result Cards */
+.result-card {
+  margin-top: 20px;
+  min-height: 40px;
+}
+
+.result-display {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  border-left: 4px solid;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  animation: slideInUp 0.3s ease;
+}
+
+.result-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.result-values {
+  font-size: 0.95rem;
+  color: #666;
+  font-style: italic;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Step Counter Styles */
+.step-display {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.step-number {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #2E7D32;
+  display: block;
+}
+
+.step-label {
+  font-size: 1.1rem;
+  color: #666;
+  margin-top: 5px;
+}
+
+.progress-container {
+  margin: 25px 0;
+}
+
+.progress-bar-bg {
+  background: #E8F5E8;
+  height: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #2E7D32);
+  width: 0%;
+  text-align: center;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px;
+  border-radius: 10px;
+  transition: width 0.6s ease;
+}
+
+.progress-text {
+  text-align: center;
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Heart Monitor Styles */
+.heart-monitor {
+  text-align: center;
+  padding: 20px;
+}
+
+.heart-pulse {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 4px solid #4CAF50;
+  margin: 20px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: rgba(76,175,80,0.1);
+}
+
+.pulse-animation {
+  width: 50px;
+  height: 50px;
+  background: #4CAF50;
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+@keyframes heartbeat {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.6; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Health Summary Styles */
+.health-summary {
+  padding: 20px;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #E8F5E8;
+}
+
+.summary-item:last-child {
+  border-bottom: none;
+}
+
+.summary-label {
+  font-weight: 600;
+  color: #2C5530;
+}
+
+.summary-value {
+  font-weight: 700;
+  color: #2E7D32;
+  font-size: 1.1rem;
+}
+
+.recommendations {
+  margin-top: 25px;
+  padding: 20px;
+  background: linear-gradient(135deg, #E8F5E8, #C8E6C9);
+  border-radius: 12px;
+  border-left: 4px solid #4CAF50;
+}
+
+.recommendations h4 {
+  color: #2E7D32;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+.recommendations ul {
+  list-style: none;
+  padding: 0;
+}
+
+.recommendations li {
+  background: white;
+  padding: 10px 15px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  border-left: 3px solid #4CAF50;
+  color: #1B5E20;
+  font-weight: 500;
+}
+
+.recommendations li:last-child {
+  margin-bottom: 0;
+}
+
+/* Responsive Design for Body Health Page */
+@media (max-width: 768px) {
+  .bodyhealth-hero h1 {
+    font-size: 2.2rem;
+  }
+  
+  .bodyhealth-hero p {
+    font-size: 1.1rem;
+  }
+  
+  .input-row {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .health-btn {
+    padding: 10px 20px;
+    font-size: 0.95rem;
+    max-width: 200px;
+  }
+  
+  .step-number {
+    font-size: 2.5rem;
+  }
+  
+  .heart-pulse {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .pulse-animation {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .summary-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  
+  .recommendations {
+    padding: 15px;
+  }
+  
+  .recommendations h4 {
+    font-size: 1.1rem;
+  }
+}
