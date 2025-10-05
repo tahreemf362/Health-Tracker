@@ -150,6 +150,159 @@
           </div>
         </div>
       </div>
+
+      <!-- Health Activity Calendar -->
+      <div class="care-card calendar-card">
+        <h3>📅 Health Activity Calendar</h3>
+        <div class="calendar-section">
+          <div class="calendar-header">
+            <button class="nav-btn" onclick="changeMonth(-1)">❮</button>
+            <h4 id="currentMonth">October 2025</h4>
+            <button class="nav-btn" onclick="changeMonth(1)">❯</button>
+          </div>
+          
+          <div class="calendar-grid">
+            <div class="calendar-days">
+              <div class="day-header">Sun</div>
+              <div class="day-header">Mon</div>
+              <div class="day-header">Tue</div>
+              <div class="day-header">Wed</div>
+              <div class="day-header">Thu</div>
+              <div class="day-header">Fri</div>
+              <div class="day-header">Sat</div>
+            </div>
+            <div class="calendar-dates" id="calendarDates">
+              <!-- Calendar dates will be generated here -->
+            </div>
+          </div>
+          
+          <div class="calendar-legend">
+            <div class="legend-item">
+              <span class="legend-dot excellent"></span>
+              <span>Excellent Day (90-100%)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot good"></span>
+              <span>Good Day (70-89%)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot average"></span>
+              <span>Average Day (50-69%)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot poor"></span>
+              <span>Needs Improvement (<50%)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Daily Activity Panel -->
+      <div class="care-card daily-panel" id="dailyPanel" style="display: none;">
+        <h3 id="selectedDate">Today's Activities</h3>
+        <div class="activity-tabs">
+          <button class="tab-btn active" onclick="showTab('overview')">📊 Overview</button>
+          <button class="tab-btn" onclick="showTab('activities')">🏃‍♀️ Activities</button>
+          <button class="tab-btn" onclick="showTab('health')">🩺 Health</button>
+          <button class="tab-btn" onclick="showTab('suggestions')">💡 AI Suggestions</button>
+        </div>
+        
+        <div class="tab-content active" id="overview">
+          <div class="daily-score">
+            <div class="score-circle">
+              <span id="dailyScore">-</span>
+              <small>Health Score</small>
+            </div>
+          </div>
+          <div class="quick-stats">
+            <div class="stat-item">
+              <span class="stat-number" id="dailySteps">0</span>
+              <span class="stat-label">Steps</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="activitiesCompleted">0</span>
+              <span class="stat-label">Activities</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" id="healthChecks">0</span>
+              <span class="stat-label">Health Checks</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="tab-content" id="activities">
+          <div class="activity-tracker">
+            <h4>Track Your Activities</h4>
+            <div class="activity-list">
+              <div class="activity-item">
+                <label class="activity-checkbox">
+                  <input type="checkbox" onchange="updateActivity('exercise', this.checked)">
+                  <span class="checkmark">💪</span>
+                  <span class="activity-name">Exercise/Workout</span>
+                </label>
+              </div>
+              <div class="activity-item">
+                <label class="activity-checkbox">
+                  <input type="checkbox" onchange="updateActivity('meditation', this.checked)">
+                  <span class="checkmark">🧘‍♀️</span>
+                  <span class="activity-name">Meditation/Mindfulness</span>
+                </label>
+              </div>
+              <div class="activity-item">
+                <label class="activity-checkbox">
+                  <input type="checkbox" onchange="updateActivity('water', this.checked)">
+                  <span class="checkmark">💧</span>
+                  <span class="activity-name">Drank 8+ Glasses Water</span>
+                </label>
+              </div>
+              <div class="activity-item">
+                <label class="activity-checkbox">
+                  <input type="checkbox" onchange="updateActivity('sleep', this.checked)">
+                  <span class="checkmark">😴</span>
+                  <span class="activity-name">Got 7-9 Hours Sleep</span>
+                </label>
+              </div>
+              <div class="activity-item">
+                <label class="activity-checkbox">
+                  <input type="checkbox" onchange="updateActivity('healthy_meal', this.checked)">
+                  <span class="checkmark">🥗</span>
+                  <span class="activity-name">Ate Healthy Meals</span>
+                </label>
+              </div>
+              <div class="activity-item">
+                <label class="activity-checkbox">
+                  <input type="checkbox" onchange="updateActivity('vitamins', this.checked)">
+                  <span class="checkmark">💊</span>
+                  <span class="activity-name">Took Vitamins/Supplements</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="tab-content" id="health">
+          <div class="health-metrics">
+            <h4>Health Metrics Recorded</h4>
+            <div id="healthMetricsDisplay">
+              <p class="no-data">No health metrics recorded for this day.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="tab-content" id="suggestions">
+          <div class="ai-suggestions">
+            <h4>🤖 AI-Powered Suggestions</h4>
+            <div id="aiSuggestionsDisplay">
+              <!-- AI suggestions will be generated here -->
+            </div>
+          </div>
+        </div>
+        
+        <div class="panel-actions">
+          <button class="health-btn" onclick="saveDaily()">💾 Save Today's Data</button>
+          <button class="secondary-btn" onclick="closeDailyPanel()">✕ Close</button>
+        </div>
+      </div>
     </div>
   </main>
 
@@ -383,11 +536,381 @@
       });
     });
 
+    // Calendar System
+    let currentDate = new Date();
+    let selectedDateData = null;
+
+    function generateCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      
+      document.getElementById('currentMonth').textContent = 
+        new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(currentDate);
+      
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const daysInMonth = lastDay.getDate();
+      const startingDayOfWeek = firstDay.getDay();
+      
+      const calendarDates = document.getElementById('calendarDates');
+      calendarDates.innerHTML = '';
+      
+      // Add empty cells for days before month starts
+      for (let i = 0; i < startingDayOfWeek; i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.className = 'calendar-day empty';
+        calendarDates.appendChild(emptyDay);
+      }
+      
+      // Add days of the month
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dayElement = document.createElement('div');
+        dayElement.className = 'calendar-day';
+        dayElement.textContent = day;
+        
+        const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const dayData = getDayData(dateKey);
+        
+        if (dayData) {
+          dayElement.classList.add('has-data');
+          dayElement.classList.add(getScoreClass(dayData.score));
+        }
+        
+        const today = new Date();
+        if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate()) {
+          dayElement.classList.add('today');
+        }
+        
+        dayElement.onclick = () => selectDate(dateKey, day, month, year);
+        calendarDates.appendChild(dayElement);
+      }
+    }
+
+    function changeMonth(direction) {
+      currentDate.setMonth(currentDate.getMonth() + direction);
+      generateCalendar();
+    }
+
+    function selectDate(dateKey, day, month, year) {
+      selectedDateData = dateKey;
+      const selectedDay = new Date(year, month, day);
+      const formattedDate = new Intl.DateTimeFormat('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      }).format(selectedDay);
+      
+      document.getElementById('selectedDate').textContent = `${formattedDate} Activities`;
+      document.getElementById('dailyPanel').style.display = 'block';
+      loadDayData(dateKey);
+      
+      // Scroll to daily panel
+      document.getElementById('dailyPanel').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function getDayData(dateKey) {
+      const userData = JSON.parse(localStorage.getItem('wellnest_user_data') || '{}');
+      return userData.calendar && userData.calendar[dateKey] ? userData.calendar[dateKey] : null;
+    }
+
+    function saveDayData(dateKey, data) {
+      const userData = JSON.parse(localStorage.getItem('wellnest_user_data') || '{}');
+      if (!userData.calendar) userData.calendar = {};
+      userData.calendar[dateKey] = data;
+      localStorage.setItem('wellnest_user_data', JSON.stringify(userData));
+    }
+
+    function getScoreClass(score) {
+      if (score >= 90) return 'excellent';
+      if (score >= 70) return 'good';
+      if (score >= 50) return 'average';
+      return 'poor';
+    }
+
+    function loadDayData(dateKey) {
+      const dayData = getDayData(dateKey) || {
+        activities: {},
+        healthMetrics: {},
+        score: 0,
+        steps: 0
+      };
+      
+      // Load activities
+      Object.keys(dayData.activities || {}).forEach(activity => {
+        const checkbox = document.querySelector(`input[onchange*="${activity}"]`);
+        if (checkbox) checkbox.checked = dayData.activities[activity];
+      });
+      
+      // Update overview
+      document.getElementById('dailyScore').textContent = dayData.score || 0;
+      document.getElementById('dailySteps').textContent = dayData.steps || 0;
+      document.getElementById('activitiesCompleted').textContent = 
+        Object.values(dayData.activities || {}).filter(Boolean).length;
+      document.getElementById('healthChecks').textContent = 
+        Object.keys(dayData.healthMetrics || {}).length;
+      
+      // Load health metrics
+      loadHealthMetrics(dayData.healthMetrics || {});
+      
+      // Generate AI suggestions
+      generateAISuggestions(dayData);
+    }
+
+    function updateActivity(activityName, isCompleted) {
+      const dayData = getDayData(selectedDateData) || {
+        activities: {},
+        healthMetrics: {},
+        score: 0,
+        steps: 0
+      };
+      
+      dayData.activities[activityName] = isCompleted;
+      dayData.score = calculateDayScore(dayData);
+      
+      saveDayData(selectedDateData, dayData);
+      loadDayData(selectedDateData);
+      generateCalendar(); // Refresh calendar to show updated score
+    }
+
+    function calculateDayScore(dayData) {
+      const activities = dayData.activities || {};
+      const healthMetrics = dayData.healthMetrics || {};
+      
+      let score = 0;
+      const totalActivities = 6; // Total trackable activities
+      const completedActivities = Object.values(activities).filter(Boolean).length;
+      
+      // Activity score (60% weight)
+      score += (completedActivities / totalActivities) * 60;
+      
+      // Health metrics score (30% weight)
+      const healthScore = Object.keys(healthMetrics).length > 0 ? 25 : 0;
+      score += healthScore;
+      
+      // Steps score (10% weight)
+      const stepsScore = Math.min((dayData.steps || 0) / 10000, 1) * 15;
+      score += stepsScore;
+      
+      return Math.round(score);
+    }
+
+    function loadHealthMetrics(healthMetrics) {
+      const display = document.getElementById('healthMetricsDisplay');
+      
+      if (Object.keys(healthMetrics).length === 0) {
+        display.innerHTML = '<p class="no-data">No health metrics recorded for this day.</p>';
+        return;
+      }
+      
+      let html = '<div class="metrics-grid">';
+      
+      Object.entries(healthMetrics).forEach(([metric, value]) => {
+        html += `
+          <div class="metric-item">
+            <span class="metric-name">${getMetricLabel(metric)}</span>
+            <span class="metric-value">${value}</span>
+          </div>
+        `;
+      });
+      
+      html += '</div>';
+      display.innerHTML = html;
+    }
+
+    function getMetricLabel(metric) {
+      const labels = {
+        'bp': '🩸 Blood Pressure',
+        'glucose': '🍯 Blood Sugar',
+        'bmi': '⚖️ BMI',
+        'heartRate': '❤️ Heart Rate'
+      };
+      return labels[metric] || metric;
+    }
+
+    function generateAISuggestions(dayData) {
+      const display = document.getElementById('aiSuggestionsDisplay');
+      const activities = dayData.activities || {};
+      const score = dayData.score || 0;
+      
+      let suggestions = [];
+      
+      // Score-based suggestions
+      if (score < 50) {
+        suggestions.push({
+          icon: '🚀',
+          text: 'Your health score is below average. Focus on completing more daily activities.',
+          priority: 'high'
+        });
+      } else if (score < 70) {
+        suggestions.push({
+          icon: '📈',
+          text: 'Good progress! Try to add one more healthy activity to reach the next level.',
+          priority: 'medium'
+        });
+      } else if (score >= 90) {
+        suggestions.push({
+          icon: '🏆',
+          text: 'Excellent work! You\'re maintaining a fantastic health routine.',
+          priority: 'celebration'
+        });
+      }
+      
+      // Activity-specific suggestions
+      if (!activities.exercise) {
+        suggestions.push({
+          icon: '💪',
+          text: 'Add 30 minutes of exercise to boost your energy and mood.',
+          priority: 'medium'
+        });
+      }
+      
+      if (!activities.water) {
+        suggestions.push({
+          icon: '💧',
+          text: 'Stay hydrated! Aim for 8 glasses of water throughout the day.',
+          priority: 'high'
+        });
+      }
+      
+      if (!activities.sleep) {
+        suggestions.push({
+          icon: '😴',
+          text: 'Prioritize 7-9 hours of quality sleep for better recovery.',
+          priority: 'high'
+        });
+      }
+      
+      if (!activities.meditation) {
+        suggestions.push({
+          icon: '🧘‍♀️',
+          text: 'Try 10 minutes of meditation to reduce stress and improve focus.',
+          priority: 'low'
+        });
+      }
+      
+      // Weekly pattern analysis
+      const weekData = getWeekData(selectedDateData);
+      if (weekData.avgScore < score) {
+        suggestions.push({
+          icon: '📊',
+          text: 'You\'re doing better than your weekly average! Keep up the momentum.',
+          priority: 'celebration'
+        });
+      }
+      
+      if (suggestions.length === 0) {
+        suggestions.push({
+          icon: '✨',
+          text: 'You\'re doing amazing! Continue your healthy habits.',
+          priority: 'celebration'
+        });
+      }
+      
+      let html = '<div class="suggestions-list">';
+      suggestions.forEach(suggestion => {
+        html += `
+          <div class="suggestion-item ${suggestion.priority}">
+            <span class="suggestion-icon">${suggestion.icon}</span>
+            <span class="suggestion-text">${suggestion.text}</span>
+          </div>
+        `;
+      });
+      html += '</div>';
+      
+      display.innerHTML = html;
+    }
+
+    function getWeekData(dateKey) {
+      const userData = JSON.parse(localStorage.getItem('wellnest_user_data') || '{}');
+      const calendar = userData.calendar || {};
+      
+      const selectedDate = new Date(dateKey);
+      let totalScore = 0;
+      let daysCount = 0;
+      
+      for (let i = 0; i < 7; i++) {
+        const checkDate = new Date(selectedDate);
+        checkDate.setDate(checkDate.getDate() - i);
+        const checkKey = `${checkDate.getFullYear()}-${String(checkDate.getMonth() + 1).padStart(2, '0')}-${String(checkDate.getDate()).padStart(2, '0')}`;
+        
+        if (calendar[checkKey]) {
+          totalScore += calendar[checkKey].score || 0;
+          daysCount++;
+        }
+      }
+      
+      return {
+        avgScore: daysCount > 0 ? Math.round(totalScore / daysCount) : 0,
+        daysCount
+      };
+    }
+
+    function showTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      
+      event.target.classList.add('active');
+      document.getElementById(tabName).classList.add('active');
+    }
+
+    function saveDaily() {
+      if (!selectedDateData) return;
+      
+      const dayData = getDayData(selectedDateData) || {
+        activities: {},
+        healthMetrics: {},
+        score: 0,
+        steps: 0
+      };
+      
+      // Save current step count for the day
+      const currentSteps = parseInt(localStorage.getItem('daily_steps') || '0');
+      dayData.steps = currentSteps;
+      
+      // Save health metrics from current session
+      const bpResult = document.getElementById('bpResult').innerHTML;
+      const sugarResult = document.getElementById('sugarResult').innerHTML;
+      const bmiResult = document.getElementById('bmiResult').innerHTML;
+      const heartResult = document.getElementById('heartResult').innerHTML;
+      
+      if (bpResult && !bpResult.includes('⚠️')) {
+        dayData.healthMetrics.bp = bpResult;
+      }
+      if (sugarResult && !sugarResult.includes('⚠️')) {
+        dayData.healthMetrics.glucose = sugarResult;
+      }
+      if (bmiResult && !bmiResult.includes('⚠️')) {
+        dayData.healthMetrics.bmi = bmiResult;
+      }
+      if (heartResult && !heartResult.includes('⚠️')) {
+        dayData.healthMetrics.heartRate = heartResult;
+      }
+      
+      dayData.score = calculateDayScore(dayData);
+      saveDayData(selectedDateData, dayData);
+      
+      alert('✅ Daily data saved successfully!');
+      generateCalendar();
+      loadDayData(selectedDateData);
+    }
+
+    function closeDailyPanel() {
+      document.getElementById('dailyPanel').style.display = 'none';
+      selectedDateData = null;
+    }
+
     // Initialize page
     document.addEventListener('DOMContentLoaded', function() {
       if (!checkAuthentication()) return;
       updateNavigation();
       updateStepDisplay();
+      generateCalendar();
+      
+      // Auto-select today's date
+      const today = new Date();
+      const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+      selectDate(todayKey, today.getDate(), today.getMonth(), today.getFullYear());
     });
   </script>
 </body>

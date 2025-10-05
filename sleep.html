@@ -44,7 +44,7 @@
   <div class="card-container">
     <div class="card">
       <h3>Hours Slept Today</h3>
-      <p id="sleepDisplay">7 hrs 45 mins</p>
+      <p id="sleepDisplay">No sleep recorded today</p>
     </div>
 
     <div class="card">
@@ -66,9 +66,7 @@
     <div class="card">
       <h3>Sleep History</h3>
       <div id="sleepHistory">
-        <p>📅 Oct 3: 7 hrs 45 mins</p>
-        <p>📅 Oct 2: 8 hrs 15 mins</p>
-        <p>📅 Oct 1: 6 hrs 30 mins</p>
+        <!-- Sleep history will be loaded from localStorage -->
       </div>
     </div>
 
@@ -82,7 +80,7 @@
 <footer>© 2025 WellNest | Designed with 💚 by Tahreem Fatima</footer>
 
 <script>
-  // Sleep Tracking Functionality
+  // Sleep Tracking Functionality with Persistent Storage
   function addSleepHours() {
     const hours = document.getElementById('sleepHours').value;
     const minutes = document.getElementById('sleepMinutes').value;
@@ -110,24 +108,58 @@
       sleepText = `${totalMinutes} mins`;
     }
     
+    // Calculate total sleep in minutes for quality assessment
+    const totalSleepMinutes = (totalHours * 60) + totalMinutes;
+    
+    // Save to localStorage with date
+    const today = new Date();
+    const dateKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    
+    const userData = JSON.parse(localStorage.getItem('wellnest_user_data') || '{}');
+    
+    // Initialize sleep data structure
+    if (!userData.sleepHistory) userData.sleepHistory = {};
+    if (!userData.calendar) userData.calendar = {};
+    
+    // Save sleep data
+    userData.sleepHistory[dateKey] = {
+      hours: totalHours,
+      minutes: totalMinutes,
+      totalMinutes: totalSleepMinutes,
+      sleepText: sleepText,
+      quality: getSleepQuality(totalSleepMinutes),
+      timestamp: Date.now()
+    };
+    
+    // Update calendar data
+    if (!userData.calendar[dateKey]) {
+      userData.calendar[dateKey] = {
+        activities: {},
+        healthMetrics: {},
+        score: 0,
+        steps: 0
+      };
+    }
+    
+    // Mark sleep activity as completed if 7-9 hours
+    if (totalSleepMinutes >= 420 && totalSleepMinutes <= 540) { // 7-9 hours
+      userData.calendar[dateKey].activities.sleep = true;
+    }
+    
+    // Add sleep as health metric
+    userData.calendar[dateKey].healthMetrics.sleep = sleepText;
+    
+    // Recalculate health score
+    userData.calendar[dateKey].score = calculateDayScore(userData.calendar[dateKey]);
+    
+    // Save to localStorage
+    localStorage.setItem('wellnest_user_data', JSON.stringify(userData));
+    
     // Update today's sleep display
     document.getElementById('sleepDisplay').textContent = sleepText;
     
-    // Add to sleep history
-    const today = new Date();
-    const dateStr = today.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric' 
-    });
-    
-    const historyContainer = document.getElementById('sleepHistory');
-    const newEntry = document.createElement('p');
-    newEntry.innerHTML = `📅 ${dateStr}: ${sleepText}`;
-    newEntry.style.color = '#2C6E63';
-    newEntry.style.fontWeight = '500';
-    
-    // Insert at the beginning
-    historyContainer.insertBefore(newEntry, historyContainer.firstChild);
+    // Refresh sleep history display
+    loadSleepHistory();
     
     // Clear input fields
     document.getElementById('sleepHours').value = '';
@@ -137,26 +169,134 @@
     alert(`Sleep logged successfully! 🌙\n${sleepText} added to your tracker.`);
     
     // Provide sleep quality feedback
-    const totalSleepMinutes = (totalHours * 60) + totalMinutes;
-    let feedback = '';
-    
-    if (totalSleepMinutes < 360) { // Less than 6 hours
-      feedback = '😴 You might need more sleep for optimal health!';
-    } else if (totalSleepMinutes >= 360 && totalSleepMinutes <= 540) { // 6-9 hours
-      feedback = '✨ Great job! You\'re in the healthy sleep range.';
-    } else {
-      feedback = '😊 That\'s quite a bit of sleep! Hope you feel refreshed.';
-    }
-    
+    const feedback = getSleepQualityFeedback(totalSleepMinutes);
     setTimeout(() => alert(feedback), 1000);
   }
 
-  // Check authentication
-  const isLoggedIn = localStorage.getItem('wellnest_user');
-  if (!isLoggedIn) {
-    alert('🔒 Please login to access your sleep tracker! 🌿');
-    window.location.href = 'login.html';
+  function getSleepQuality(totalMinutes) {
+    if (totalMinutes < 360) return 'Poor'; // Less than 6 hours
+    if (totalMinutes >= 420 && totalMinutes <= 540) return 'Excellent'; // 7-9 hours
+    if (totalMinutes >= 360 && totalMinutes < 420) return 'Fair'; // 6-7 hours
+    if (totalMinutes > 540) return 'Too Much'; // More than 9 hours
+    return 'Unknown';
   }
+
+  function getSleepQualityFeedback(totalMinutes) {
+    if (totalMinutes < 360) {
+      return '😴 You might need more sleep for optimal health! Aim for 7-9 hours.';
+    } else if (totalMinutes >= 420 && totalMinutes <= 540) {
+      return '✨ Excellent! You\'re in the optimal sleep range (7-9 hours).';
+    } else if (totalMinutes >= 360 && totalMinutes < 420) {
+      return '😊 Good sleep, but try to get a bit more for optimal recovery.';
+    } else {
+      return '😊 That\'s quite a bit of sleep! Make sure it\'s quality rest.';
+    }
+  }
+
+  function calculateDayScore(dayData) {
+    const activities = dayData.activities || {};
+    const healthMetrics = dayData.healthMetrics || {};
+    
+    let score = 0;
+    const totalActivities = 6; // Total trackable activities
+    const completedActivities = Object.values(activities).filter(Boolean).length;
+    
+    // Activity score (60% weight)
+    score += (completedActivities / totalActivities) * 60;
+    
+    // Health metrics score (30% weight)
+    const healthScore = Object.keys(healthMetrics).length > 0 ? 25 : 0;
+    score += healthScore;
+    
+    // Steps score (10% weight)
+    const stepsScore = Math.min((dayData.steps || 0) / 10000, 1) * 15;
+    score += stepsScore;
+    
+    return Math.round(score);
+  }
+
+  function loadSleepHistory() {
+    const userData = JSON.parse(localStorage.getItem('wellnest_user_data') || '{}');
+    const sleepHistory = userData.sleepHistory || {};
+    const historyContainer = document.getElementById('sleepHistory');
+    
+    // Clear existing history
+    historyContainer.innerHTML = '';
+    
+    if (Object.keys(sleepHistory).length === 0) {
+      historyContainer.innerHTML = '<p style="color: #666; font-style: italic;">No sleep history yet. Start tracking your sleep!</p>';
+      return;
+    }
+    
+    // Sort dates in descending order (most recent first)
+    const sortedDates = Object.keys(sleepHistory).sort((a, b) => new Date(b) - new Date(a));
+    
+    sortedDates.slice(0, 10).forEach(dateKey => { // Show last 10 entries
+      const sleepData = sleepHistory[dateKey];
+      const date = new Date(dateKey);
+      const dateStr = date.toLocaleDateString('en-US', { 
+        month: 'short', 
+        day: 'numeric',
+        year: date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
+      });
+      
+      const entry = document.createElement('p');
+      entry.innerHTML = `📅 ${dateStr}: ${sleepData.sleepText} <span style="color: ${getQualityColor(sleepData.quality)};">(${sleepData.quality})</span>`;
+      entry.style.color = '#2C6E63';
+      entry.style.fontWeight = '500';
+      entry.style.padding = '8px';
+      entry.style.borderLeft = `3px solid ${getQualityColor(sleepData.quality)}`;
+      entry.style.marginBottom = '5px';
+      entry.style.borderRadius = '5px';
+      entry.style.background = '#f8f9fa';
+      
+      historyContainer.appendChild(entry);
+    });
+  }
+
+  function getQualityColor(quality) {
+    switch(quality) {
+      case 'Excellent': return '#4CAF50';
+      case 'Good': return '#8BC34A';
+      case 'Fair': return '#FF9800';
+      case 'Poor': return '#F44336';
+      case 'Too Much': return '#9C27B0';
+      default: return '#666';
+    }
+  }
+
+  function loadTodaysSleep() {
+    const today = new Date();
+    const dateKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    
+    const userData = JSON.parse(localStorage.getItem('wellnest_user_data') || '{}');
+    const sleepHistory = userData.sleepHistory || {};
+    
+    if (sleepHistory[dateKey]) {
+      document.getElementById('sleepDisplay').textContent = sleepHistory[dateKey].sleepText;
+    } else {
+      document.getElementById('sleepDisplay').textContent = 'No sleep recorded today';
+    }
+  }
+
+  // Check authentication
+  function checkAuthentication() {
+    const isLoggedIn = localStorage.getItem('wellnest_user');
+    if (!isLoggedIn || isLoggedIn !== 'true') {
+      alert('🔒 Please login to access your sleep tracker! 🌿');
+      window.location.href = 'login.html';
+      return false;
+    }
+    return true;
+  }
+
+  // Initialize page data
+  document.addEventListener('DOMContentLoaded', function() {
+    if (checkAuthentication()) {
+      loadTodaysSleep();
+      loadSleepHistory();
+    }
+  });
 
   // Hamburger Menu Functionality
   const hamburger = document.getElementById('hamburger');
