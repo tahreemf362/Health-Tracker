@@ -1,4 +1,6 @@
 /* 🌿 WellNest – Nature Wellness Theme */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
 * {
   margin: 0;
   padding: 0;
@@ -1050,7 +1052,7 @@ footer {
   flex-wrap: wrap;
 }
 
-.add-reminder-btn, .test-reminder-btn {
+.add-reminder-btn {
   background: #2C6E63;
   color: white;
   border: none;
@@ -1065,17 +1067,8 @@ footer {
   min-width: 140px;
 }
 
-.test-reminder-btn {
-  background: #ff9800;
-}
-
 .add-reminder-btn:hover {
   background: #145C4D;
-  transform: translateY(-2px);
-}
-
-.test-reminder-btn:hover {
-  background: #f57c00;
   transform: translateY(-2px);
 }
 
@@ -1145,30 +1138,257 @@ footer {
   transform: scale(1.1);
 }
 
-/* 🔔 Reminder Alert Modal */
+/* 🔔 Enhanced App-Compatible Reminder Alert Modal */
 .reminder-alert {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.7);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2000;
+  z-index: 10000;
   animation: fadeIn 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+.reminder-alert.app-compatible {
+  background: rgba(0,0,0,0.8);
+}
+
+.alert-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
 }
 
 .alert-content {
-  background: white;
+  background: linear-gradient(135deg, #ffffff, #f8fff8);
   padding: 30px;
   border-radius: 20px;
   text-align: center;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  box-shadow: 0 25px 50px rgba(0,0,0,0.4);
   max-width: 400px;
   margin: 20px;
-  animation: slideUp 0.3s ease;
+  animation: slideUp 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  border: 3px solid #4CAF50;
+  position: relative;
+  z-index: 1;
+}
+
+.alert-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.alert-icon {
+  font-size: 2rem;
+  animation: pulse 1.5s infinite;
+}
+
+.alert-body {
+  margin: 20px 0;
+}
+
+.alert-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.reminder-task {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2C6E63;
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+.reminder-time, .reminder-type {
+  font-size: 1rem;
+  color: #666;
+  margin: 8px 0;
+}
+
+.alert-snooze-btn {
+  background: linear-gradient(90deg, #FFA726, #FF9800);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: 'Poppins', sans-serif;
+}
+
+.alert-snooze-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* 📱 App Notification Styles */
+.snooze-confirmation {
+  animation: slideInRight 0.3s ease-out;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.notification-info {
+  font-family: 'Poppins', sans-serif;
+  animation: bounceIn 0.5s ease-out;
+}
+
+.notification-info ul {
+  text-align: left;
+  margin: 15px 0;
+  padding-left: 20px;
+}
+
+.notification-info li {
+  margin: 8px 0;
+  color: #4CAF50;
+  font-weight: 500;
+}
+
+.notification-info button {
+  background: linear-gradient(90deg, #4CAF50, #45a049);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 15px;
+  transition: transform 0.3s;
+}
+
+.notification-info button:hover {
+  transform: scale(1.05);
+}
+
+@keyframes slideInRight {
+  from { 
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to { 
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: translate(-50%, -50%) scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  70% {
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+/* 🕌 Prayer Permission Alerts */
+.prayer-permission-success ul,
+.prayer-permission-fallback ul {
+  text-align: left;
+  margin: 15px 0;
+  padding-left: 20px;
+}
+
+.prayer-permission-success li,
+.prayer-permission-fallback li {
+  margin: 8px 0;
+  font-weight: 500;
+}
+
+.prayer-permission-success button,
+.prayer-permission-fallback button {
+  background: linear-gradient(90deg, #4CAF50, #45a049);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 15px;
+  transition: transform 0.3s;
+  font-family: 'Poppins', sans-serif;
+}
+
+.prayer-permission-success button:hover,
+.prayer-permission-fallback button:hover {
+  transform: scale(1.05);
+}
+
+.prayer-alert-content {
+  background: linear-gradient(135deg, #f8fff8, #e8f5e8);
+  border: 3px solid #4CAF50;
+}
+
+.prayer-message {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2C6E63;
+  margin-bottom: 15px;
+}
+
+.prayer-time {
+  color: #666;
+  font-size: 1rem;
+  margin: 10px 0;
+}
+
+/* App-specific optimizations */
+@media (max-width: 480px) {
+  .alert-content {
+    max-width: 90vw;
+    margin: 10px;
+    padding: 20px;
+  }
+  
+  .alert-actions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .reminder-task {
+    font-size: 1.1rem;
+  }
+  
+  .notification-info,
+  .prayer-permission-success,
+  .prayer-permission-fallback {
+    max-width: 90vw;
+    padding: 15px;
+  }
+  
+  .prayer-message {
+    font-size: 1.1rem;
+  }
 }
 
 .alert-content h3 {
@@ -2956,7 +3176,337 @@ footer {
   transform: translateX(5px);
 }
 
-/* 💪 Responsive Workout Styles */
+/* � Workout History Styles */
+.workout-history-section {
+  background: linear-gradient(135deg, #f8f9ff, #e8f2ff);
+  padding: 30px;
+  border-radius: 20px;
+  margin: 30px 0;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.workout-history-section h3 {
+  color: #2C6E63;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2rem;
+  font-weight: 800;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.history-summary {
+  margin-bottom: 25px;
+}
+
+.history-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.stat-item {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.stat-item:hover {
+  transform: translateY(-5px);
+}
+
+.stat-number {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #2C6E63;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  color: #666;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.history-filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  background: white;
+  color: #2C6E63;
+  border: 2px solid #79C9AF;
+  padding: 10px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.filter-btn:hover, .filter-btn.active {
+  background: #79C9AF;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.workout-history-list {
+  max-height: 600px;
+  overflow-y: auto;
+  margin-bottom: 25px;
+}
+
+.no-history {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.no-history-icon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+}
+
+.no-history h4 {
+  color: #2C6E63;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+.workout-history-item {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border-left: 5px solid #79C9AF;
+}
+
+.workout-history-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.history-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.history-date {
+  display: flex;
+  flex-direction: column;
+}
+
+.history-day {
+  font-weight: 700;
+  color: #2C6E63;
+  font-size: 1.1rem;
+}
+
+.history-time {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.history-stats-mini {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.stat-mini {
+  background: #f0f8ff;
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2C6E63;
+}
+
+.history-item-details {
+  display: grid;
+  gap: 20px;
+}
+
+.history-tags {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.history-tag {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.goal-tag {
+  background: #e8f5e8;
+  color: #2E7D32;
+}
+
+.level-tag {
+  background: #fff3e0;
+  color: #F57C00;
+}
+
+.completion-tag {
+  background: #fce4ec;
+  color: #C2185B;
+}
+
+.completion-tag.complete {
+  background: #e8f5e8;
+  color: #2E7D32;
+}
+
+.history-body-parts {
+  color: #666;
+  font-weight: 500;
+}
+
+.history-exercises {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.toggle-exercises-btn {
+  background: #79C9AF;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.toggle-exercises-btn:hover {
+  background: #2C6E63;
+  transform: scale(1.05);
+}
+
+.exercise-details {
+  margin-top: 15px;
+  display: grid;
+  gap: 8px;
+}
+
+.exercise-history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: white;
+  border-radius: 8px;
+  border-left: 3px solid #ddd;
+}
+
+.exercise-history-item.completed {
+  border-left-color: #4CAF50;
+  background: #f8fff8;
+}
+
+.exercise-history-item.skipped {
+  border-left-color: #FFA726;
+  background: #fff8f0;
+}
+
+.exercise-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.exercise-details {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.history-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.repeat-btn, .delete-btn, .export-btn, .clear-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.repeat-btn {
+  background: #4CAF50;
+  color: white;
+}
+
+.repeat-btn:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+}
+
+.delete-btn {
+  background: #ff5722;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #e64a19;
+  transform: translateY(-2px);
+}
+
+.export-btn {
+  background: #2196F3;
+  color: white;
+}
+
+.export-btn:hover {
+  background: #1976D2;
+  transform: translateY(-2px);
+}
+
+.clear-btn {
+  background: #ff9800;
+  color: white;
+}
+
+.clear-btn:hover {
+  background: #f57c00;
+  transform: translateY(-2px);
+}
+
+.history-actions {
+  margin-top: 25px;
+  justify-content: center;
+}
+
+/* �💪 Responsive Workout Styles */
 @media (max-width: 768px) {
   .workout-setup {
     padding: 0 15px;
@@ -3039,6 +3589,78 @@ footer {
   
   .motivation-card p {
     font-size: 1.1rem;
+  }
+  
+  /* 📚 Mobile Workout History Styles */
+  .workout-history-section {
+    padding: 20px;
+    margin: 20px 0;
+  }
+  
+  .history-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+  
+  .stat-item {
+    padding: 15px;
+  }
+  
+  .stat-number {
+    font-size: 2rem;
+  }
+  
+  .history-filters {
+    gap: 8px;
+  }
+  
+  .filter-btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+  
+  .workout-history-item {
+    padding: 20px;
+  }
+  
+  .history-item-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .history-stats-mini {
+    gap: 8px;
+  }
+  
+  .stat-mini {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+  
+  .history-tags {
+    gap: 6px;
+  }
+  
+  .history-tag {
+    padding: 4px 8px;
+    font-size: 0.7rem;
+  }
+  
+  .history-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .repeat-btn, .delete-btn, .export-btn, .clear-btn {
+    width: 100%;
+    padding: 12px;
+  }
+  
+  .exercise-history-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
   }
 }
 
@@ -3966,7 +4588,9 @@ footer {
 .calendar-card {
   background: linear-gradient(135deg, #A8E6CF, #79C9AF);
   color: white;
-  margin-top: 30px;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .calendar-card h3 {
@@ -4408,6 +5032,665 @@ footer {
 .secondary-btn:hover {
   background: #555;
   transform: translateY(-2px);
+}
+
+/* 🕌 Prayer Page Styles */
+.prayer-hero {
+  background: linear-gradient(135deg, #A8E6CF 0%, #2C6E63 100%);
+  color: white;
+}
+
+.prayer-hero h1 {
+  font-size: 3.5rem;
+  font-weight: 900;
+  margin-bottom: 15px;
+  text-shadow: 0 4px 8px rgba(0,0,0,0.4);
+  letter-spacing: -1px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.prayer-hero p {
+  font-size: 1.4rem;
+  opacity: 0.95;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.prayer-card {
+  background: linear-gradient(135deg, #A8E6CF 0%, #79C9AF 100%);
+  color: white;
+}
+
+.prayer-card h3 {
+  color: black;
+  margin-bottom: 25px;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(255,255,255,0.3);
+}
+
+.prayer-stats {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  margin-bottom: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+}
+
+.prayer-stats .stat-circle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  color: black;
+  font-weight: 700;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.prayer-stats .stat-circle span {
+  font-size: 3rem;
+  margin-bottom: 5px;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.prayer-stats .stat-circle small {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  font-weight: 600;
+}
+
+.completion-text {
+  flex: 1;
+}
+
+.completion-text p {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: black;
+  letter-spacing: 0.3px;
+}
+
+.progress-ring {
+  background: rgba(255, 255, 255, 0.2);
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4CAF50, #81C784);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.prayer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.prayer-item {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 20px;
+  transition: all 0.3s;
+  backdrop-filter: blur(10px);
+}
+
+.prayer-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.prayer-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.prayer-checkbox input {
+  display: none;
+}
+
+.prayer-checkbox .checkmark {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  transition: all 0.3s;
+  flex-shrink: 0;
+}
+
+.prayer-checkbox input:checked + .checkmark {
+  background: #4CAF50;
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+}
+
+.prayer-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.prayer-name {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: black;
+  margin-bottom: 5px;
+  letter-spacing: 0.5px;
+}
+
+.prayer-time {
+  font-size: 1rem;
+  color: black;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  opacity: 0.8;
+}
+
+.habits-card {
+  background: linear-gradient(135deg, #E8F5E8 0%, #C8E6C9 100%);
+  color: #333;
+}
+
+.habits-card h3 {
+  color: #2E7D32;
+  margin-bottom: 25px;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.habits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.habit-item {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+}
+
+.habit-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.habit-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.habit-checkbox input {
+  display: none;
+}
+
+.habit-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.3s;
+  flex-shrink: 0;
+}
+
+.habit-checkbox input:checked ~ .habit-icon {
+  background: #2E7D32;
+  color: white;
+  transform: scale(1.1);
+}
+
+.habit-name {
+  font-weight: 700;
+  color: #333;
+  font-size: 1.1rem;
+  letter-spacing: 0.3px;
+}
+
+.guidance-card {
+  background: linear-gradient(135deg, #F1F8E9 0%, #DCEDC1 100%);
+  color: #333;
+}
+
+.guidance-card h3 {
+  color: #2E7D32;
+  margin-bottom: 25px;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.guidance-item {
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.guidance-item h4 {
+  color: #2E7D32;
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.guidance-item p {
+  color: #444;
+  line-height: 1.7;
+  margin-bottom: 15px;
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+.guidance-category {
+  display: inline-block;
+  background: linear-gradient(135deg, #2E7D32, #4CAF50);
+  color: white;
+  padding: 8px 18px;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.history-card {
+  background: linear-gradient(135deg, #C8E6C9 0%, #E8F5E8 100%);
+  color: #333;
+}
+
+.history-card h3 {
+  color: #2E7D32;
+  margin-bottom: 25px;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.history-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.history-stats .stat-item {
+  text-align: center;
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.history-stats .stat-number {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #2E7D32;
+  margin-bottom: 5px;
+  letter-spacing: -1px;
+}
+
+.history-stats .stat-label {
+  color: #555;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.recent-history h4 {
+  color: #2E7D32;
+  margin-bottom: 15px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.goals-card {
+  background: linear-gradient(135deg, #A8E6CF 0%, #79C9AF 100%);
+  color: white;
+}
+
+.goals-card h3 {
+  color: white;
+  margin-bottom: 25px;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.goals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.goal-item {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+}
+
+.goal-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.goal-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2E7D32, #4CAF50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.goal-text {
+  flex: 1;
+  color: black;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 0.2px;
+}
+
+.goal-progress {
+  background: linear-gradient(135deg, #4CAF50, #81C784);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 25px;
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+/* Prayer Times Display */
+.prayer-times-card {
+  background: linear-gradient(135deg, #F1F8E9 0%, #C8E6C9 100%);
+  color: #333;
+}
+
+.prayer-times-card h3 {
+  color: #2E7D32;
+  margin-bottom: 25px;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.next-prayer-container {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.next-prayer-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.next-prayer-emoji {
+  font-size: 2rem;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2E7D32, #4CAF50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.next-prayer-details {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.next-prayer-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2E7D32;
+  margin-bottom: 5px;
+}
+
+.next-prayer-time {
+  font-size: 1rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.prayer-times-display h4 {
+  color: #2E7D32;
+  margin-bottom: 15px;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.prayer-times-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.prayer-time-item {
+  background: white;
+  padding: 15px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+}
+
+.prayer-time-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.prayer-time-emoji {
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #A8E6CF, #79C9AF);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.prayer-time-name {
+  flex: 1;
+  font-weight: 600;
+  color: #2E7D32;
+  font-size: 1rem;
+}
+
+.prayer-time-clock {
+  font-weight: 700;
+  color: #4CAF50;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+
+.notification-controls {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.notification-controls .health-btn {
+  background: linear-gradient(135deg, #2E7D32, #4CAF50);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+}
+
+.notification-controls .health-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+}
+
+.notification-controls .secondary-btn {
+  background: #666;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+}
+
+.notification-controls .secondary-btn:hover {
+  background: #555;
+  transform: translateY(-2px);
+}
+
+/* Responsive Design for Prayer Page */
+@media (max-width: 768px) {
+  .prayer-hero h1 {
+    font-size: 2.2rem;
+  }
+  
+  .prayer-hero p {
+    font-size: 1.1rem;
+  }
+  
+  .prayer-stats {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+  
+  .prayer-stats .stat-circle {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .prayer-stats .stat-circle span {
+    font-size: 2rem;
+  }
+  
+  .habits-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .history-stats {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .goal-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  .prayer-checkbox {
+    gap: 15px;
+  }
+  
+  .prayer-name {
+    font-size: 1.1rem;
+  }
+
+  /* Prayer times responsive */
+  .prayer-times-list {
+    grid-template-columns: 1fr;
+  }
+
+  .next-prayer-info {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .next-prayer-emoji {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+
+  .notification-controls {
+    flex-direction: column;
+  }
+
+  .prayer-time-item {
+    padding: 12px;
+  }
+
+  .prayer-time-emoji {
+    width: 35px;
+    height: 35px;
+    font-size: 1.2rem;
+  }
 }
 
 /* Responsive Design for Body Health Page */

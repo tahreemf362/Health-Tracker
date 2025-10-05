@@ -212,6 +212,47 @@
       </div>
     </div>
   </div>
+
+  <!-- 📚 Workout History -->
+  <div class="workout-history-section" id="workoutHistorySection">
+    <h3>📚 Workout History</h3>
+    <div class="history-summary">
+      <div class="history-stats">
+        <div class="stat-item">
+          <span class="stat-number" id="historyTotalWorkouts">0</span>
+          <span class="stat-label">Total Workouts</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="historyThisWeek">0</span>
+          <span class="stat-label">This Week</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="historyThisMonth">0</span>
+          <span class="stat-label">This Month</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="history-filters">
+      <button class="filter-btn active" onclick="filterWorkouts('all')">All</button>
+      <button class="filter-btn" onclick="filterWorkouts('week')">This Week</button>
+      <button class="filter-btn" onclick="filterWorkouts('month')">This Month</button>
+      <button class="filter-btn" onclick="filterWorkouts('goal')">By Goal</button>
+    </div>
+
+    <div class="workout-history-list" id="workoutHistoryList">
+      <div class="no-history" id="noHistoryMessage">
+        <div class="no-history-icon">💪</div>
+        <h4>No Workouts Yet</h4>
+        <p>Complete your first workout to start building your fitness history!</p>
+      </div>
+    </div>
+
+    <div class="history-actions">
+      <button onclick="exportWorkoutHistory()" class="export-btn">📊 Export History</button>
+      <button onclick="clearWorkoutHistory()" class="clear-btn">🗑️ Clear History</button>
+    </div>
+  </div>
 </section>
 
 <footer>© 2025 WellNest | Designed with 💚 by Tahreem Fatima</footer>
@@ -222,6 +263,7 @@
     checkAuthentication();
     updateNavigation();
     loadUserProgress();
+    loadWorkoutHistory();
   };
 
   function checkAuthentication() {
@@ -553,6 +595,27 @@
     const totalCalories = currentWorkout.reduce((sum, ex) => sum + ex.calories, 0);
     const workoutMinutes = Math.ceil(timerSeconds / 60);
     
+    // Save workout to history
+    saveWorkoutToHistory({
+      date: new Date().toISOString(),
+      goal: selectedGoal,
+      bodyParts: selectedBodyParts,
+      level: selectedLevel,
+      duration: selectedTime,
+      actualTime: workoutMinutes,
+      exercises: currentWorkout.map(ex => ({
+        name: ex.name,
+        category: ex.category,
+        duration: ex.duration,
+        reps: ex.reps,
+        completed: document.querySelector(`[onclick="markComplete('${ex.name}')"]`)?.disabled || false
+      })),
+      completedExercises: completedExercises,
+      totalExercises: currentWorkout.length,
+      caloriesBurned: totalCalories,
+      completionRate: Math.round((completedExercises / currentWorkout.length) * 100)
+    });
+    
     // Update progress
     updateWorkoutProgress(completedExercises, totalCalories, workoutMinutes);
     
@@ -560,8 +623,9 @@
     const motivationMsg = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
     alert(`🎉 Workout Complete!\n\n📊 Exercises: ${completedExercises}/${currentWorkout.length}\n🔥 Calories: ~${totalCalories}\n⏰ Time: ${workoutMinutes} minutes\n\n${motivationMsg}`);
     
-    // Refresh progress display
+    // Refresh progress display and workout history
     loadUserProgress();
+    loadWorkoutHistory();
   }
 
   function showNewWorkout() {
@@ -676,7 +740,285 @@
       displayTips();
     }
     getNewMotivation();
+    loadWorkoutHistory();
   }, 1000);
+
+  // 📚 Workout History Management
+  function saveWorkoutToHistory(workoutData) {
+    let history = JSON.parse(localStorage.getItem('workoutHistory')) || [];
+    
+    // Add timestamp and ID
+    workoutData.id = Date.now();
+    workoutData.dateString = new Date(workoutData.date).toLocaleDateString();
+    workoutData.timeString = new Date(workoutData.date).toLocaleTimeString();
+    
+    // Add to beginning of array (newest first)
+    history.unshift(workoutData);
+    
+    // Keep only last 100 workouts to prevent storage overflow
+    if (history.length > 100) {
+      history = history.slice(0, 100);
+    }
+    
+    localStorage.setItem('workoutHistory', JSON.stringify(history));
+    console.log('💾 Workout saved to history:', workoutData);
+  }
+
+  function loadWorkoutHistory() {
+    const history = JSON.parse(localStorage.getItem('workoutHistory')) || [];
+    const historyContainer = document.getElementById('workoutHistoryList');
+    const noHistoryMessage = document.getElementById('noHistoryMessage');
+    
+    // Update history stats
+    updateHistoryStats(history);
+    
+    if (history.length === 0) {
+      noHistoryMessage.style.display = 'block';
+      return;
+    }
+    
+    noHistoryMessage.style.display = 'none';
+    
+    const historyHTML = history.map(workout => `
+      <div class="workout-history-item" data-date="${workout.date}" data-goal="${workout.goal}">
+        <div class="history-item-header">
+          <div class="history-date">
+            <span class="history-day">${workout.dateString}</span>
+            <span class="history-time">${workout.timeString}</span>
+          </div>
+          <div class="history-stats-mini">
+            <span class="stat-mini">💪 ${workout.completedExercises}/${workout.totalExercises}</span>
+            <span class="stat-mini">🔥 ${workout.caloriesBurned} cal</span>
+            <span class="stat-mini">⏰ ${workout.actualTime}min</span>
+          </div>
+        </div>
+        
+        <div class="history-item-details">
+          <div class="history-tags">
+            <span class="history-tag goal-tag">${getGoalEmoji(workout.goal)} ${formatGoal(workout.goal)}</span>
+            <span class="history-tag level-tag">${getLevelEmoji(workout.level)} ${formatLevel(workout.level)}</span>
+            <span class="history-tag completion-tag ${workout.completionRate === 100 ? 'complete' : 'partial'}">${workout.completionRate}% Complete</span>
+          </div>
+          
+          <div class="history-body-parts">
+            <strong>Focus Areas:</strong> ${workout.bodyParts.map(part => formatBodyPart(part)).join(', ')}
+          </div>
+          
+          <div class="history-exercises">
+            <button class="toggle-exercises-btn" onclick="toggleExerciseDetails(${workout.id})">
+              📋 View Exercises (${workout.exercises.length})
+            </button>
+            <div class="exercise-details" id="exercises-${workout.id}" style="display: none;">
+              ${workout.exercises.map(ex => `
+                <div class="exercise-history-item ${ex.completed ? 'completed' : 'skipped'}">
+                  <span class="exercise-name">${ex.completed ? '✅' : '⏭️'} ${ex.name}</span>
+                  <span class="exercise-details">${ex.reps || ex.duration}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          
+          <div class="history-actions">
+            <button onclick="repeatWorkout(${workout.id})" class="repeat-btn">🔄 Repeat Workout</button>
+            <button onclick="deleteWorkout(${workout.id})" class="delete-btn">🗑️ Delete</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+    
+    historyContainer.innerHTML = historyHTML;
+  }
+
+  function updateHistoryStats(history) {
+    const totalWorkouts = history.length;
+    const now = new Date();
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    
+    const thisWeek = history.filter(w => new Date(w.date) >= weekAgo).length;
+    const thisMonth = history.filter(w => new Date(w.date) >= monthAgo).length;
+    
+    document.getElementById('historyTotalWorkouts').textContent = totalWorkouts;
+    document.getElementById('historyThisWeek').textContent = thisWeek;
+    document.getElementById('historyThisMonth').textContent = thisMonth;
+  }
+
+  function filterWorkouts(filter) {
+    // Update active filter button
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    const historyItems = document.querySelectorAll('.workout-history-item');
+    const now = new Date();
+    
+    historyItems.forEach(item => {
+      const itemDate = new Date(item.dataset.date);
+      let show = true;
+      
+      switch(filter) {
+        case 'week':
+          const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          show = itemDate >= weekAgo;
+          break;
+        case 'month':
+          const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+          show = itemDate >= monthAgo;
+          break;
+        case 'goal':
+          // Show all for now, could add goal filtering UI later
+          show = true;
+          break;
+        default: // 'all'
+          show = true;
+      }
+      
+      item.style.display = show ? 'block' : 'none';
+    });
+  }
+
+  function toggleExerciseDetails(workoutId) {
+    const details = document.getElementById(`exercises-${workoutId}`);
+    const button = event.target;
+    
+    if (details.style.display === 'none') {
+      details.style.display = 'block';
+      button.textContent = '📋 Hide Exercises';
+    } else {
+      details.style.display = 'none';
+      button.textContent = `📋 View Exercises`;
+    }
+  }
+
+  function repeatWorkout(workoutId) {
+    const history = JSON.parse(localStorage.getItem('workoutHistory')) || [];
+    const workout = history.find(w => w.id === workoutId);
+    
+    if (!workout) return;
+    
+    // Set the workout parameters
+    selectedGoal = workout.goal;
+    selectedBodyParts = workout.bodyParts;
+    selectedLevel = workout.level;
+    selectedTime = workout.duration;
+    
+    // Generate the same workout
+    currentWorkout = workout.exercises.map(ex => ({
+      name: ex.name,
+      category: ex.category,
+      duration: ex.duration,
+      reps: ex.reps,
+      calories: Math.round(Math.random() * 20 + 10) // Approximate calories
+    }));
+    
+    // Show the workout plan
+    displayWorkoutPlan();
+    
+    alert('🔄 Workout loaded! Ready to repeat your previous session!');
+  }
+
+  function deleteWorkout(workoutId) {
+    if (!confirm('🗑️ Are you sure you want to delete this workout from your history?')) {
+      return;
+    }
+    
+    let history = JSON.parse(localStorage.getItem('workoutHistory')) || [];
+    history = history.filter(w => w.id !== workoutId);
+    localStorage.setItem('workoutHistory', JSON.stringify(history));
+    
+    loadWorkoutHistory();
+    alert('✅ Workout deleted from history!');
+  }
+
+  function exportWorkoutHistory() {
+    const history = JSON.parse(localStorage.getItem('workoutHistory')) || [];
+    
+    if (history.length === 0) {
+      alert('📊 No workout history to export!');
+      return;
+    }
+    
+    // Create CSV content
+    const headers = ['Date', 'Goal', 'Level', 'Duration (min)', 'Exercises Completed', 'Calories Burned', 'Completion Rate'];
+    const csvContent = [
+      headers.join(','),
+      ...history.map(w => [
+        w.dateString,
+        formatGoal(w.goal),
+        formatLevel(w.level),
+        w.actualTime,
+        `${w.completedExercises}/${w.totalExercises}`,
+        w.caloriesBurned,
+        `${w.completionRate}%`
+      ].join(','))
+    ].join('\\n');
+    
+    // Create and download file
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `wellnest-workout-history-${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    
+    alert('📊 Workout history exported successfully!');
+  }
+
+  function clearWorkoutHistory() {
+    if (!confirm('🗑️ Are you sure you want to clear your entire workout history? This action cannot be undone!')) {
+      return;
+    }
+    
+    localStorage.removeItem('workoutHistory');
+    loadWorkoutHistory();
+    alert('✅ Workout history cleared!');
+  }
+
+  // Helper functions for formatting
+  function getGoalEmoji(goal) {
+    const emojis = {
+      'weight-loss': '🔥',
+      'weight-gain': '💪',
+      'maintain': '⚖️'
+    };
+    return emojis[goal] || '🎯';
+  }
+
+  function formatGoal(goal) {
+    const goals = {
+      'weight-loss': 'Weight Loss',
+      'weight-gain': 'Muscle Gain',
+      'maintain': 'Maintain'
+    };
+    return goals[goal] || goal;
+  }
+
+  function getLevelEmoji(level) {
+    const emojis = {
+      'beginner': '🌱',
+      'intermediate': '🔥',
+      'advanced': '💎'
+    };
+    return emojis[level] || '🎯';
+  }
+
+  function formatLevel(level) {
+    return level.charAt(0).toUpperCase() + level.slice(1);
+  }
+
+  function formatBodyPart(part) {
+    const parts = {
+      'full-body': 'Full Body',
+      'upper-body': 'Upper Body',
+      'lower-body': 'Lower Body',
+      'core': 'Core',
+      'cardio': 'Cardio',
+      'flexibility': 'Flexibility'
+    };
+    return parts[part] || part;
+  }
 </script>
 </body>
 </html>

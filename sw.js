@@ -1,4 +1,4 @@
-const CACHE_NAME = 'wellnest-v1';
+const CACHE_NAME = 'wellnest-v3-fixed-' + Date.now();
 const urlsToCache = [
   '/',
   '/index.html',
@@ -9,6 +9,7 @@ const urlsToCache = [
   '/diet.html',
   '/workout.html',
   '/care.html',
+  '/pray.html',
   '/reminders.html',
   '/login.html',
   '/signup.html',
@@ -16,28 +17,94 @@ const urlsToCache = [
   '/images/fitness-logo.svg',
   '/images/yoga.svg',
   '/images/diet.svg',
-  '/images/sleep.svg'
+  '/images/sleep.svg',
+  '/images/fit.webp'
 ];
 
-// Install event - cache resources
+// Install event - cache resources and clear old cache
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        return cache.addAll(urlsToCache);
+    Promise.all([
+      // Clear all old caches first
+      caches.keys().then(cacheNames => {
+        return Promise.all(
+          cacheNames.map(cacheName => {
+            if (cacheName !== CACHE_NAME) {
+              console.log('Deleting old cache:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      }),
+      // Then create new cache
+      caches.open(CACHE_NAME)
+        .then(cache => {
+          console.log('Creating new cache:', CACHE_NAME);
+          return cache.addAll(urlsToCache);
+        })
+    ]).then(() => {
+      // Force immediate activation
+      return self.skipWaiting();
+    })
+  );
+});
+
+// Activate event - take control immediately
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    Promise.all([
+      // Clear old caches
+      caches.keys().then(cacheNames => {
+        return Promise.all(
+          cacheNames.map(cacheName => {
+            if (cacheName !== CACHE_NAME) {
+              console.log('Activating: Deleting old cache:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      }),
+      // Take control of all clients immediately
+      self.clients.claim()
+    ])
+  );
+});
+
+// Fetch event - always try network first, fallback to cache
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    fetch(event.request)
+      .then(response => {
+        // If fetch successful, update cache and return response
+        if (response && response.status === 200) {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseClone);
+          });
+        }
+        return response;
+      })
+      .catch(() => {
+        // If network fails, try cache
+        return caches.match(event.request);
       })
   );
 });
 
-// Fetch event - serve from cache when offline
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Return cached version or fetch from network
-        return response || fetch(event.request);
+// Enhanced notification handling for apps
+self.addEventListener('notificationclick', event => {
+  console.log('Notification clicked:', event.notification);
+  
+  event.notification.close();
+  
+  // Focus the app window when notification is clicked
+  event.waitUntil(
+    clients.matchAll().then(clientList => {
+      if (clientList.length > 0) {
+        return clientList[0].focus();
       }
-    )
+      return clients.openWindow('/');
+    })
   );
 });
 
@@ -45,10 +112,63 @@ self.addEventListener('fetch', event => {
 self.addEventListener('sync', event => {
   if (event.tag === 'reminder-sync') {
     event.waitUntil(
-      // Handle background reminder sync
-      console.log('Background reminder sync triggered')
+      handleBackgroundReminders()
+    );
+  } else if (event.tag === 'prayer-sync') {
+    event.waitUntil(
+      handleBackgroundPrayers()
     );
   }
+});
+
+function handleBackgroundReminders() {
+  console.log('🔔 Background reminder sync triggered');
+  
+  // Get stored reminders from IndexedDB or localStorage
+  return new Promise((resolve) => {
+    // This would normally check for pending reminders
+    // and send notifications if needed
+    console.log('Checking for pending reminders...');
+    resolve();
+  });
+}
+
+function handleBackgroundPrayers() {
+  console.log('🕌 Background prayer sync triggered');
+  
+  return new Promise((resolve) => {
+    // Check for missed prayers and send notifications
+    console.log('Checking for missed prayers...');
+    resolve();
+  });
+}
+
+// Handle push notifications (for advanced implementations)
+self.addEventListener('push', event => {
+  console.log('Push notification received:', event);
+  
+  const options = {
+    body: event.data ? event.data.text() : 'WellNest reminder',
+    icon: '/images/fitness-logo.svg',
+    badge: '/images/fitness-logo.svg',
+    vibrate: [200, 100, 200],
+    requireInteraction: true,
+    actions: [
+      {
+        action: 'view',
+        title: 'View',
+        icon: '/images/fitness-logo.svg'
+      },
+      {
+        action: 'dismiss',
+        title: 'Dismiss'
+      }
+    ]
+  };
+  
+  event.waitUntil(
+    self.registration.showNotification('WellNest Health Tracker', options)
+  );
 });
 
 // Push notifications (for future enhancement)

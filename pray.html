@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Prayer Tracker - WellNest</title>
+  <link rel="stylesheet" href="style.css?v=20241005">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Force Cache Clear Script -->
+  <script>
+    // Clear all caches on load to prevent old version issues
+    if ('caches' in window) {
+      caches.keys().then(function(names) {
+        names.forEach(function(name) {
+          if (name.indexOf('wellnest') !== -1 && name.indexOf('v3-fixed') === -1) {
+            caches.delete(name).then(() => {
+              console.log('Prayer page: Cleared old cache:', name);
+            });
+          }
+        });
+      });
+    }
+    
+    // Force reload if cached version detected
+    if (performance.navigation.type === 1 && !sessionStorage.getItem('prayer-refresh-done')) {
+      sessionStorage.setItem('prayer-refresh-done', 'true');
+      location.reload(true);
+    }
+  </script>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <img src="images/fitness-logo.svg" alt="WellNest Logo" class="logo">
+        <span>WellNest</span>
+      </div>
+      
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="body.html">Body</a></li>
+        <li><a href="bodyhealth.html">Body Health</a></li>
+        <li><a href="mind.html">Mind</a></li>
+        <li><a href="sleep.html">Sleep</a></li>
+        <li><a href="diet.html">Diet</a></li>
+        <li><a href="workout.html">Workout</a></li>
+        <li><a href="care.html">Care</a></li>
+        <li><a href="pray.html" class="active">Prayer</a></li>
+        <li><a href="reminders.html">Reminders</a></li>
+        <li><a href="login.html" id="loginLink">Login</a></li>
+        <li><a href="signup.html" id="signupLink">Sign Up</a></li>
+        <li><a href="#" id="logoutLink" onclick="logout()" style="display: none;">Logout</a></li>
+      </ul>
+      
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section prayer-hero">
+    <div class="hero-content">
+      <h1>Prayer Tracker 🕌</h1>
+      <p>Track your daily prayers and strengthen your spiritual connection</p>
+    </div>
+  </section>
+
+  <main class="main-content">
+    <div class="container">
+
+      <!-- Prayer Times Display -->
+      <div class="care-card prayer-times-card">
+        <h3>🕌 Prayer Times & Next Reminder</h3>
+        <div id="nextPrayer" class="next-prayer-container">
+          <!-- Default next prayer display (will be updated by JavaScript) -->
+          <div class="next-prayer-info">
+            <h4>⏰ Next Prayer</h4>
+            <p>Calculating next prayer time...</p>
+          </div>
+        </div>
+        <div id="prayerTimesDisplay">
+          <!-- Default prayer times display (will be replaced by JavaScript) -->
+          <div class="prayer-times-display">
+            <h4>📅 Today's Prayer Times</h4>
+            <div class="prayer-times-list">
+              <div class="prayer-time-item">
+                <span class="prayer-time-emoji">🌅</span>
+                <span class="prayer-time-name">Fajr</span>
+                <span class="prayer-time-clock">05:30</span>
+              </div>
+              <div class="prayer-time-item">
+                <span class="prayer-time-emoji">☀️</span>
+                <span class="prayer-time-name">Dhuhr</span>
+                <span class="prayer-time-clock">12:15</span>
+              </div>
+              <div class="prayer-time-item">
+                <span class="prayer-time-emoji">🌇</span>
+                <span class="prayer-time-name">Asr</span>
+                <span class="prayer-time-clock">15:45</span>
+              </div>
+              <div class="prayer-time-item">
+                <span class="prayer-time-emoji">🌆</span>
+                <span class="prayer-time-name">Maghrib</span>
+                <span class="prayer-time-clock">18:30</span>
+              </div>
+              <div class="prayer-time-item">
+                <span class="prayer-time-emoji">🌙</span>
+                <span class="prayer-time-name">Isha</span>
+                <span class="prayer-time-clock">20:00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="notification-controls">
+          <button class="health-btn" onclick="requestNotificationPermission()">🔔 Enable Prayer Notifications</button>
+        </div>
+      </div>
+
+      <!-- Daily Prayer Tracker -->
+      <div class="care-card prayer-card">
+        <h3>🕌 Daily Prayer Tracker</h3>
+        <div class="prayer-stats">
+          <div class="stat-circle">
+            <span id="prayerCount">0</span>
+            <small>out of 5</small>
+          </div>
+          <div class="completion-text">
+            <p id="prayerStatus">Start your spiritual journey today</p>
+            <div class="progress-ring">
+              <div class="progress-fill" id="prayerProgress" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="prayer-list">
+          <div class="prayer-item">
+            <label class="prayer-checkbox">
+              <input type="checkbox" id="fajr" onchange="updatePrayer('fajr', this.checked)">
+              <span class="checkmark">🌅</span>
+              <div class="prayer-info">
+                <span class="prayer-name">Fajr</span>
+                <span class="prayer-time">Dawn Prayer</span>
+              </div>
+            </label>
+          </div>
+          
+          <div class="prayer-item">
+            <label class="prayer-checkbox">
+              <input type="checkbox" id="dhuhr" onchange="updatePrayer('dhuhr', this.checked)">
+              <span class="checkmark">☀️</span>
+              <div class="prayer-info">
+                <span class="prayer-name">Dhuhr</span>
+                <span class="prayer-time">Midday Prayer</span>
+              </div>
+            </label>
+          </div>
+          
+          <div class="prayer-item">
+            <label class="prayer-checkbox">
+              <input type="checkbox" id="asr" onchange="updatePrayer('asr', this.checked)">
+              <span class="checkmark">🌇</span>
+              <div class="prayer-info">
+                <span class="prayer-name">Asr</span>
+                <span class="prayer-time">Afternoon Prayer</span>
+              </div>
+            </label>
+          </div>
+          
+          <div class="prayer-item">
+            <label class="prayer-checkbox">
+              <input type="checkbox" id="maghrib" onchange="updatePrayer('maghrib', this.checked)">
+              <span class="checkmark">🌆</span>
+              <div class="prayer-info">
+                <span class="prayer-name">Maghrib</span>
+                <span class="prayer-time">Sunset Prayer</span>
+              </div>
+            </label>
+          </div>
+          
+          <div class="prayer-item">
+            <label class="prayer-checkbox">
+              <input type="checkbox" id="isha" onchange="updatePrayer('isha', this.checked)">
+              <span class="checkmark">🌙</span>
+              <div class="prayer-info">
+                <span class="prayer-name">Isha</span>
+                <span class="prayer-time">Night Prayer</span>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Islamic Habits Tracker -->
+      <div class="care-card habits-card">
+        <h3>🌟 Islamic Habits Today</h3>
+        <div class="habits-grid">
+          <div class="habit-item">
+            <label class="habit-checkbox">
+              <input type="checkbox" id="quran" onchange="updateHabit('quran', this.checked)">
+              <span class="habit-icon">📖</span>
+              <span class="habit-name">Read Quran</span>
+            </label>
+          </div>
+          
+          <div class="habit-item">
+            <label class="habit-checkbox">
+              <input type="checkbox" id="dhikr" onchange="updateHabit('dhikr', this.checked)">
+              <span class="habit-icon">📿</span>
+              <span class="habit-name">Dhikr/Tasbih</span>
+            </label>
+          </div>
+          
+          <div class="habit-item">
+            <label class="habit-checkbox">
+              <input type="checkbox" id="dua" onchange="updateHabit('dua', this.checked)">
+              <span class="habit-icon">🤲</span>
+              <span class="habit-name">Make Dua</span>
+            </label>
+          </div>
+          
+          <div class="habit-item">
+            <label class="habit-checkbox">
+              <input type="checkbox" id="charity" onchange="updateHabit('charity', this.checked)">
+              <span class="habit-icon">💝</span>
+              <span class="habit-name">Give Charity</span>
+            </label>
+          </div>
+          
+          <div class="habit-item">
+            <label class="habit-checkbox">
+              <input type="checkbox" id="istighfar" onchange="updateHabit('istighfar', this.checked)">
+              <span class="habit-icon">🌸</span>
+              <span class="habit-name">Istighfar</span>
+            </label>
+          </div>
+          
+          <div class="habit-item">
+            <label class="habit-checkbox">
+              <input type="checkbox" id="sunnah" onchange="updateHabit('sunnah', this.checked)">
+              <span class="habit-icon">✨</span>
+              <span class="habit-name">Sunnah Acts</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Daily Islamic Guidance -->
+      <div class="care-card guidance-card">
+        <h3>💡 Daily Islamic Guidance</h3>
+        <div class="guidance-content" id="dailyGuidance">
+          <!-- Daily guidance will be loaded here -->
+        </div>
+        <button class="health-btn" onclick="getNewGuidance()">🔄 Get New Guidance</button>
+      </div>
+
+      <!-- Prayer History -->
+      <div class="care-card history-card">
+        <h3>📊 Prayer History</h3>
+        <div class="history-stats">
+          <div class="stat-item">
+            <span class="stat-number" id="weeklyAverage">0%</span>
+            <span class="stat-label">This Week</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="monthlyAverage">0%</span>
+            <span class="stat-label">This Month</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" id="streak">0</span>
+            <span class="stat-label">Days Streak</span>
+          </div>
+        </div>
+        
+        <div class="recent-history" id="recentHistory">
+          <h4>Recent Days</h4>
+          <div class="history-list">
+            <!-- Recent prayer history will be loaded here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Spiritual Goals -->
+      <div class="care-card goals-card">
+        <h3>🎯 Spiritual Goals</h3>
+        <div class="goals-list">
+          <div class="goal-item">
+            <span class="goal-icon">🌅</span>
+            <span class="goal-text">Pray Fajr for 7 consecutive days</span>
+            <span class="goal-progress" id="fajrStreak">0/7</span>
+          </div>
+          <div class="goal-item">
+            <span class="goal-icon">📖</span>
+            <span class="goal-text">Read Quran daily for 30 days</span>
+            <span class="goal-progress" id="quranStreak">0/30</span>
+          </div>
+          <div class="goal-item">
+            <span class="goal-icon">🤲</span>
+            <span class="goal-text">Complete all 5 prayers for 3 days</span>
+            <span class="goal-progress" id="allPrayersStreak">0/3</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>© 2025 WellNest | Designed with 💚 by Tahreem Fatima</footer>
+
+  <script>
+    // Prayer tracking functionality
+    let currentDate = new Date();
+    let todayKey = formatDateKey(new Date());
+    let prayerTimers = {};
+    let notificationPermission = false;
+
+    function formatDateKey(date) {
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    }
+
+    // Prayer times (approximate - can be adjusted for location)
+    const prayerTimes = {
+      fajr: { hour: 5, minute: 30, name: 'Fajr', emoji: '🌅' },
+      dhuhr: { hour: 12, minute: 15, name: 'Dhuhr', emoji: '☀️' },
+      asr: { hour: 15, minute: 45, name: 'Asr', emoji: '🌇' },
+      maghrib: { hour: 18, minute: 30, name: 'Maghrib', emoji: '🌆' },
+      isha: { hour: 20, minute: 0, name: 'Isha', emoji: '🌙' }
+    };
+
+    // Enhanced prayer notification permission for apps
+    function requestNotificationPermission() {
+      console.log('🔔 Requesting prayer notification permissions...');
+      
+      // Method 1: Standard web notifications
+      if ('Notification' in window) {
+        if (Notification.permission === 'granted') {
+          notificationPermission = true;
+          schedulePrayerReminders();
+          showPrayerPermissionSuccess();
+        } else if (Notification.permission === 'default') {
+          Notification.requestPermission().then(function(permission) {
+            if (permission === 'granted') {
+              notificationPermission = true;
+              console.log('✅ Web prayer notifications granted');
+              schedulePrayerReminders();
+              showPrayerPermissionSuccess();
+            } else {
+              console.log('❌ Web prayer notifications denied');
+              showPrayerPermissionFallback();
+            }
+          }).catch(error => {
+            console.log('❌ Permission request error:', error);
+            showPrayerPermissionFallback();
+          });
+        } else {
+          showPrayerPermissionFallback();
+        }
+      } else {
+        console.log('⚠️ Web notifications not supported');
+        showPrayerPermissionFallback();
+      }
+      
+      // Method 2: App-specific permission requests
+      if (typeof window.AndroidNotification !== 'undefined') {
+        try {
+          window.AndroidNotification.requestPermission();
+          console.log('✅ Android prayer notification permission requested');
+        } catch (error) {
+          console.log('❌ Android permission request failed:', error);
+        }
+      }
+      
+      if (typeof window.webkit !== 'undefined' && window.webkit.messageHandlers && window.webkit.messageHandlers.requestNotification) {
+        try {
+          window.webkit.messageHandlers.requestNotification.postMessage({ type: 'prayer' });
+          console.log('✅ iOS prayer notification permission requested');
+        } catch (error) {
+          console.log('❌ iOS permission request failed:', error);
+        }
+      }
+    }
+    
+    function showPrayerPermissionSuccess() {
+      const successDiv = document.createElement('div');
+      successDiv.className = 'prayer-permission-success';
+      successDiv.innerHTML = `
+        <div class="success-content">
+          <h4>🕌 Prayer Notifications Enabled!</h4>
+          <p>You will receive reminders for:</p>
+          <ul>
+            <li>✓ All 5 daily prayers</li>
+            <li>✓ Missed prayer alerts</li>
+            <li>✓ Prayer time notifications</li>
+          </ul>
+          <button onclick="closePermissionAlert(this)">Alhamdulillah!</button>
+        </div>
+      `;
+      successDiv.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(135deg, #E8F5E8, #C8E6C9);
+        border: 3px solid #4CAF50;
+        border-radius: 15px;
+        padding: 25px;
+        z-index: 10002;
+        box-shadow: 0 6px 25px rgba(76, 175, 80, 0.3);
+        max-width: 350px;
+        text-align: center;
+        font-family: 'Poppins', sans-serif;
+      `;
+      document.body.appendChild(successDiv);
+      
+      setTimeout(() => {
+        if (successDiv.parentNode) {
+          successDiv.parentNode.removeChild(successDiv);
+        }
+      }, 6000);
+    }
+    
+    function showPrayerPermissionFallback() {
+      const fallbackDiv = document.createElement('div');
+      fallbackDiv.className = 'prayer-permission-fallback';
+      fallbackDiv.innerHTML = `
+        <div class="fallback-content">
+          <h4>📱 Prayer Reminders Active</h4>
+          <p>Your prayer reminders will work using:</p>
+          <ul>
+            <li>✓ Visual alerts on screen</li>
+            <li>✓ Audio notifications</li>
+            <li>✓ Vibration (mobile)</li>
+            <li>✓ Page title alerts</li>
+          </ul>
+          <p><small>Keep the app open for best results</small></p>
+          <button onclick="closePermissionAlert(this)">Got it!</button>
+        </div>
+      `;
+      fallbackDiv.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+        border: 3px solid #FF9800;
+        border-radius: 15px;
+        padding: 25px;
+        z-index: 10002;
+        box-shadow: 0 6px 25px rgba(255, 152, 0, 0.3);
+        max-width: 350px;
+        text-align: center;
+        font-family: 'Poppins', sans-serif;
+      `;
+      document.body.appendChild(fallbackDiv);
+      
+      setTimeout(() => {
+        if (fallbackDiv.parentNode) {
+          fallbackDiv.parentNode.removeChild(fallbackDiv);
+        }
+      }, 8000);
+    }
+    
+    function closePermissionAlert(button) {
+      const alert = button.closest('.prayer-permission-success, .prayer-permission-fallback');
+      if (alert && alert.parentNode) {
+        alert.parentNode.removeChild(alert);
+      }
+    }
+
+    // Enhanced app-compatible notification system
+    function sendNotification(title, body, icon = '🕌') {
+      console.log('🔔 Prayer notification:', title, body);
+      
+      let notificationSent = false;
+      
+      // Method 1: Web notification (browsers)
+      if (notificationPermission && 'Notification' in window) {
+        try {
+          const notification = new Notification(title, {
+            body: body,
+            icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE2IDJDOC4yNjggMiAyIDguMjY4IDIgMTZTOC4yNjggMzAgMTYgMzBTMzAgMjMuNzMyIDMwIDE2UzIzLjczMiAyIDE2IDJaIiBmaWxsPSIjNENBRjUwIi8+Cjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1zaXplPSIxOCIgZmlsbD0id2hpdGUiPvCfWIw8L3RleHQ+Cjwvc3ZnPg==',
+            badge: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMkM4LjI2OCAyIDIgOC4yNjggMiAxNlM4LjI2OCAzMCAxNiAzMFMzMCAyMy43MzIgMzAgMTZTMjMuNzMyIDIgMTYgMloiIGZpbGw9IiM0Q0FGNTAI',
+            requireInteraction: true,
+            tag: 'prayer-reminder',
+            silent: false
+          });
+
+          notification.onclick = function() {
+            window.focus();
+            this.close();
+          };
+          
+          notificationSent = true;
+          console.log('✅ Web notification sent');
+        } catch (error) {
+          console.log('❌ Web notification failed:', error);
+        }
+      }
+      
+      // Method 2: App-specific notifications
+      if (typeof window.AndroidNotification !== 'undefined') {
+        try {
+          window.AndroidNotification.show(title + ': ' + body);
+          notificationSent = true;
+          console.log('✅ Android notification sent');
+        } catch (error) {
+          console.log('❌ Android notification failed:', error);
+        }
+      }
+      
+      // Method 3: iOS app notifications
+      if (typeof window.webkit !== 'undefined' && window.webkit.messageHandlers && window.webkit.messageHandlers.notification) {
+        try {
+          window.webkit.messageHandlers.notification.postMessage({
+            title: title,
+            body: body
+          });
+          notificationSent = true;
+          console.log('✅ iOS notification sent');
+        } catch (error) {
+          console.log('❌ iOS notification failed:', error);
+        }
+      }
+      
+      // Method 4: Vibration for mobile apps
+      if ('vibrate' in navigator) {
+        try {
+          navigator.vibrate([300, 100, 300, 100, 300]);
+          console.log('✅ Prayer vibration triggered');
+        } catch (error) {
+          console.log('❌ Vibration failed:', error);
+        }
+      }
+      
+      // Method 5: Visual prayer alert (always show as backup)
+      showPrayerVisualAlert(title, body, icon);
+      
+      // Method 6: Audio alert
+      try {
+        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmEfBzmByfLAciUEKH7J8t+QQAoTVrLr7aNWFAdGod/3um4gBDue2vTEcSEEJ4HM8t+RQgkRVrTs66hWFApGn+DyvmEfBzmByfLAciUEKH7J8t+QQAoUVrPp66hVFApGn+DyvmEfBzmByfLAciUEKH7J8t+QQAoTVrLr7aNWFAdGod/3um4gBDue2vTEcSEEJ4HM8t+RQgkRVrTs66hWFApGn+DyvmEfBzmByfLAciUEKH7J8t+QQAoUXrPq6qhWFAlDodnw');
+        audio.volume = 0.6;
+        audio.play().catch(() => console.log('❌ Prayer audio failed'));
+      } catch (error) {
+        console.log('❌ Audio setup failed:', error);
+      }
+      
+      // Method 7: Title flash for background apps
+      flashPrayerTitle(title);
+      
+      console.log(notificationSent ? '✅ Prayer notification sent successfully' : '⚠️ Using visual alerts only');
+    }
+    
+    function showPrayerVisualAlert(title, body, icon) {
+      const alertDiv = document.createElement('div');
+      alertDiv.className = 'prayer-alert app-compatible';
+      alertDiv.innerHTML = `
+        <div class="alert-overlay"></div>
+        <div class="alert-content prayer-alert-content">
+          <div class="alert-header">
+            <span class="alert-icon">${icon}</span>
+            <h3>${title}</h3>
+          </div>
+          <div class="alert-body">
+            <p class="prayer-message">${body}</p>
+            <p class="prayer-time">⏰ ${new Date().toLocaleTimeString()}</p>
+          </div>
+          <div class="alert-actions">
+            <button onclick="closePrayerAlert(this)" class="alert-close-btn primary">✓ Understood</button>
+          </div>
+        </div>
+      `;
+      
+      alertDiv.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0,0,0,0.8);
+        backdrop-filter: blur(5px);
+      `;
+      
+      document.body.appendChild(alertDiv);
+      
+      // Focus the close button
+      const closeBtn = alertDiv.querySelector('.alert-close-btn');
+      if (closeBtn) closeBtn.focus();
+      
+      // Auto-remove after 30 seconds
+      setTimeout(() => {
+        if (alertDiv.parentNode) {
+          alertDiv.parentNode.removeChild(alertDiv);
+        }
+      }, 30000);
+    }
+    
+    function closePrayerAlert(button) {
+      const alert = button.closest('.prayer-alert');
+      if (alert && alert.parentNode) {
+        alert.parentNode.removeChild(alert);
+      }
+    }
+    
+    function flashPrayerTitle(title) {
+      const originalTitle = document.title;
+      let flashCount = 0;
+      const maxFlashes = 8;
+      
+      const flashInterval = setInterval(() => {
+        document.title = flashCount % 2 === 0 ? `🕌 ${title}` : originalTitle;
+        flashCount++;
+        
+        if (flashCount >= maxFlashes) {
+          clearInterval(flashInterval);
+          document.title = originalTitle;
+        }
+      }, 1500);
+
+        // Auto close after 10 seconds
+        setTimeout(() => {
+          notification.close();
+        }, 10000);
+      }
+    }
+
+    // Schedule prayer reminders
+    function schedulePrayerReminders() {
+      // Clear existing timers
+      Object.values(prayerTimers).forEach(timer => clearTimeout(timer));
+      prayerTimers = {};
+
+      const now = new Date();
+      
+      Object.entries(prayerTimes).forEach(([prayerKey, prayerTime]) => {
+        // Schedule reminder for prayer time
+        const prayerDateTime = new Date();
+        prayerDateTime.setHours(prayerTime.hour, prayerTime.minute, 0, 0);
+        
+        // If prayer time has passed today, schedule for tomorrow
+        if (prayerDateTime <= now) {
+          prayerDateTime.setDate(prayerDateTime.getDate() + 1);
+        }
+        
+        const timeUntilPrayer = prayerDateTime.getTime() - now.getTime();
+        
+        // Schedule prayer time notification
+        prayerTimers[prayerKey] = setTimeout(() => {
+          const userData = JSON.parse(localStorage.getItem('wellnest_user_data') || '{}');
+          const todaysPrayers = userData.prayers && userData.prayers[todayKey] ? userData.prayers[todayKey] : {};
+          
+          if (!todaysPrayers[prayerKey]) {
+            sendNotification(
+              `${prayerTime.emoji} ${prayerTime.name} Prayer Time`,
+              `It's time for ${prayerTime.name} prayer. May Allah accept your prayers. 🤲`,
+              '🕌'
+            );
+            
+            // Schedule missed prayer reminder (30 minutes later)
+            setTimeout(() => {
+              checkMissedPrayer(prayerKey, prayerTime);
+            }, 30 * 60 * 1000); // 30 minutes
+          }
+          
+          // Reschedule for next day
+          schedulePrayerReminders();
+        }, timeUntilPrayer);
+        
+        console.log(`${prayerTime.name} reminder scheduled in ${Math.round(timeUntilPrayer / 1000 / 60)} minutes`);
+      });
+    }
+
+    // Check for missed prayers
+    function checkMissedPrayer(prayerKey, prayerTime) {
+      const userData = JSON.parse(localStorage.getItem('wellnest_user_data') || '{}');
+      const todaysPrayers = userData.prayers && userData.prayers[todayKey] ? userData.prayers[todayKey] : {};
+      
+      if (!todaysPrayers[prayerKey]) {
+        sendNotification(
+          `${prayerTime.emoji} Missed ${prayerTime.name} Prayer`,
+          `You haven't marked ${prayerTime.name} prayer as completed. Remember to make it up (Qada). 🤲`,
+          '⚠️'
+        );
+      }
+    }
+
+    // Get next prayer time
+    function getNextPrayerTime() {
+      const now = new Date();
+      const currentTime = now.getHours() * 60 + now.getMinutes();
+      
+      let nextPrayer = null;
+      let minTimeDiff = Infinity;
+      
+      Object.entries(prayerTimes).forEach(([key, prayer]) => {
+        const prayerTime = prayer.hour * 60 + prayer.minute;
+        let timeDiff;
+        
+        if (prayerTime > currentTime) {
+          // Prayer is later today
+          timeDiff = prayerTime - currentTime;
+        } else {
+          // Prayer is tomorrow
+          timeDiff = (24 * 60) - currentTime + prayerTime;
+        }
+        
+        if (timeDiff < minTimeDiff) {
+          minTimeDiff = timeDiff;
+          nextPrayer = { ...prayer, key, timeUntil: timeDiff };
+        }
+      });
+      
+      return nextPrayer;
+    }
+
+    // Display prayer times
+    function displayPrayerTimes() {
+      const prayerTimesHTML = Object.entries(prayerTimes).map(([key, prayer]) => {
+        const timeStr = `${String(prayer.hour).padStart(2, '0')}:${String(prayer.minute).padStart(2, '0')}`;
+        return `
+          <div class="prayer-time-item">
+            <span class="prayer-time-emoji">${prayer.emoji}</span>
+            <span class="prayer-time-name">${prayer.name}</span>
+            <span class="prayer-time-clock">${timeStr}</span>
+          </div>
+        `;
+      }).join('');
+      
+      return `
+        <div class="prayer-times-display">
+          <h4>📅 Today's Prayer Times</h4>
+          <div class="prayer-times-list">
+            ${prayerTimesHTML}
+          </div>
+        </div>
+      `;
+    }
+
+    // Update next prayer display
+    function updateNextPrayerDisplay() {
+      const nextPrayer = getNextPrayerTime();
+      const nextPrayerElement = document.getElementById('nextPrayer');
+      
+      if (nextPrayerElement && nextPrayer) {
+        const hours = Math.floor(nextPrayer.timeUntil / 60);
+        const minutes = nextPrayer.timeUntil % 60;
+        
+        nextPrayerElement.innerHTML = `
+          <div class="next-prayer-info">
+            <span class="next-prayer-emoji">${nextPrayer.emoji}</span>
+            <div class="next-prayer-details">
+              <span class="next-prayer-name">Next: ${nextPrayer.name}</span>
+              <span class="next-prayer-time">in ${hours}h ${minutes}m</span>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // Islamic guidance database
+    const islamicGuidance = [
+      {
+        title: "Morning Dhikr",
+        content: "Start your day with 'Alhamdulillahi Rabbil Alameen' (All praise is due to Allah, the Lord of the worlds). This simple dhikr fills your heart with gratitude and sets a positive tone for your entire day.",
+        category: "Dhikr"
+      },
+      {
+        title: "The Power of Istighfar",
+        content: "Say 'Astaghfirullah' (I seek forgiveness from Allah) frequently. The Prophet ﷺ said: 'Whoever persists in seeking forgiveness, Allah will grant him relief from every worry and a way out from every hardship.'",
+        category: "Forgiveness"
+      },
+      {
+        title: "Reading Surah Al-Fatiha",
+        content: "Recite Surah Al-Fatiha with contemplation. It contains the essence of the entire Quran and establishes a direct connection with Allah. Reflect on its meaning as you recite.",
+        category: "Quran"
+      },
+      {
+        title: "The Sunnah of Smiling",
+        content: "Smiling is a Sunnah and an act of charity. The Prophet ﷺ said: 'Your smile for your brother is a charity.' Spread positivity through this simple act of worship.",
+        category: "Sunnah"
+      },
+      {
+        title: "Remembering Allah in Difficulty",
+        content: "When facing challenges, remember 'La hawla wa la quwwata illa billah' (There is no power except with Allah). This dhikr brings peace and reminds us of Allah's ultimate control.",
+        category: "Dhikr"
+      },
+      {
+        title: "The Virtue of Charity",
+        content: "Give charity, even if it's small. The Prophet ﷺ said: 'Protect yourself from the fire even with half a date (in charity).' Every act of giving purifies the soul.",
+        category: "Charity"
+      },
+      {
+        title: "Seeking Knowledge",
+        content: "Dedicate time daily to learning about Islam. The Prophet ﷺ said: 'Whoever treads a path seeking knowledge, Allah will make easy for him the path to Paradise.'",
+        category: "Knowledge"
+      },
+      {
+        title: "The Beauty of Tahajjud",
+        content: "Try to wake up for Tahajjud prayer, even if briefly. These quiet moments with Allah in the last third of the night are incredibly blessed and bring immense spiritual benefit.",
+        category: "Prayer"
+      },
+      {
+        title: "Gratitude Practice",
+        content: "End your day by listing three things you're grateful for and saying 'Alhamdulillah.' Gratitude is a form of worship that increases Allah's blessings in your life.",
+        category: "Gratitude"
+      },
+      {
+        title: "Prophetic Dua",
+        content: "Learn and recite this beautiful dua: 'Rabbana atina fi'd-dunya hasanatan wa fi'l-akhirati hasanatan wa qina 'adhab an-nar' (Our Lord, give us good in this world and good in the Hereafter, and save us from the punishment of the Fire).",
+        category: "Dua"
+      }
+    ];
+
+    function updatePrayer(prayerName, isCompleted) {
+      const userData = JSON.parse(localStorage.getItem('wellnest_user_data') || '{}');
+      
+      // Initialize prayer data structure
+      if (!userData.prayers) userData.prayers = {};
+      if (!userData.prayers[todayKey]) {
+        userData.prayers[todayKey] = {
+          fajr: false,
+          dhuhr: false,
+          asr: false,
+          maghrib: false,
+          isha: false,
+          completedCount: 0,
+          timestamp: Date.now()
+        };
+      }
+
+      // Update prayer status
+      userData.prayers[todayKey][prayerName] = isCompleted;
+      
+      // Recalculate completed count
+      const prayers = userData.prayers[todayKey];
+      prayers.completedCount = Object.values(prayers).filter(val => val === true).length;
+      
+      // Update calendar integration
+      updateCalendarIntegration(userData);
+      
+      // Save to localStorage
+      localStorage.setItem('wellnest_user_data', JSON.stringify(userData));
+      
+      // Update UI
+      updatePrayerDisplay();
+      updatePrayerHistory();
+      updateSpritualGoals();
+    }
+
+    function updateHabit(habitName, isCompleted) {
+      const userData = JSON.parse(localStorage.getItem('wellnest_user_data') || '{}');
+      
+      // Initialize habits data structure
+      if (!userData.islamicHabits) userData.islamicHabits = {};
+      if (!userData.islamicHabits[todayKey]) {
+        userData.islamicHabits[todayKey] = {};
+      }
+
+      userData.islamicHabits[todayKey][habitName] = isCompleted;
+      
+      // Update calendar integration
+      updateCalendarIntegration(userData);
+      
+      // Save to localStorage
+      localStorage.setItem('wellnest_user_data', JSON.stringify(userData));
+    }
+
+    function updateCalendarIntegration(userData) {
+      // Initialize calendar structure
+      if (!userData.calendar) userData.calendar = {};
+      if (!userData.calendar[todayKey]) {
+        userData.calendar[todayKey] = {
+          activities: {},
+          healthMetrics: {},
+          score: 0,
+          steps: 0
+        };
+      }
+
+      const todaysPrayers = userData.prayers && userData.prayers[todayKey] ? userData.prayers[todayKey] : {};
+      const todaysHabits = userData.islamicHabits && userData.islamicHabits[todayKey] ? userData.islamicHabits[todayKey] : {};
+      
+      // Calculate prayer completion percentage
+      const prayerCount = todaysPrayers.completedCount || 0;
+      const prayerPercentage = (prayerCount / 5) * 100;
+      
+      // Calculate habits completion
+      const habitCount = Object.values(todaysHabits).filter(Boolean).length;
+      const habitPercentage = (habitCount / 6) * 100;
+      
+      // Mark activities in calendar
+      if (prayerCount >= 5) {
+        userData.calendar[todayKey].activities.prayer_complete = true;
+      }
+      if (prayerCount >= 3) {
+        userData.calendar[todayKey].activities.prayer_regular = true;
+      }
+      if (todaysHabits.quran) {
+        userData.calendar[todayKey].activities.quran_read = true;
+      }
+      
+      // Add spiritual metrics
+      userData.calendar[todayKey].healthMetrics.prayers = `${prayerCount}/5 prayers`;
+      userData.calendar[todayKey].healthMetrics.spiritual = `${Math.round((prayerPercentage + habitPercentage) / 2)}% spiritual goals`;
+      
+      // Recalculate overall health score including spiritual component
+      userData.calendar[todayKey].score = calculateDayScore(userData.calendar[todayKey]);
+    }
+
+    function calculateDayScore(dayData) {
+      const activities = dayData.activities || {};
+      const healthMetrics = dayData.healthMetrics || {};
+      
+      let score = 0;
+      const totalActivities = 8; // Including spiritual activities
+      const completedActivities = Object.values(activities).filter(Boolean).length;
+      
+      // Activity score (50% weight)
+      score += (completedActivities / totalActivities) * 50;
+      
+      // Health metrics score (30% weight)
+      const healthScore = Object.keys(healthMetrics).length > 0 ? 25 : 0;
+      score += healthScore;
+      
+      // Steps score (10% weight)
+      const stepsScore = Math.min((dayData.steps || 0) / 10000, 1) * 15;
+      score += stepsScore;
+      
+      // Spiritual bonus (10% weight)
+      const spiritualBonus = (activities.prayer_complete ? 5 : 0) + (activities.quran_read ? 5 : 0);
+      score += spiritualBonus;
+      
+      return Math.round(score);
+    }
+
+    function updatePrayerDisplay() {
+      const userData = JSON.parse(localStorage.getItem('wellnest_user_data') || '{}');
+      const todaysPrayers = userData.prayers && userData.prayers[todayKey] ? userData.prayers[todayKey] : {};
+      
+      const prayerCount = todaysPrayers.completedCount || 0;
+      const percentage = (prayerCount / 5) * 100;
+      
+      document.getElementById('prayerCount').textContent = prayerCount;
+      document.getElementById('prayerProgress').style.width = percentage + '%';
+      
+      let status = '';
+      if (prayerCount === 0) {
+        status = 'Begin your spiritual journey today 🌟';
+      } else if (prayerCount < 3) {
+        status = 'Good start! Keep going 💪';
+      } else if (prayerCount < 5) {
+        status = 'Excellent progress! Almost there 🌙';
+      } else {
+        status = 'Mashallah! All prayers completed 🎉';
+      }
+      
+      document.getElementById('prayerStatus').textContent = status;
+    }
+
+    function updatePrayerHistory() {
+      const userData = JSON.parse(localStorage.getItem('wellnest_user_data') || '{}');
+      const prayers = userData.prayers || {};
+      
+      // Calculate weekly average
+      let weeklyTotal = 0;
+      let weeklyDays = 0;
+      const today = new Date();
+      
+      for (let i = 0; i < 7; i++) {
+        const checkDate = new Date(today);
+        checkDate.setDate(checkDate.getDate() - i);
+        const dateKey = formatDateKey(checkDate);
+        
+        if (prayers[dateKey]) {
+          weeklyTotal += (prayers[dateKey].completedCount || 0);
+          weeklyDays++;
+        }
+      }
+      
+      const weeklyAverage = weeklyDays > 0 ? Math.round((weeklyTotal / (weeklyDays * 5)) * 100) : 0;
+      document.getElementById('weeklyAverage').textContent = weeklyAverage + '%';
+      
+      // Calculate monthly average
+      let monthlyTotal = 0;
+      let monthlyDays = 0;
+      
+      for (let i = 0; i < 30; i++) {
+        const checkDate = new Date(today);
+        checkDate.setDate(checkDate.getDate() - i);
+        const dateKey = formatDateKey(checkDate);
+        
+        if (prayers[dateKey]) {
+          monthlyTotal += (prayers[dateKey].completedCount || 0);
+          monthlyDays++;
+        }
+      }
+      
+      const monthlyAverage = monthlyDays > 0 ? Math.round((monthlyTotal / (monthlyDays * 5)) * 100) : 0;
+      document.getElementById('monthlyAverage').textContent = monthlyAverage + '%';
+      
+      // Calculate streak
+      let streak = 0;
+      for (let i = 0; i < 365; i++) {
+        const checkDate = new Date(today);
+        checkDate.setDate(checkDate.getDate() - i);
+        const dateKey = formatDateKey(checkDate);
+        
+        if (prayers[dateKey] && prayers[dateKey].completedCount >= 3) {
+          streak++;
+        } else {
+          break;
+        }
+      }
+      
+      document.getElementById('streak').textContent = streak;
+    }
+
+    function updateSpritualGoals() {
+      const userData = JSON.parse(localStorage.getItem('wellnest_user_data') || '{}');
+      const prayers = userData.prayers || {};
+      const habits = userData.islamicHabits || {};
+      
+      // Fajr streak
+      let fajrStreak = 0;
+      const today = new Date();
+      
+      for (let i = 0; i < 7; i++) {
+        const checkDate = new Date(today);
+        checkDate.setDate(checkDate.getDate() - i);
+        const dateKey = formatDateKey(checkDate);
+        
+        if (prayers[dateKey] && prayers[dateKey].fajr) {
+          fajrStreak++;
+        } else {
+          break;
+        }
+      }
+      
+      document.getElementById('fajrStreak').textContent = `${Math.min(fajrStreak, 7)}/7`;
+      
+      // Quran streak
+      let quranStreak = 0;
+      
+      for (let i = 0; i < 30; i++) {
+        const checkDate = new Date(today);
+        checkDate.setDate(checkDate.getDate() - i);
+        const dateKey = formatDateKey(checkDate);
+        
+        if (habits[dateKey] && habits[dateKey].quran) {
+          quranStreak++;
+        } else {
+          break;
+        }
+      }
+      
+      document.getElementById('quranStreak').textContent = `${Math.min(quranStreak, 30)}/30`;
+      
+      // All prayers streak
+      let allPrayersStreak = 0;
+      
+      for (let i = 0; i < 3; i++) {
+        const checkDate = new Date(today);
+        checkDate.setDate(checkDate.getDate() - i);
+        const dateKey = formatDateKey(checkDate);
+        
+        if (prayers[dateKey] && prayers[dateKey].completedCount >= 5) {
+          allPrayersStreak++;
+        } else {
+          break;
+        }
+      }
+      
+      document.getElementById('allPrayersStreak').textContent = `${Math.min(allPrayersStreak, 3)}/3`;
+    }
+
+    function loadDailyGuidance() {
+      const today = new Date();
+      const dayIndex = today.getDate() % islamicGuidance.length;
+      const guidance = islamicGuidance[dayIndex];
+      
+      const guidanceHTML = `
+        <div class="guidance-item">
+          <h4>${guidance.title}</h4>
+          <p>${guidance.content}</p>
+          <span class="guidance-category">${guidance.category}</span>
+        </div>
+      `;
+      
+      document.getElementById('dailyGuidance').innerHTML = guidanceHTML;
+    }
+
+    function getNewGuidance() {
+      const randomIndex = Math.floor(Math.random() * islamicGuidance.length);
+      const guidance = islamicGuidance[randomIndex];
+      
+      const guidanceHTML = `
+        <div class="guidance-item">
+          <h4>${guidance.title}</h4>
+          <p>${guidance.content}</p>
+          <span class="guidance-category">${guidance.category}</span>
+        </div>
+      `;
+      
+      document.getElementById('dailyGuidance').innerHTML = guidanceHTML;
+    }
+
+    function loadTodaysData() {
+      const userData = JSON.parse(localStorage.getItem('wellnest_user_data') || '{}');
+      
+      // Load prayer data
+      const todaysPrayers = userData.prayers && userData.prayers[todayKey] ? userData.prayers[todayKey] : {};
+      
+      // Update prayer checkboxes
+      ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'].forEach(prayer => {
+        const checkbox = document.getElementById(prayer);
+        if (checkbox) {
+          checkbox.checked = todaysPrayers[prayer] || false;
+        }
+      });
+      
+      // Load habits data
+      const todaysHabits = userData.islamicHabits && userData.islamicHabits[todayKey] ? userData.islamicHabits[todayKey] : {};
+      
+      // Update habit checkboxes
+      ['quran', 'dhikr', 'dua', 'charity', 'istighfar', 'sunnah'].forEach(habit => {
+        const checkbox = document.getElementById(habit);
+        if (checkbox) {
+          checkbox.checked = todaysHabits[habit] || false;
+        }
+      });
+    }
+
+    // Authentication check
+    function checkAuthentication() {
+      const isLoggedIn = localStorage.getItem('wellnest_user');
+      if (!isLoggedIn || isLoggedIn !== 'true') {
+        alert('Please login to access your prayer tracker! 🕌');
+        window.location.href = 'login.html';
+        return false;
+      }
+      return true;
+    }
+
+    // Navigation functions
+    function updateNavigation() {
+      const isLoggedIn = localStorage.getItem('wellnest_user');
+      if (isLoggedIn === 'true') {
+        document.getElementById('loginLink').style.display = 'none';
+        document.getElementById('signupLink').style.display = 'none';
+        document.getElementById('logoutLink').style.display = 'block';
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('wellnest_user');
+      localStorage.removeItem('wellnest_user_data');
+      alert('Logged out successfully! Barakallahu feeki 🤲');
+      window.location.href = 'index.html';
+    }
+
+    // Hamburger Menu Functionality
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('navMenu');
+
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      navMenu.classList.toggle('active');
+    });
+
+    document.querySelectorAll('.nav-menu a').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        navMenu.classList.remove('active');
+      });
+    });
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      if (!checkAuthentication()) return;
+      updateNavigation();
+      loadTodaysData();
+      updatePrayerDisplay();
+      updatePrayerHistory();
+      updateSpritualGoals();
+      loadDailyGuidance();
+      
+      // Display prayer times
+      console.log('🕌 Initializing prayer times display...');
+      const prayerTimesElement = document.getElementById('prayerTimesDisplay');
+      console.log('Prayer times element found:', prayerTimesElement);
+      
+      if (prayerTimesElement) {
+        const prayerTimesHTML = displayPrayerTimes();
+        console.log('Prayer times HTML generated:', prayerTimesHTML);
+        prayerTimesElement.innerHTML = prayerTimesHTML;
+      } else {
+        console.error('❌ Prayer times display element not found!');
+      }
+      
+      // Update next prayer display
+      updateNextPrayerDisplay();
+      
+      // Update next prayer every minute
+      setInterval(updateNextPrayerDisplay, 60000);
+      
+      // Check notification permission and schedule reminders if granted
+      if ('Notification' in window && Notification.permission === 'granted') {
+        notificationPermission = true;
+        schedulePrayerReminders();
+      }
+      
+      // Fallback prayer times display (in case of timing issues)
+      setTimeout(() => {
+        const prayerTimesElement = document.getElementById('prayerTimesDisplay');
+        if (prayerTimesElement && prayerTimesElement.innerHTML.trim() === '') {
+          console.log('🔄 Fallback: Re-initializing prayer times display...');
+          prayerTimesElement.innerHTML = displayPrayerTimes();
+        }
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

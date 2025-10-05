@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Clear Cache - WellNest</title>
+  <link rel="stylesheet" href="style.css?v=20241005">
+  <style>
+    .cache-clear-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #A8E6CF, #79C9AF);
+      padding: 20px;
+    }
+    
+    .cache-clear-card {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      max-width: 500px;
+    }
+    
+    .cache-clear-card h1 {
+      color: #2C6E63;
+      margin-bottom: 20px;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .cache-clear-card p {
+      color: #666;
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+    
+    .cache-status {
+      background: #f8f9fa;
+      border-left: 4px solid #4CAF50;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+    
+    .clear-btn {
+      background: linear-gradient(90deg, #4CAF50, #45a049);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 10px;
+      transition: transform 0.3s;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .clear-btn:hover {
+      transform: scale(1.05);
+    }
+    
+    .back-btn {
+      background: linear-gradient(90deg, #79C9AF, #2C6E63);
+      color: white;
+      text-decoration: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-top: 20px;
+      transition: transform 0.3s;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .back-btn:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="cache-clear-container">
+    <div class="cache-clear-card">
+      <h1>🔧 Cache Manager</h1>
+      <p>If you're experiencing issues with pages not loading correctly, use this tool to clear all cached data.</p>
+      
+      <div class="cache-status" id="cacheStatus">
+        <p><strong>Status:</strong> Checking cache...</p>
+      </div>
+      
+      <button class="clear-btn" onclick="clearAllCaches()">🗑️ Clear All Cache</button>
+      <button class="clear-btn" onclick="clearAndReload()">🔄 Clear Cache & Reload</button>
+      
+      <div id="clearResults" style="margin-top: 20px;"></div>
+      
+      <a href="index.html" class="back-btn">← Back to Home</a>
+    </div>
+  </div>
+
+  <script>
+    async function checkCacheStatus() {
+      const statusDiv = document.getElementById('cacheStatus');
+      
+      if ('caches' in window) {
+        try {
+          const cacheNames = await caches.keys();
+          const wellnestCaches = cacheNames.filter(name => name.includes('wellnest'));
+          
+          if (wellnestCaches.length > 0) {
+            statusDiv.innerHTML = `
+              <p><strong>Found ${wellnestCaches.length} WellNest cache(s):</strong></p>
+              <ul style="text-align: left; margin-top: 10px;">
+                ${wellnestCaches.map(name => `<li>${name}</li>`).join('')}
+              </ul>
+            `;
+          } else {
+            statusDiv.innerHTML = '<p><strong>Status:</strong> ✅ No WellNest caches found</p>';
+          }
+        } catch (error) {
+          statusDiv.innerHTML = '<p><strong>Error:</strong> Could not check cache status</p>';
+        }
+      } else {
+        statusDiv.innerHTML = '<p><strong>Status:</strong> Cache API not supported</p>';
+      }
+    }
+    
+    async function clearAllCaches() {
+      const resultsDiv = document.getElementById('clearResults');
+      resultsDiv.innerHTML = '<p>🔄 Clearing caches...</p>';
+      
+      if ('caches' in window) {
+        try {
+          const cacheNames = await caches.keys();
+          const cleared = [];
+          
+          for (const name of cacheNames) {
+            if (name.includes('wellnest')) {
+              await caches.delete(name);
+              cleared.push(name);
+            }
+          }
+          
+          // Clear localStorage and sessionStorage
+          localStorage.clear();
+          sessionStorage.clear();
+          
+          resultsDiv.innerHTML = `
+            <div style="background: #d4edda; color: #155724; padding: 15px; border-radius: 5px;">
+              <p><strong>✅ Successfully cleared:</strong></p>
+              <ul style="text-align: left; margin-top: 10px;">
+                ${cleared.map(name => `<li>${name}</li>`).join('')}
+                <li>Local Storage</li>
+                <li>Session Storage</li>
+              </ul>
+            </div>
+          `;
+          
+          // Update cache status
+          setTimeout(checkCacheStatus, 1000);
+          
+        } catch (error) {
+          resultsDiv.innerHTML = `
+            <div style="background: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px;">
+              <p><strong>❌ Error clearing cache:</strong> ${error.message}</p>
+            </div>
+          `;
+        }
+      } else {
+        resultsDiv.innerHTML = '<p>❌ Cache API not supported in this browser</p>';
+      }
+    }
+    
+    async function clearAndReload() {
+      await clearAllCaches();
+      
+      setTimeout(() => {
+        window.location.href = 'index.html?nocache=' + Date.now();
+      }, 2000);
+    }
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', checkCacheStatus);
+  </script>
+</body>
+</html>

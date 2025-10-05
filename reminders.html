@@ -3,9 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <title>Reminders - WellNest</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20241005">
+  
+  <!-- Force Cache Clear Script -->
   <script>
+    // Clear all caches on load to prevent old version issues
+    if ('caches' in window) {
+      caches.keys().then(function(names) {
+        names.forEach(function(name) {
+          if (name.indexOf('wellnest') !== -1 && name.indexOf('v3-fixed') === -1) {
+            caches.delete(name).then(() => {
+              console.log('Reminders page: Cleared old cache:', name);
+            });
+          }
+        });
+      });
+    }
+    
+    // Force reload if cached version detected
+    if (performance.navigation.type === 1 && !sessionStorage.getItem('reminders-refresh-done')) {
+      sessionStorage.setItem('reminders-refresh-done', 'true');
+      location.reload(true);
+    }
+    
     let activeReminders = [];
     let reminderIntervals = [];
 
@@ -17,14 +41,8 @@
       if (task.trim() === "") return alert("Please enter a reminder task!");
       if (!time) return alert("Please set a time for the reminder!");
 
-      // Request notification permission
-      if (Notification.permission === "default") {
-        Notification.requestPermission().then(permission => {
-          if (permission !== 'granted') {
-            alert("⚠️ Notifications are disabled. You'll only see visual alerts.");
-          }
-        });
-      }
+      // Enhanced notification permission for app compatibility
+      requestEnhancedNotificationPermission();
 
       const reminder = {
         id: Date.now(),
@@ -103,43 +121,182 @@
     }
 
     function triggerNotification(reminder) {
-      // Browser notification
-      if (Notification.permission === "granted") {
-        new Notification(`WellNest Reminder: ${reminder.task}`, {
-          body: `Time for: ${reminder.task}`,
-          icon: 'images/fitness-logo.svg',
-          badge: 'images/fitness-logo.svg'
-        });
+      console.log('🔔 Triggering reminder:', reminder.task);
+      
+      // Try multiple notification methods for app compatibility
+      let notificationSent = false;
+      
+      // Method 1: Browser notification (works in web browsers)
+      if ('Notification' in window && Notification.permission === "granted") {
+        try {
+          new Notification(`WellNest Reminder: ${reminder.task}`, {
+            body: `Time for: ${reminder.task}`,
+            icon: 'images/fitness-logo.svg',
+            badge: 'images/fitness-logo.svg',
+            requireInteraction: true,
+            tag: 'wellnest-reminder'
+          });
+          notificationSent = true;
+          console.log('✅ Browser notification sent');
+        } catch (error) {
+          console.log('❌ Browser notification failed:', error);
+        }
       }
 
-      // Audio alert
-      const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmEfBzmByfLAciUEKH7J8t+QQAoTVrLr7aNWFAdGod/3um4gBDue2vTEcSEEJ4HM8t+RQgkRVrTs66hWFApGn+DyvmEfBzmByfLAciUEKH7J8t+QQAoUVrPp66hVFApGn+DyvmEfBzmByfLAciUEKH7J8t+QQAoTVrLr7aNWFAdGod/3um4gBDue2vTEcSEEJ4HM8t+RQgkRVrTs66hWFApGn+DyvmEfBzmByfLAciUEKH7J8t+QQAoUXrPq6qhWFAlDodnw');
-      audio.play().catch(() => {}); // Ignore audio errors
+      // Method 2: App-specific notifications (for wrapped apps)
+      if (typeof window.AndroidNotification !== 'undefined') {
+        try {
+          window.AndroidNotification.show(`WellNest Reminder: ${reminder.task}`);
+          notificationSent = true;
+          console.log('✅ Android app notification sent');
+        } catch (error) {
+          console.log('❌ Android notification failed:', error);
+        }
+      }
 
-      // Visual alert
+      // Method 3: iOS app notifications
+      if (typeof window.webkit !== 'undefined' && window.webkit.messageHandlers && window.webkit.messageHandlers.notification) {
+        try {
+          window.webkit.messageHandlers.notification.postMessage({
+            title: 'WellNest Reminder',
+            body: reminder.task
+          });
+          notificationSent = true;
+          console.log('✅ iOS app notification sent');
+        } catch (error) {
+          console.log('❌ iOS notification failed:', error);
+        }
+      }
+
+      // Method 4: Vibration (for mobile apps)
+      if ('vibrate' in navigator) {
+        try {
+          navigator.vibrate([200, 100, 200, 100, 200]);
+          console.log('✅ Vibration triggered');
+        } catch (error) {
+          console.log('❌ Vibration failed:', error);
+        }
+      }
+
+      // Method 5: Audio alert (works in most environments)
+      try {
+        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmEfBzmByfLAciUEKH7J8t+QQAoTVrLr7aNWFAdGod/3um4gBDue2vTEcSEEJ4HM8t+RQgkRVrTs66hWFApGn+DyvmEfBzmByfLAciUEKH7J8t+QQAoUVrPp66hVFApGn+DyvmEfBzmByfLAciUEKH7J8t+QQAoTVrLr7aNWFAdGod/3um4gBDue2vTEcSEEJ4HM8t+RQgkRVrTs66hWFApGn+DyvmEfBzmByfLAciUEKH7J8t+QQAoUXrPq6qhWFAlDodnw');
+        audio.volume = 0.7;
+        audio.play().catch(() => console.log('❌ Audio alert failed'));
+        console.log('✅ Audio alert played');
+      } catch (error) {
+        console.log('❌ Audio setup failed:', error);
+      }
+
+      // Method 6: Visual alert (always works as fallback)
       showVisualAlert(reminder);
+      
+      // Method 7: Page title flash (works in background apps)
+      flashPageTitle(reminder.task);
+      
+      // Log final status
+      console.log(notificationSent ? '✅ Notification successfully sent' : '⚠️ Using fallback visual alerts only');
     }
 
     function showVisualAlert(reminder) {
-      // Create modal-style alert
+      // Create enhanced modal-style alert for app compatibility
       const alertDiv = document.createElement('div');
-      alertDiv.className = 'reminder-alert';
+      alertDiv.className = 'reminder-alert app-compatible';
       alertDiv.innerHTML = `
+        <div class="alert-overlay"></div>
         <div class="alert-content">
-          <h3>🔔 Reminder Time!</h3>
-          <p><strong>${reminder.task}</strong></p>
-          <p>⏰ ${formatTime(reminder.time)}</p>
-          <button onclick="closeAlert(this)" class="alert-close-btn">Got it!</button>
+          <div class="alert-header">
+            <span class="alert-icon">🔔</span>
+            <h3>Reminder Time!</h3>
+          </div>
+          <div class="alert-body">
+            <p class="reminder-task"><strong>${reminder.task}</strong></p>
+            <p class="reminder-time">⏰ ${reminder.time === 'Test' ? 'Test Reminder' : formatTime(reminder.time)}</p>
+            <p class="reminder-type">📅 ${reminder.type.charAt(0).toUpperCase() + reminder.type.slice(1)} reminder</p>
+          </div>
+          <div class="alert-actions">
+            <button onclick="closeAlert(this)" class="alert-close-btn primary">✓ Got it!</button>
+            <button onclick="snoozeReminder(this, ${reminder.id})" class="alert-snooze-btn">⏰ Snooze 5min</button>
+          </div>
         </div>
       `;
       document.body.appendChild(alertDiv);
       
-      // Auto-remove after 10 seconds
+      // Make the alert more prominent
+      alertDiv.style.position = 'fixed';
+      alertDiv.style.top = '0';
+      alertDiv.style.left = '0';
+      alertDiv.style.width = '100%';
+      alertDiv.style.height = '100%';
+      alertDiv.style.zIndex = '10000';
+      alertDiv.style.display = 'flex';
+      alertDiv.style.alignItems = 'center';
+      alertDiv.style.justifyContent = 'center';
+      
+      // Focus trap for accessibility
+      const closeBtn = alertDiv.querySelector('.alert-close-btn');
+      if (closeBtn) closeBtn.focus();
+      
+      // Auto-remove after 30 seconds (longer for app users)
       setTimeout(() => {
         if (alertDiv.parentNode) {
           alertDiv.parentNode.removeChild(alertDiv);
         }
-      }, 10000);
+      }, 30000);
+    }
+
+    function flashPageTitle(task) {
+      const originalTitle = document.title;
+      let flashCount = 0;
+      const maxFlashes = 10;
+      
+      const flashInterval = setInterval(() => {
+        document.title = flashCount % 2 === 0 ? `🔔 REMINDER: ${task}` : originalTitle;
+        flashCount++;
+        
+        if (flashCount >= maxFlashes) {
+          clearInterval(flashInterval);
+          document.title = originalTitle;
+        }
+      }, 1000);
+    }
+
+    function snoozeReminder(button, reminderId) {
+      const alert = button.closest('.reminder-alert');
+      if (alert && alert.parentNode) {
+        alert.parentNode.removeChild(alert);
+      }
+      
+      // Find the reminder and reschedule for 5 minutes later
+      const reminder = activeReminders.find(r => r.id === reminderId);
+      if (reminder) {
+        setTimeout(() => {
+          triggerNotification(reminder);
+        }, 5 * 60 * 1000); // 5 minutes
+        
+        // Show confirmation
+        const confirmDiv = document.createElement('div');
+        confirmDiv.className = 'snooze-confirmation';
+        confirmDiv.innerHTML = '<p>⏰ Reminder snoozed for 5 minutes</p>';
+        confirmDiv.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: #4CAF50;
+          color: white;
+          padding: 10px 20px;
+          border-radius: 5px;
+          z-index: 10001;
+          animation: slideIn 0.3s ease-out;
+        `;
+        document.body.appendChild(confirmDiv);
+        
+        setTimeout(() => {
+          if (confirmDiv.parentNode) {
+            confirmDiv.parentNode.removeChild(confirmDiv);
+          }
+        }, 3000);
+      }
     }
 
     function closeAlert(button) {
@@ -179,21 +336,93 @@
       return `${hour12}:${minutes} ${ampm}`;
     }
 
-    function testReminder() {
-      // Test reminder in 5 seconds
-      const testReminder = {
-        id: Date.now(),
-        task: "Test Reminder - This is working!",
-        time: "Test",
-        type: "test",
-        active: true
-      };
+    function requestEnhancedNotificationPermission() {
+      console.log('🔔 Requesting enhanced notification permissions...');
+      
+      // Method 1: Standard web notification permission
+      if ('Notification' in window) {
+        if (Notification.permission === "default") {
+          Notification.requestPermission().then(permission => {
+            if (permission === 'granted') {
+              console.log('✅ Web notifications granted');
+            } else {
+              console.log('❌ Web notifications denied');
+              showNotificationFallbackInfo();
+            }
+          }).catch(error => {
+            console.log('❌ Notification permission error:', error);
+            showNotificationFallbackInfo();
+          });
+        }
+      } else {
+        console.log('⚠️ Web notifications not supported');
+      }
+      
+      // Method 2: Request app-specific permissions
+      if (typeof window.AndroidNotification !== 'undefined') {
+        try {
+          window.AndroidNotification.requestPermission();
+          console.log('✅ Android notification permission requested');
+        } catch (error) {
+          console.log('❌ Android permission request failed:', error);
+        }
+      }
+      
+      // Method 3: Request iOS app permissions
+      if (typeof window.webkit !== 'undefined' && window.webkit.messageHandlers && window.webkit.messageHandlers.requestNotification) {
+        try {
+          window.webkit.messageHandlers.requestNotification.postMessage({});
+          console.log('✅ iOS notification permission requested');
+        } catch (error) {
+          console.log('❌ iOS permission request failed:', error);
+        }
+      }
+    }
+
+    function showNotificationFallbackInfo() {
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'notification-info';
+      infoDiv.innerHTML = `
+        <div class="info-content">
+          <h4>📱 App Notifications</h4>
+          <p>Reminders will work using:</p>
+          <ul>
+            <li>✓ Visual alerts on screen</li>
+            <li>✓ Audio notifications</li>
+            <li>✓ Vibration (on mobile)</li>
+            <li>✓ Page title flashing</li>
+          </ul>
+          <button onclick="closeInfo(this)">Got it!</button>
+        </div>
+      `;
+      infoDiv.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        border: 2px solid #4CAF50;
+        border-radius: 10px;
+        padding: 20px;
+        z-index: 10002;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        max-width: 300px;
+        text-align: center;
+      `;
+      document.body.appendChild(infoDiv);
       
       setTimeout(() => {
-        triggerNotification(testReminder);
-      }, 5000);
-      
-      alert("Test reminder will trigger in 5 seconds!");
+        if (infoDiv.parentNode) {
+          infoDiv.parentNode.removeChild(infoDiv);
+        }
+      }, 8000);
+    }
+
+    function closeInfo(button) {
+      const info = button.closest('.notification-info');
+      if (info && info.parentNode) {
+        info.parentNode.removeChild(info);
+      }
     }
 
     // Load saved reminders and request notification permission
@@ -238,6 +467,7 @@
     <li><a href="diet.html">Diet</a></li>
     <li><a href="workout.html">Workout</a></li>
     <li><a href="care.html">Care</a></li>
+    <li><a href="pray.html">Prayer</a></li>
     <li><a href="reminders.html" class="active">Reminders</a></li>
     <li><a href="login.html" id="loginLink">Login</a></li>
     <li><a href="signup.html" id="signupLink">Sign Up</a></li>

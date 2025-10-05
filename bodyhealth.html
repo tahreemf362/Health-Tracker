@@ -3,9 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <title>Body Health Tracker - WellNest</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20241005">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Force Cache Clear Script -->
+  <script>
+    // Clear all caches on load to prevent old version issues
+    if ('caches' in window) {
+      caches.keys().then(function(names) {
+        names.forEach(function(name) {
+          if (name.indexOf('wellnest') !== -1 && name.indexOf('v3-fixed') === -1) {
+            caches.delete(name).then(() => {
+              console.log('Body Health page: Cleared old cache:', name);
+            });
+          }
+        });
+      });
+    }
+    
+    // Force reload if cached version detected  
+    if (performance.navigation.type === 1 && !sessionStorage.getItem('bodyhealth-refresh-done')) {
+      sessionStorage.setItem('bodyhealth-refresh-done', 'true');
+      location.reload(true);
+    }
+  </script>
 </head>
 <body>
   <!-- Navigation -->
@@ -25,6 +50,7 @@
         <li><a href="diet.html">Diet</a></li>
         <li><a href="workout.html">Workout</a></li>
         <li><a href="care.html">Care</a></li>
+        <li><a href="pray.html">Prayer</a></li>
         <li><a href="reminders.html">Reminders</a></li>
         <li><a href="login.html" id="loginLink">Login</a></li>
         <li><a href="signup.html" id="signupLink">Sign Up</a></li>
@@ -102,6 +128,83 @@
         </div>
       </div>
 
+      <!-- Health Activity Calendar -->
+      <div class="care-card calendar-card" style="display: block; opacity: 1;">
+        <h3>📅 Health Activity Calendar</h3>
+        <div class="calendar-section">
+          <div class="calendar-header">
+            <button class="nav-btn" onclick="changeMonth(-1)">❮</button>
+            <h4 id="currentMonth">October 2025</h4>
+            <button class="nav-btn" onclick="changeMonth(1)">❯</button>
+          </div>
+          
+          <div class="calendar-grid">
+            <div class="calendar-days">
+              <div class="day-header">Sun</div>
+              <div class="day-header">Mon</div>
+              <div class="day-header">Tue</div>
+              <div class="day-header">Wed</div>
+              <div class="day-header">Thu</div>
+              <div class="day-header">Fri</div>
+              <div class="day-header">Sat</div>
+            </div>
+            <div class="calendar-dates" id="calendarDates">
+              <!-- Static calendar as fallback -->
+              <div class="calendar-day">1</div>
+              <div class="calendar-day">2</div>
+              <div class="calendar-day">3</div>
+              <div class="calendar-day">4</div>
+              <div class="calendar-day today">5</div>
+              <div class="calendar-day">6</div>
+              <div class="calendar-day">7</div>
+              <div class="calendar-day">8</div>
+              <div class="calendar-day">9</div>
+              <div class="calendar-day">10</div>
+              <div class="calendar-day">11</div>
+              <div class="calendar-day">12</div>
+              <div class="calendar-day">13</div>
+              <div class="calendar-day">14</div>
+              <div class="calendar-day">15</div>
+              <div class="calendar-day">16</div>
+              <div class="calendar-day">17</div>
+              <div class="calendar-day">18</div>
+              <div class="calendar-day">19</div>
+              <div class="calendar-day">20</div>
+              <div class="calendar-day">21</div>
+              <div class="calendar-day">22</div>
+              <div class="calendar-day">23</div>
+              <div class="calendar-day">24</div>
+              <div class="calendar-day">25</div>
+              <div class="calendar-day">26</div>
+              <div class="calendar-day">27</div>
+              <div class="calendar-day">28</div>
+              <div class="calendar-day">29</div>
+              <div class="calendar-day">30</div>
+              <div class="calendar-day">31</div>
+            </div>
+          </div>
+          
+          <div class="calendar-legend">
+            <div class="legend-item">
+              <span class="legend-dot excellent"></span>
+              <span>Excellent Day (90-100%)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot good"></span>
+              <span>Good Day (70-89%)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot average"></span>
+              <span>Average Day (50-69%)</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot poor"></span>
+              <span>Needs Improvement (<50%)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Step Counter -->
       <div class="care-card">
         <h3>🚶‍♀️ Daily Step Counter</h3>
@@ -151,51 +254,7 @@
         </div>
       </div>
 
-      <!-- Health Activity Calendar -->
-      <div class="care-card calendar-card">
-        <h3>📅 Health Activity Calendar</h3>
-        <div class="calendar-section">
-          <div class="calendar-header">
-            <button class="nav-btn" onclick="changeMonth(-1)">❮</button>
-            <h4 id="currentMonth">October 2025</h4>
-            <button class="nav-btn" onclick="changeMonth(1)">❯</button>
-          </div>
-          
-          <div class="calendar-grid">
-            <div class="calendar-days">
-              <div class="day-header">Sun</div>
-              <div class="day-header">Mon</div>
-              <div class="day-header">Tue</div>
-              <div class="day-header">Wed</div>
-              <div class="day-header">Thu</div>
-              <div class="day-header">Fri</div>
-              <div class="day-header">Sat</div>
-            </div>
-            <div class="calendar-dates" id="calendarDates">
-              <!-- Calendar dates will be generated here -->
-            </div>
-          </div>
-          
-          <div class="calendar-legend">
-            <div class="legend-item">
-              <span class="legend-dot excellent"></span>
-              <span>Excellent Day (90-100%)</span>
-            </div>
-            <div class="legend-item">
-              <span class="legend-dot good"></span>
-              <span>Good Day (70-89%)</span>
-            </div>
-            <div class="legend-item">
-              <span class="legend-dot average"></span>
-              <span>Average Day (50-69%)</span>
-            </div>
-            <div class="legend-item">
-              <span class="legend-dot poor"></span>
-              <span>Needs Improvement (<50%)</span>
-            </div>
-          </div>
-        </div>
-      </div>
+
 
       <!-- Daily Activity Panel -->
       <div class="care-card daily-panel" id="dailyPanel" style="display: none;">
@@ -901,16 +960,31 @@
     }
 
     // Initialize page
-    document.addEventListener('DOMContentLoaded', function() {
+    function initializePage() {
       if (!checkAuthentication()) return;
       updateNavigation();
       updateStepDisplay();
-      generateCalendar();
       
-      // Auto-select today's date
-      const today = new Date();
-      const todayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-      selectDate(todayKey, today.getDate(), today.getMonth(), today.getFullYear());
+      // Ensure calendar elements exist before generating
+      const calendarDates = document.getElementById('calendarDates');
+      const currentMonth = document.getElementById('currentMonth');
+      
+      if (calendarDates && currentMonth) {
+        generateCalendar();
+      } else {
+        // Retry after a short delay if elements aren't ready
+        setTimeout(initializePage, 50);
+      }
+    }
+
+    // Use both DOMContentLoaded and window.onload for maximum compatibility
+    document.addEventListener('DOMContentLoaded', initializePage);
+    window.addEventListener('load', function() {
+      // Fallback initialization if DOMContentLoaded didn't work
+      const calendarDates = document.getElementById('calendarDates');
+      if (calendarDates && !calendarDates.hasChildNodes()) {
+        generateCalendar();
+      }
     });
   </script>
 </body>

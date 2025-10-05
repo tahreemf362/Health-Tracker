@@ -3,8 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <title>WellNest – All-in-One Health Tracker</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=20241005" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
   
   <!-- PWA Manifest -->
@@ -14,6 +17,28 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="WellNest">
   <link rel="apple-touch-icon" href="images/fitness-logo.svg">
+  
+  <!-- Force Cache Clear Script -->
+  <script>
+    // Clear all caches on load to prevent old version issues
+    if ('caches' in window) {
+      caches.keys().then(function(names) {
+        names.forEach(function(name) {
+          if (name.indexOf('wellnest') !== -1 && name.indexOf('v3-fixed') === -1) {
+            caches.delete(name).then(() => {
+              console.log('Cleared old cache:', name);
+            });
+          }
+        });
+      });
+    }
+    
+    // Force reload if cached version detected
+    if (performance.navigation.type === 1 && !sessionStorage.getItem('force-refresh-done')) {
+      sessionStorage.setItem('force-refresh-done', 'true');
+      location.reload(true);
+    }
+  </script>
 </head>
 
 <body>
@@ -40,6 +65,7 @@
       <li><a href="#" onclick="checkAuth('diet.html')">Diet</a></li>
       <li><a href="#" onclick="checkAuth('workout.html')">Workout</a></li>
       <li><a href="#" onclick="checkAuth('care.html')">Care</a></li>
+      <li><a href="#" onclick="checkAuth('pray.html')">Prayer</a></li>
       <li><a href="#" onclick="checkAuth('reminders.html')">Reminders</a></li>
       <li><a href="login.html" id="loginLink">Login</a></li>
       <li><a href="signup.html" id="signupLink">Sign Up</a></li>
@@ -176,7 +202,20 @@
     }
 
     // Check authentication status on page load
-    document.addEventListener('DOMContentLoaded', updateAuthUI);
+    document.addEventListener('DOMContentLoaded', function() {
+      updateAuthUI();
+      
+      // Remove any test buttons that might appear from cache
+      setTimeout(() => {
+        const testButtons = document.querySelectorAll('button[onclick*="test"], .test-reminder-btn, .test-btn');
+        testButtons.forEach(btn => {
+          if (btn.textContent.toLowerCase().includes('test')) {
+            btn.remove();
+            console.log('Removed cached test button:', btn);
+          }
+        });
+      }, 1000);
+    });
   </script>
 </body>
 </html>
