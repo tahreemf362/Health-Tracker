@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Wellness Assistant 🌿</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #e8f5e9, #a5d6a7);
+      margin: 0;
+      padding: 0;
+      color: #2e7d32;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    header {
+      background-color: #388e3c;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 22px;
+      font-weight: bold;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .back-btn {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-50%) scale(1.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .back-btn:active {
+      transform: translateY(-50%) scale(0.95);
+    }
+    .chat-container {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .message {
+      padding: 10px 15px;
+      border-radius: 15px;
+      max-width: 70%;
+      word-wrap: break-word;
+    }
+    .user {
+      align-self: flex-end;
+      background: #c8e6c9;
+    }
+    .ai {
+      align-self: flex-start;
+      background: #81c784;
+      color: white;
+    }
+    .input-area {
+      display: flex;
+      padding: 10px;
+      background: #f1f8e9;
+      border-top: 2px solid #a5d6a7;
+    }
+    input {
+      flex: 1;
+      padding: 10px;
+      border: 2px solid #a5d6a7;
+      border-radius: 10px;
+      outline: none;
+      font-size: 16px;
+    }
+    button {
+      background: #66bb6a;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      margin-left: 10px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #43a047;
+    }
+
+    /* Mobile responsiveness for back button */
+    @media (max-width: 768px) {
+      .back-btn {
+        left: 10px;
+        font-size: 16px;
+        width: 35px;
+        height: 35px;
+        padding: 6px 8px;
+      }
+      
+      header {
+        padding: 12px;
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+    <header>
+      <button class="back-btn" onclick="goBack()" title="Go Back">
+        ←
+      </button>
+      AI Health Assistant
+    </header>
+  <div class="chat-container" id="chat"></div>
+  <div class="input-area">
+    <input type="text" id="userInput" placeholder="Ask your health or fitness question...">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    const chat = document.getElementById("chat");
+
+    function sendMessage() {
+      const input = document.getElementById("userInput");
+      const text = input.value.trim();
+      if (text === "") return;
+
+      addMessage(text, "user");
+      input.value = "";
+
+      setTimeout(() => {
+        const reply = getAIReply(text);
+        addMessage(reply, "ai");
+      }, 700);
+    }
+
+    function addMessage(message, sender) {
+      const msg = document.createElement("div");
+      msg.classList.add("message", sender);
+      msg.textContent = message;
+      chat.appendChild(msg);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function getAIReply(userText) {
+      userText = userText.toLowerCase();
+
+      if (userText.includes("sleep")) {
+        return "😴 Try sleeping 7–8 hours daily, avoid screen time before bed, and keep a calm bedtime routine.";
+      } else if (userText.includes("diet") || userText.includes("food")) {
+        return "🥗 Eat a balanced diet: fruits, vegetables, lean proteins, and drink plenty of water!";
+      } else if (userText.includes("workout") || userText.includes("exercise")) {
+        return "💪 Aim for at least 30 minutes of light exercise daily like walking, yoga, or cycling.";
+      } else if (userText.includes("stress")) {
+        return "🧘 Practice deep breathing and take short breaks. Meditation or music can help too!";
+      } else if (userText.includes("water")) {
+        return "💧 Drink at least 8 glasses of water a day to stay hydrated.";
+      } else {
+        return "🌿 I recommend maintaining balance: good sleep, healthy diet, and daily movement. What area would you like me to guide you on — diet, sleep, or fitness?";
+      }
+    }
+
+    // Back button functionality
+    function goBack() {
+      // Try to go back in browser history, otherwise go to homepage
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = 'index.html';
+      }
+    }
+  </script>
+</body>
+</html>

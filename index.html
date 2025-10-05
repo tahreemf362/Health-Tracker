@@ -85,6 +85,13 @@
         <button onclick="window.location.href='login.html'" class="login-btn">Login to Start</button>
         <button onclick="window.location.href='signup.html'" class="signup-btn">Sign Up Free</button>
       </div>
+      <div class="ai-assistant-section">
+        <button onclick="checkAuth('aiassistant.html')" class="ai-assistant-btn">
+          <span class="ai-icon">🤖</span>
+          <span class="ai-text">Try AI Health Assistant</span>
+        </button>
+        <p class="ai-description">Get personalized health advice and smart wellness insights</p>
+      </div>
     </div>
     <div class="hero-img">
       <img src="images/fit.webp" alt="Nature Wellness Illustration" />
@@ -186,10 +193,20 @@
         
         // Update hero buttons for logged in users
         const heroText = document.querySelector('.hero-text .auth-buttons');
+        const aiSection = document.querySelector('.hero-text .ai-assistant-section');
         if (heroText) {
           heroText.innerHTML = `
             <button onclick="window.location.href='body.html'" class="dashboard-btn">Go to Dashboard</button>
             <button onclick="window.location.href='diet.html'" class="track-btn">Start Tracking</button>
+          `;
+        }
+        if (aiSection) {
+          aiSection.innerHTML = `
+            <button onclick="window.location.href='aiassistant.html'" class="ai-assistant-btn logged-in">
+              <span class="ai-icon">🤖</span>
+              <span class="ai-text">AI Health Assistant</span>
+            </button>
+            <p class="ai-description">Get personalized health advice and smart wellness insights</p>
           `;
         }
       } else {
@@ -217,5 +234,97 @@
       }, 1000);
     });
   </script>
+
+  <style>
+    /* AI Assistant Button Styling */
+    .ai-assistant-section {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .ai-assistant-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      text-decoration: none;
+    }
+
+    .ai-assistant-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
+      background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    }
+
+    .ai-assistant-btn.logged-in {
+      background: linear-gradient(135deg, #A8E6CF 0%, #79C9AF 100%);
+      color: #2C6E63;
+      box-shadow: 0 4px 15px rgba(121, 201, 175, 0.3);
+    }
+
+    .ai-assistant-btn.logged-in:hover {
+      background: linear-gradient(135deg, #90e0b8 0%, #6bb89a 100%);
+      box-shadow: 0 6px 25px rgba(121, 201, 175, 0.4);
+    }
+
+    .ai-icon {
+      font-size: 20px;
+      animation: pulse 2s infinite;
+    }
+
+    .ai-text {
+      font-family: 'Poppins', sans-serif;
+      letter-spacing: 0.5px;
+    }
+
+    .ai-description {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #666;
+      font-style: italic;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.4;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.1);
+      }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .ai-assistant-section {
+        margin-top: 25px;
+      }
+
+      .ai-assistant-btn {
+        padding: 12px 25px;
+        font-size: 15px;
+        width: 100%;
+        max-width: 280px;
+      }
+
+      .ai-description {
+        font-size: 13px;
+        margin-top: 12px;
+        padding: 0 20px;
+      }
+    }
+  </style>
 </body>
 </html>
