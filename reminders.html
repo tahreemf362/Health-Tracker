@@ -19,7 +19,11 @@
 
       // Request notification permission
       if (Notification.permission === "default") {
-        Notification.requestPermission();
+        Notification.requestPermission().then(permission => {
+          if (permission !== 'granted') {
+            alert("⚠️ Notifications are disabled. You'll only see visual alerts.");
+          }
+        });
       }
 
       const reminder = {
@@ -34,6 +38,9 @@
       activeReminders.push(reminder);
       displayReminder(reminder);
       scheduleReminder(reminder);
+      
+      // Save to localStorage
+      localStorage.setItem('activeReminders', JSON.stringify(activeReminders));
       
       // Clear form
       document.getElementById("reminderInput").value = "";
@@ -65,8 +72,12 @@
       reminderTime.setHours(hours, minutes, 0, 0);
       
       // If time has passed today, schedule for tomorrow (for once/daily reminders)
-      if (reminderTime <= now && (reminder.type === 'once' || reminder.type === 'daily')) {
-        reminderTime.setDate(reminderTime.getDate() + 1);
+      if (reminderTime <= now) {
+        if (reminder.type === 'once') {
+          reminderTime.setDate(reminderTime.getDate() + 1);
+        } else if (reminder.type === 'daily') {
+          reminderTime.setDate(reminderTime.getDate() + 1);
+        }
       }
 
       const timeUntilReminder = reminderTime.getTime() - now.getTime();
@@ -156,6 +167,9 @@
           item.remove();
         }
       });
+      
+      // Update localStorage
+      localStorage.setItem('activeReminders', JSON.stringify(activeReminders));
     }
 
     function formatTime(time) {
@@ -165,10 +179,37 @@
       return `${hour12}:${minutes} ${ampm}`;
     }
 
-    // Request notification permission on page load
+    function testReminder() {
+      // Test reminder in 5 seconds
+      const testReminder = {
+        id: Date.now(),
+        task: "Test Reminder - This is working!",
+        time: "Test",
+        type: "test",
+        active: true
+      };
+      
+      setTimeout(() => {
+        triggerNotification(testReminder);
+      }, 5000);
+      
+      alert("Test reminder will trigger in 5 seconds!");
+    }
+
+    // Load saved reminders and request notification permission
     window.addEventListener('load', () => {
       if ('Notification' in window && Notification.permission === 'default') {
         Notification.requestPermission();
+      }
+      
+      // Load saved reminders
+      const savedReminders = localStorage.getItem('activeReminders');
+      if (savedReminders) {
+        activeReminders = JSON.parse(savedReminders);
+        activeReminders.forEach(reminder => {
+          displayReminder(reminder);
+          scheduleReminder(reminder);
+        });
       }
     });
   </script>
@@ -226,6 +267,7 @@
           </select>
         </div>
         <button onclick="addTimedReminder()" class="add-reminder-btn">Add Reminder</button>
+        <button onclick="testReminder()" class="test-reminder-btn" style="background: #ff9800; margin-left: 10px;">Test Alert (5sec)</button>
       </div>
       
       <div class="active-reminders">
@@ -246,9 +288,43 @@
 <script>
   // Check authentication
   const isLoggedIn = localStorage.getItem('wellnest_user');
-  if (!isLoggedIn) {
+  if (!isLoggedIn || isLoggedIn !== 'true') {
     alert('🔒 Please login to access your reminders! 🌿');
     window.location.href = 'login.html';
+  }
+
+  // Update navigation
+  function updateNavigation() {
+    const isLoggedIn = localStorage.getItem('wellnest_user');
+    if (isLoggedIn === 'true') {
+      document.getElementById('loginLink').style.display = 'none';
+      document.getElementById('signupLink').style.display = 'none';
+      document.getElementById('logoutLink').style.display = 'block';
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem('wellnest_user');
+    localStorage.removeItem('wellnest_user_data');
+    localStorage.removeItem('activeReminders');
+    alert('Logged out successfully! See you soon! 👋');
+    window.location.href = 'index.html';
+  }
+
+  // Initialize navigation
+  updateNavigation();
+
+  // Register service worker for PWA functionality
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(registration => {
+          console.log('SW registered: ', registration);
+        })
+        .catch(registrationError => {
+          console.log('SW registration failed: ', registrationError);
+        });
+    });
   }
 
   // Hamburger Menu Functionality
