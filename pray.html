@@ -800,21 +800,355 @@
       opacity: 0.8;
     }
 
-    /* Responsive design */
+    /* Mobile Navigation Styles */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+      gap: 4px;
+    }
+
+    .hamburger span {
+      width: 25px;
+      height: 3px;
+      background: #2C6E63;
+      transition: 0.3s;
+      border-radius: 2px;
+    }
+
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(-45deg) translate(-5px, 6px);
+    }
+
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(45deg) translate(-5px, -6px);
+    }
+
+    /* Mobile Responsive Design */
     @media (max-width: 768px) {
+      /* Navigation */
+      .hamburger {
+        display: flex;
+      }
+      
+      .nav-menu {
+        position: fixed;
+        left: -100%;
+        top: 70px;
+        bottom: 0;
+        flex-direction: column;
+        background: linear-gradient(180deg, #A8E6CF, #79C9AF);
+        width: 100%;
+        text-align: center;
+        transition: 0.3s;
+        box-shadow: 0 10px 27px rgba(0,0,0,0.05);
+        padding: 20px 0;
+        z-index: 1000;
+        overflow-y: auto;
+      }
+      
+      .nav-menu.active {
+        left: 0;
+      }
+      
+      .nav-menu li {
+        margin: 10px 0;
+      }
+
+      /* Main Content */
+      .main-content {
+        padding: 20px 15px;
+      }
+
+      .container {
+        max-width: 100%;
+        padding: 0 10px;
+      }
+
+      .page-title {
+        font-size: 24px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      /* Cards */
+      .care-card {
+        margin-bottom: 20px;
+        padding: 20px 15px;
+        border-radius: 15px;
+      }
+
+      /* Prayer Progress Card */
       .prayer-stats {
         flex-direction: column;
         text-align: center;
         gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .stat-circle {
+        width: 70px;
+        height: 70px;
+        font-size: 20px;
+        margin: 0 auto;
+      }
+
+      .completion-text {
+        width: 100%;
+      }
+
+      .completion-text p {
+        font-size: 14px;
+        margin-bottom: 10px;
       }
 
       .progress-container {
         flex-direction: column;
         gap: 10px;
+        width: 100%;
       }
 
+      .progress-bar {
+        height: 10px;
+      }
+
+      .progress-percentage {
+        text-align: center;
+        font-size: 16px;
+      }
+
+      /* Prayer List */
+      .prayer-list {
+        gap: 12px;
+      }
+
+      .prayer-item {
+        padding: 15px;
+        border-radius: 12px;
+      }
+
+      .prayer-item:hover {
+        transform: none;
+      }
+
+      .prayer-checkbox {
+        gap: 12px;
+      }
+
+      .checkmark {
+        font-size: 20px;
+        min-width: 24px;
+      }
+
+      .prayer-name {
+        font-size: 16px;
+      }
+
+      .prayer-time {
+        font-size: 13px;
+      }
+
+      /* Habits Grid */
       .habits-grid {
         grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .habit-item {
+        padding: 12px;
+        border-radius: 8px;
+      }
+
+      .habit-item:hover {
+        transform: none;
+      }
+
+      .habit-checkbox {
+        gap: 8px;
+      }
+
+      .habit-icon {
+        font-size: 18px;
+        min-width: 20px;
+      }
+
+      .habit-name {
+        font-size: 14px;
+      }
+
+      /* Weekly History */
+      .weekly-stats {
+        margin-top: 15px;
+      }
+
+      .week-summary {
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .weekly-count, .weekly-percentage {
+        min-width: auto;
+        width: 100%;
+        padding: 12px;
+      }
+
+      .weekly-count span, .weekly-percentage span {
+        font-size: 20px;
+      }
+
+      .weekly-calendar {
+        grid-template-columns: repeat(7, 1fr);
+        gap: 6px;
+      }
+
+      .calendar-day {
+        padding: 8px 3px;
+        font-size: 10px;
+      }
+
+      .day-count {
+        font-size: 12px;
+      }
+
+      .day-percentage {
+        font-size: 8px;
+      }
+
+      /* Reminders */
+      .reminder-list {
+        gap: 15px;
+      }
+
+      .reminder-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+        padding: 12px;
+      }
+
+      .reminder-item:hover {
+        transform: none;
+      }
+
+      .reminder-icon {
+        font-size: 20px;
+        margin-top: 0;
+      }
+
+      .reminder-item p {
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      /* Typography */
+      h3 {
+        font-size: 18px;
+        margin-bottom: 15px;
+      }
+
+      /* Touch Improvements */
+      .prayer-checkbox input[type="checkbox"],
+      .habit-checkbox input[type="checkbox"] {
+        width: 22px;
+        height: 22px;
+        margin-right: 5px;
+      }
+
+      /* Spacing Adjustments */
+      .prayer-progress-card,
+      .habits-card,
+      .weekly-prayer-card,
+      .reminders-card {
+        margin-bottom: 20px;
+      }
+
+      /* Scrolling Improvements */
+      .weekly-calendar {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+      }
+
+      .weekly-calendar::-webkit-scrollbar {
+        height: 3px;
+      }
+
+      .weekly-calendar::-webkit-scrollbar-track {
+        background: rgba(44, 110, 99, 0.1);
+      }
+
+      .weekly-calendar::-webkit-scrollbar-thumb {
+        background: rgba(44, 110, 99, 0.3);
+        border-radius: 2px;
+      }
+    }
+
+    /* Extra Small Mobile Phones */
+    @media (max-width: 480px) {
+      .main-content {
+        padding: 15px 10px;
+      }
+
+      .container {
+        padding: 0 5px;
+      }
+
+      .page-title {
+        font-size: 20px;
+        margin-bottom: 15px;
+      }
+
+      .care-card {
+        padding: 15px 12px;
+        margin-bottom: 15px;
+      }
+
+      h3 {
+        font-size: 16px;
+        margin-bottom: 12px;
+      }
+
+      .prayer-item,
+      .habit-item {
+        padding: 12px;
+      }
+
+      .prayer-name {
+        font-size: 15px;
+      }
+
+      .prayer-time {
+        font-size: 12px;
+      }
+
+      .habit-name {
+        font-size: 13px;
+      }
+
+      .weekly-calendar {
+        gap: 4px;
+      }
+
+      .calendar-day {
+        padding: 6px 2px;
+        font-size: 9px;
+      }
+
+      .day-count {
+        font-size: 11px;
+      }
+
+      .day-percentage {
+        font-size: 7px;
+      }
+
+      .reminder-item p {
+        font-size: 13px;
       }
     }
   </style>
